@@ -1,14 +1,18 @@
-// originally parseUri 1.2.2, now patched by us
+// Originally parseUri 1.2.2, now patched by us
 // (c) Steven Levithan <stevenlevithan.com>
 // MIT License
-var keys = ["source", "protocol", "authority", "userInfo", "user", "password",
-    "host", "port", "relative", "path", "directory", "file", "query", "anchor"];
-var qName ="queryKey";
+var keys = ['source', 'protocol', 'authority', 'userInfo', 'user', 'password',
+    'host', 'port', 'relative', 'path', 'directory', 'file', 'query', 'anchor',
+];
+var qName = 'queryKey';
 var qParser = /(?:^|&)([^&=]*)=?([^&]*)/g;
 
-// use the "loose" parser
+// Use the "loose" parser
+//
 /* jshint maxlen: false */
+/* jscs:disable maximumLineLength*/
 var parser = /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/;
+/* jscs:enable maximumLineLength*/
 
 function parseUri(str) {
   var m = parser.exec(str);
@@ -17,7 +21,7 @@ function parseUri(str) {
 
   while (i--) {
     var key = keys[i];
-    var value = m[i] || "";
+    var value = m[i] || '';
     var encoded = ['user', 'password'].indexOf(key) !== -1;
     uri[key] = encoded ? decodeURIComponent(value) : value;
   }

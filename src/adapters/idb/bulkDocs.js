@@ -65,7 +65,7 @@ function idbBulkDocs(dbOpts, req, opts, api, idb, Changes, callback) {
     var stores = [
       DOC_STORE, BY_SEQ_STORE,
       ATTACH_STORE, META_STORE,
-      LOCAL_STORE, ATTACH_AND_SEQ_STORE
+      LOCAL_STORE, ATTACH_AND_SEQ_STORE,
     ];
     var txnResult = openTransactionSafely(idb, stores, 'readwrite');
     if (txnResult.error) {
@@ -120,7 +120,7 @@ function idbBulkDocs(dbOpts, req, opts, api, idb, Changes, callback) {
     for (var i = 0, len = docInfos.length; i < len; i++) {
       var docInfo = docInfos[i];
       if (docInfo._id && isLocalId(docInfo._id)) {
-        checkDone(); // skip local docs
+        checkDone(); // Skip local docs
         continue;
       }
       var req = docStore.get(docInfo.metadata.id);
@@ -247,8 +247,8 @@ function idbBulkDocs(dbOpts, req, opts, api, idb, Changes, callback) {
 
     function afterPutDocError(e) {
       // ConstraintError, need to update, not put (see #1638 for details)
-      e.preventDefault(); // avoid transaction abort
-      e.stopPropagation(); // avoid transaction onerror
+      e.preventDefault(); // Avoid transaction abort
+      e.stopPropagation(); // Avoid transaction onerror
       var index = bySeqStore.index('_doc_id_rev');
       var getKeyReq = index.getKey(doc._doc_id_rev);
       getKeyReq.onsuccess = function (e) {
@@ -261,7 +261,7 @@ function idbBulkDocs(dbOpts, req, opts, api, idb, Changes, callback) {
       results[resultsIdx] = {
         ok: true,
         id: metadata.id,
-        rev: winningRev
+        rev: winningRev,
       };
       fetchedDocs.set(docInfo.metadata.id, docInfo.metadata);
       insertAttachmentMappings(docInfo, metadata.seq, callback);
@@ -308,7 +308,7 @@ function idbBulkDocs(dbOpts, req, opts, api, idb, Changes, callback) {
     });
   }
 
-  // map seqs to attachment digests, which
+  // Map seqs to attachment digests, which
   // we will need later during compaction
   function insertAttachmentMappings(docInfo, seq, callback) {
 
@@ -329,21 +329,21 @@ function idbBulkDocs(dbOpts, req, opts, api, idb, Changes, callback) {
       var digest = docInfo.data._attachments[att].digest;
       var req = attachAndSeqStore.put({
         seq: seq,
-        digestSeq: digest + '::' + seq
+        digestSeq: digest + '::' + seq,
       });
 
       req.onsuccess = checkDone;
       req.onerror = function (e) {
-        // this callback is for a constaint error, which we ignore
+        // This callback is for a constaint error, which we ignore
         // because this docid/rev has already been associated with
         // the digest (e.g. when new_edits == false)
-        e.preventDefault(); // avoid transaction abort
-        e.stopPropagation(); // avoid transaction onerror
+        e.preventDefault(); // Avoid transaction abort
+        e.stopPropagation(); // Avoid transaction onerror
         checkDone();
       };
     }
     for (var i = 0; i < attsToAdd.length; i++) {
-      add(attsToAdd[i]); // do in parallel
+      add(attsToAdd[i]); // Do in parallel
     }
   }
 
@@ -354,11 +354,11 @@ function idbBulkDocs(dbOpts, req, opts, api, idb, Changes, callback) {
     getKeyReq.onsuccess = function(e) {
       var count = e.target.result;
       if (count) {
-        return callback(); // already exists
+        return callback(); // Already exists
       }
       var newAtt = {
         digest: digest,
-        body: data
+        body: data,
       };
       var putReq = attachStore.put(newAtt);
       putReq.onsuccess = callback;

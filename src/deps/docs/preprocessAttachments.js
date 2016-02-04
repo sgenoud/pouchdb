@@ -28,7 +28,7 @@ function preprocessAttachments(docInfos, blobType, callback) {
       return callback();
     }
     if (typeof att.data === 'string') {
-      // input is assumed to be a base64 string
+      // Input is assumed to be a base64 string
 
       var asBinary = parseBase64(att.data);
       if (asBinary.error) {
@@ -40,14 +40,14 @@ function preprocessAttachments(docInfos, blobType, callback) {
         att.data = binStringToBlobOrBuffer(asBinary, att.content_type);
       } else if (blobType === 'base64') {
         att.data = btoa(asBinary);
-      } else { // binary
+      } else { // Binary
         att.data = asBinary;
       }
       md5(asBinary).then(function (result) {
         att.digest = 'md5-' + result;
         callback();
       });
-    } else { // input is a blob
+    } else { // Input is a blob
       readAsArrayBuffer(att.data, function (buff) {
         if (blobType === 'binary') {
           att.data = arrayBuffToBinString(buff);

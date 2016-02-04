@@ -1,4 +1,4 @@
-// build up a list of all the paths to the leafs in this revision tree
+// Build up a list of all the paths to the leafs in this revision tree
 function rootToLeaf(revs) {
   var paths = [];
   var toVisit = revs.slice();

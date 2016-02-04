@@ -20,7 +20,7 @@ adapters.forEach(function (adapter) {
       {_id: '0', a: 1, b: 1},
       {_id: '3', a: 4, b: 16},
       {_id: '1', a: 2, b: 4},
-      {_id: '2', a: 3, b: 9}
+      {_id: '2', a: 3, b: 9},
     ];
 
     it('Testing all docs', function (done) {
@@ -37,7 +37,7 @@ adapters.forEach(function (adapter) {
           }
           db.allDocs({
             startkey: '2',
-            include_docs: true
+            include_docs: true,
           }, function (err, all) {
             all.rows.should.have
               .length(2, 'correct number when opts.startkey set');
@@ -45,21 +45,21 @@ adapters.forEach(function (adapter) {
               .equal('2', 'correct docs when opts.startkey set');
             var opts = {
               startkey: 'org.couchdb.user:',
-              endkey: 'org.couchdb.user;'
+              endkey: 'org.couchdb.user;',
             };
             db.allDocs(opts, function (err, raw) {
               raw.rows.should.have.length(0, 'raw collation');
               var ids = ['0', '3', '1', '2'];
               db.changes().on('complete', function (changes) {
-                // order of changes is not guaranteed in a
+                // Order of changes is not guaranteed in a
                 // clustered changes feed
                 changes.results.forEach(function (row, i) {
                   ids.should.include(row.id, 'seq order');
                 });
                 db.changes({
-                  descending: true
+                  descending: true,
                 }).on('complete', function (changes) {
-                  // again, order is not guaranteed so
+                  // Again, order is not guaranteed so
                   // unsure if this is a useful test
                   ids = ['2', '1', '3', '0'];
                   changes.results.forEach(function (row, i) {
@@ -92,14 +92,14 @@ adapters.forEach(function (adapter) {
         result.rows[2].error.should.equal('not_found');
         return db.allDocs({
           keys: keys,
-          descending: true
+          descending: true,
         });
       }).then(function (result) {
         result.rows.map(keyFunc).should.deep.equal(['1000', '0', '2']);
         result.rows[0].error.should.equal('not_found');
         return db.allDocs({
           keys: keys,
-          startkey: 'a'
+          startkey: 'a',
         });
       }).then(function () {
         throw new Error('expected an error');
@@ -107,7 +107,7 @@ adapters.forEach(function (adapter) {
         should.exist(err);
         return db.allDocs({
           keys: keys,
-          endkey: 'a'
+          endkey: 'a',
         });
       }).then(function () {
           throw new Error('expected an error');
@@ -122,7 +122,7 @@ adapters.forEach(function (adapter) {
       }).then(function () {
         return db.allDocs({
           keys: keys,
-          include_docs: true
+          include_docs: true,
         });
       }).then(function (result) {
         result.rows.map(keyFunc).should.deep.equal(keys);
@@ -134,7 +134,7 @@ adapters.forEach(function (adapter) {
       return db.bulkDocs(origDocs).then(function () {
         return db.allDocs({
           keys: ['3', '1'],
-          skip: 1
+          skip: 1,
         });
       }).then(function (res) {
         res.total_rows.should.equal(4);
@@ -157,7 +157,7 @@ adapters.forEach(function (adapter) {
 
       db.info(function (err, info) {
         var update_seq = info.update_seq;
-        
+
         testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
           function () {
           db.get('1', function (err, doc) {
@@ -165,7 +165,7 @@ adapters.forEach(function (adapter) {
               should.exist(deleted.ok);
 
               db.changes({
-                since: update_seq
+                since: update_seq,
               }).on('complete', function (changes) {
                 var deleted_ids = changes.results.map(function (c) {
                   if (c.deleted) { return c.id; }
@@ -185,14 +185,14 @@ adapters.forEach(function (adapter) {
 
       db.info(function (err, info) {
         var update_seq = info.update_seq;
-        
-        testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)), 
+
+        testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
           function () {
           db.get('3', function (err, doc) {
             doc.updated = 'totally';
             db.put(doc, function (err, doc) {
               db.changes({
-                since: update_seq
+                since: update_seq,
               }).on('complete', function (changes) {
                 var ids = changes.results.map(function (c) { return c.id; });
                 ids.should.include('3');
@@ -210,7 +210,7 @@ adapters.forEach(function (adapter) {
       testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
         function () {
         db.changes({
-          include_docs: true
+          include_docs: true,
         }).on('complete', function (changes) {
           changes.results.forEach(function (row, i) {
             if (row.id === '0') {
@@ -226,16 +226,16 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
         function () {
-        // add conflicts
+        // Add conflicts
         var conflictDoc1 = {
           _id: '3',
           _rev: '2-aa01552213fafa022e6167113ed01087',
-          value: 'X'
+          value: 'X',
         };
         var conflictDoc2 = {
           _id: '3',
           _rev: '2-ff01552213fafa022e6167113ed01087',
-          value: 'Z'
+          value: 'Z',
         };
         db.put(conflictDoc1, { new_edits: false }, function (err, doc) {
           db.put(conflictDoc2, { new_edits: false }, function (err, doc) {
@@ -244,7 +244,7 @@ adapters.forEach(function (adapter) {
               db.changes({
                 include_docs: true,
                 conflicts: true,
-                style: 'all_docs'
+                style: 'all_docs',
               }).on('complete', function (changes) {
                 changes.results.map(function (x) { return x.id; }).sort()
                   .should.deep.equal(['0', '1', '2', '3'],
@@ -265,7 +265,7 @@ adapters.forEach(function (adapter) {
 
                 db.allDocs({
                   include_docs: true,
-                  conflicts: true
+                  conflicts: true,
                 }, function (err, res) {
                   var row = res.rows[3];
                   res.rows.should.have.length(4, 'correct number of changes');
@@ -292,13 +292,13 @@ adapters.forEach(function (adapter) {
       var docs = {
         docs: [
           {_id: 'z', foo: 'z'},
-          {_id: 'a', foo: 'a'}
-        ]
+          {_id: 'a', foo: 'a'},
+        ],
       };
       db.bulkDocs(docs, function (err, res) {
         db.allDocs({
           startkey: 'z',
-          endkey: 'z'
+          endkey: 'z',
         }, function (err, result) {
           result.rows.should.have.length(1, 'Exclude a result');
           done();
@@ -321,18 +321,18 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
 
       var docs = [
-        {_id : '0'},
-        {_id : '1'},
-        {_id : '2'},
-        {_id : '3'},
-        {_id : '4'},
-        {_id : '5'},
-        {_id : '6'},
-        {_id : '7'},
-        {_id : '8'},
-        {_id : '9'}
+        {_id: '0'},
+        {_id: '1'},
+        {_id: '2'},
+        {_id: '3'},
+        {_id: '4'},
+        {_id: '5'},
+        {_id: '6'},
+        {_id: '7'},
+        {_id: '8'},
+        {_id: '9'},
       ];
-      db.bulkDocs({docs : docs}).then(function (res) {
+      db.bulkDocs({docs: docs}).then(function (res) {
         docs[3]._deleted = true;
         docs[7]._deleted = true;
         docs[3]._rev = res[3].rev;
@@ -345,87 +345,87 @@ adapters.forEach(function (adapter) {
         }).then(function (res) {
           res.rows.should.have.length(8,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '5'});
+          return db.allDocs({startkey: '5'});
         }).then(function (res) {
           res.rows.should.have.length(4,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '5', skip : 2, limit : 10});
+          return db.allDocs({startkey: '5', skip: 2, limit: 10});
         }).then(function (res) {
           res.rows.should.have.length(2,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '5', limit : 0});
+          return db.allDocs({startkey: '5', limit: 0});
         }).then(function (res) {
           res.rows.should.have
             .length(0,  'correctly return rows, startkey w/ limit=0');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({keys : ['5'], limit : 0});
+          return db.allDocs({keys: ['5'], limit: 0});
         }).then(function (res) {
           res.rows.should.have
             .length(0,  'correctly return rows, keys w/ limit=0');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({limit : 0});
+          return db.allDocs({limit: 0});
         }).then(function (res) {
           res.rows.should.have.length(0,  'correctly return rows, limit=0');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '5', descending : true, skip : 1});
+          return db.allDocs({startkey: '5', descending: true, skip: 1});
         }).then(function (res) {
           res.rows.should.have.length(4,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '5', endkey : 'z'});
+          return db.allDocs({startkey: '5', endkey: 'z'});
         }).then(function (res) {
           res.rows.should.have.length(4,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '5', endkey : '5'});
+          return db.allDocs({startkey: '5', endkey: '5'});
         }).then(function (res) {
           res.rows.should.have.length(1,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '5', endkey : '4'});
+          return db.allDocs({startkey: '5', endkey: '4'});
         }).then(function (res) {
           res.rows.should.have.length(0,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '5', endkey : '4', descending : true});
+          return db.allDocs({startkey: '5', endkey: '4', descending: true});
         }).then(function (res) {
           res.rows.should.have.length(2,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '3', endkey : '7', descending : false});
+          return db.allDocs({startkey: '3', endkey: '7', descending: false});
         }).then(function (res) {
           res.rows.should.have.length(3,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '7', endkey : '3', descending : true});
+          return db.allDocs({startkey: '7', endkey: '3', descending: true});
         }).then(function (res) {
           res.rows.should.have.length(3,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({startkey : '', endkey : '0'});
+          return db.allDocs({startkey: '', endkey: '0'});
         }).then(function (res) {
           res.rows.should.have.length(1,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({keys : ['0', '1', '3']});
+          return db.allDocs({keys: ['0', '1', '3']});
         }).then(function (res) {
           res.rows.should.have.length(3,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({keys : ['0', '1', '0', '2', '1', '1']});
+          return db.allDocs({keys: ['0', '1', '0', '2', '1', '1']});
         }).then(function (res) {
           res.rows.should.have.length(6,  'correctly return rows');
           res.rows.map(function (row) { return row.key; }).should.deep.equal(
             ['0', '1', '0', '2', '1', '1']);
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({keys : []});
+          return db.allDocs({keys: []});
         }).then(function (res) {
           res.rows.should.have.length(0,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({keys : ['7']});
+          return db.allDocs({keys: ['7']});
         }).then(function (res) {
           res.rows.should.have.length(1,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({key : '3'});
+          return db.allDocs({key: '3'});
         }).then(function (res) {
           res.rows.should.have.length(0,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({key : '2'});
+          return db.allDocs({key: '2'});
         }).then(function (res) {
           res.rows.should.have.length(1,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
-          return db.allDocs({key : 'z'});
+          return db.allDocs({key: 'z'});
         }).then(function (res) {
           res.rows.should.have.length(0,  'correctly return rows');
           res.total_rows.should.equal(8,  'correctly return total_rows');
@@ -438,21 +438,21 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var docs = {
         docs: [
-          {_id: "w", foo: "w"},
-          {_id: "x", foo: "x"},
-          {_id: "y", foo: "y"},
-          {_id: "z", foo: "z"}
-        ]
+          {_id: 'w', foo: 'w'},
+          {_id: 'x', foo: 'x'},
+          {_id: 'y', foo: 'y'},
+          {_id: 'z', foo: 'z'},
+        ],
       };
       db.bulkDocs(docs, function (err, res) {
-        db.allDocs({ startkey: 'x', limit: 1, skip : 1}, function (err, res) {
+        db.allDocs({ startkey: 'x', limit: 1, skip: 1}, function (err, res) {
           res.total_rows.should.equal(4,  'Accurately return total_rows count');
           res.rows.should.have.length(1,  'Correctly limit the returned rows');
           res.rows[0].id.should.equal('y', 'Correctly skip 1 doc');
 
           db.get('x', function (err, xDoc) {
             db.remove(xDoc, function (err, res) {
-              db.allDocs({ startkey: 'w', limit: 2, skip : 1},
+              db.allDocs({ startkey: 'w', limit: 2, skip: 1},
                 function (err, res) {
                 res.total_rows.should
                   .equal(3,  'Accurately return total_rows count after delete');
@@ -473,13 +473,13 @@ adapters.forEach(function (adapter) {
       var docs = {
         docs: [
           {_id: 'z', foo: 'z'},
-          {_id: 'a', foo: 'a'}
-        ]
+          {_id: 'a', foo: 'a'},
+        ],
       };
       db.bulkDocs(docs, function (err, res) {
         db.allDocs({
           startkey: 'a',
-          limit: 1
+          limit: 1,
         }, function (err, res) {
           res.total_rows.should.equal(2, 'Accurately return total_rows count');
           res.rows.should.have.length(1, 'Correctly limit the returned rows.');
@@ -496,18 +496,18 @@ adapters.forEach(function (adapter) {
         docs: [
           {
             _id: id1,
-            foo: 'a'
+            foo: 'a',
           },
           {
             _id: id2,
-            foo: 'z'
-          }
-        ]
+            foo: 'z',
+          },
+        ],
       };
       db.bulkDocs(docs, function (err, res) {
         db.allDocs({
           startkey: id1,
-          endkey: id2
+          endkey: id2,
         }, function (err, res) {
           res.total_rows.should.equal(2, 'Accurately return total_rows count');
           done();
@@ -521,8 +521,8 @@ adapters.forEach(function (adapter) {
         docs: [
           { _id: '0' },
           { _id: '1' },
-          { _id: '2' }
-        ]
+          { _id: '2' },
+        ],
       }, function (err) {
         should.not.exist(err);
         db.allDocs({ key: '1' }, function (err, res) {
@@ -531,21 +531,21 @@ adapters.forEach(function (adapter) {
             key: '1',
             keys: [
               '1',
-              '2'
-            ]
+              '2',
+            ],
           }, function (err) {
             should.exist(err);
             db.allDocs({
               key: '1',
-              startkey: '1'
+              startkey: '1',
             }, function (err, res) {
               should.not.exist(err);
               db.allDocs({
                 key: '1',
-                endkey: '1'
+                endkey: '1',
               }, function (err, res) {
                 should.not.exist(err);
-                // when mixing key/startkey or key/endkey, the results
+                // When mixing key/startkey or key/endkey, the results
                 // are very weird and probably undefined, so don't go beyond
                 // verifying that there's no error
                 done();
@@ -562,7 +562,7 @@ adapters.forEach(function (adapter) {
           { _id: '1' },
           { _id: '2' },
           { _id: '3' },
-          { _id: '4' }
+          { _id: '4' },
         ];
         return db.bulkDocs({docs: docs}).then(function () {
           return db.allDocs({inclusive_end: false, endkey: '2'});
@@ -572,7 +572,7 @@ adapters.forEach(function (adapter) {
         }).then(function (res) {
           res.rows.should.have.length(0);
           return db.allDocs({inclusive_end: false, endkey: '1',
-            startkey: '0'});
+            startkey: '0',});
         }).then(function (res) {
           res.rows.should.have.length(0);
           return db.allDocs({inclusive_end: false, endkey: '5'});
@@ -582,11 +582,11 @@ adapters.forEach(function (adapter) {
         }).then(function (res) {
           res.rows.should.have.length(3);
           return db.allDocs({inclusive_end: false, endkey: '4',
-            startkey: '3'});
+            startkey: '3',});
         }).then(function (res) {
           res.rows.should.have.length(1);
           return db.allDocs({inclusive_end: false, endkey: '1',
-            descending: true});
+            descending: true,});
         }).then(function (res) {
           res.rows.should.have.length(3);
           return db.allDocs({inclusive_end: true, endkey: '4'});
@@ -596,7 +596,7 @@ adapters.forEach(function (adapter) {
             descending: true,
             startkey: '3',
             endkey: '2',
-            inclusive_end: false
+            inclusive_end: false,
           });
         });
       }).then(function (res) {
@@ -640,13 +640,13 @@ adapters.forEach(function (adapter) {
 
       return db.bulkDocs(docs).then(function () {
         return paginate().then(function () {
-          // try running all queries at once to try to isolate race condition
+          // Try running all queries at once to try to isolate race condition
           return PouchDB.utils.Promise.all(allkeys.map(function (key) {
             return db.allDocs({
               limit: 100,
               include_docs: true,
               startkey: key,
-              skip: 1
+              skip: 1,
             }).then(function (res) {
               if (!res.rows.length) {
                 return;
@@ -680,7 +680,7 @@ adapters.forEach(function (adapter) {
       });
     });
 
-    if (adapter === 'local') { // chrome doesn't like \u0000 in URLs
+    if (adapter === 'local') { // Chrome doesn't like \u0000 in URLs
       it('test unicode ids and revs', function (done) {
         var db = new PouchDB(dbs.name);
         var id = 'baz\u0000';

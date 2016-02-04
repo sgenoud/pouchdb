@@ -30,7 +30,7 @@ function generateReplicationId(src, target, opts) {
       queryParams + docIds;
     return md5(queryData);
   }).then(function (md5sum) {
-    // can't use straight-up md5 alphabet, because
+    // Can't use straight-up md5 alphabet, because
     // the char '/' is interpreted as being for attachments,
     // and + is also not url-safe
     md5sum = md5sum.replace(/\//g, '.').replace(/\+/g, '_');

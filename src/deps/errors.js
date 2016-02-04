@@ -14,151 +14,151 @@ PouchError.prototype.toString = function () {
     status: this.status,
     name: this.name,
     message: this.message,
-    reason: this.reason
+    reason: this.reason,
   });
 };
 
 var UNAUTHORIZED = new PouchError({
   status: 401,
   error: 'unauthorized',
-  reason: "Name or password is incorrect."
+  reason: 'Name or password is incorrect.',
 });
 
 var MISSING_BULK_DOCS = new PouchError({
   status: 400,
   error: 'bad_request',
-  reason: "Missing JSON list of 'docs'"
+  reason: 'Missing JSON list of \'docs\'',
 });
 
 var MISSING_DOC = new PouchError({
   status: 404,
   error: 'not_found',
-  reason: 'missing'
+  reason: 'missing',
 });
 
 var REV_CONFLICT = new PouchError({
   status: 409,
   error: 'conflict',
-  reason: 'Document update conflict'
+  reason: 'Document update conflict',
 });
 
 var INVALID_ID = new PouchError({
   status: 400,
   error: 'invalid_id',
-  reason: '_id field must contain a string'
+  reason: '_id field must contain a string',
 });
 
 var MISSING_ID = new PouchError({
   status: 412,
   error: 'missing_id',
-  reason: '_id is required for puts'
+  reason: '_id is required for puts',
 });
 
 var RESERVED_ID = new PouchError({
   status: 400,
   error: 'bad_request',
-  reason: 'Only reserved document ids may start with underscore.'
+  reason: 'Only reserved document ids may start with underscore.',
 });
 
 var NOT_OPEN = new PouchError({
   status: 412,
   error: 'precondition_failed',
-  reason: 'Database not open'
+  reason: 'Database not open',
 });
 
 var UNKNOWN_ERROR = new PouchError({
   status: 500,
   error: 'unknown_error',
-  reason: 'Database encountered an unknown error'
+  reason: 'Database encountered an unknown error',
 });
 
 var BAD_ARG = new PouchError({
   status: 500,
   error: 'badarg',
-  reason: 'Some query argument is invalid'
+  reason: 'Some query argument is invalid',
 });
 
 var INVALID_REQUEST = new PouchError({
   status: 400,
   error: 'invalid_request',
-  reason: 'Request was invalid'
+  reason: 'Request was invalid',
 });
 
 var QUERY_PARSE_ERROR = new PouchError({
   status: 400,
   error: 'query_parse_error',
-  reason: 'Some query parameter is invalid'
+  reason: 'Some query parameter is invalid',
 });
 
 var DOC_VALIDATION = new PouchError({
   status: 500,
   error: 'doc_validation',
-  reason: 'Bad special document member'
+  reason: 'Bad special document member',
 });
 
 var BAD_REQUEST = new PouchError({
   status: 400,
   error: 'bad_request',
-  reason: 'Something wrong with the request'
+  reason: 'Something wrong with the request',
 });
 
 var NOT_AN_OBJECT = new PouchError({
   status: 400,
   error: 'bad_request',
-  reason: 'Document must be a JSON object'
+  reason: 'Document must be a JSON object',
 });
 
 var DB_MISSING = new PouchError({
   status: 404,
   error: 'not_found',
-  reason: 'Database not found'
+  reason: 'Database not found',
 });
 
 var IDB_ERROR = new PouchError({
   status: 500,
   error: 'indexed_db_went_bad',
-  reason: 'unknown'
+  reason: 'unknown',
 });
 
 var WSQ_ERROR = new PouchError({
   status: 500,
   error: 'web_sql_went_bad',
-  reason: 'unknown'
+  reason: 'unknown',
 });
 
 var LDB_ERROR = new PouchError({
   status: 500,
   error: 'levelDB_went_went_bad',
-  reason: 'unknown'
+  reason: 'unknown',
 });
 
 var FORBIDDEN = new PouchError({
   status: 403,
   error: 'forbidden',
-  reason: 'Forbidden by design doc validate_doc_update function'
+  reason: 'Forbidden by design doc validate_doc_update function',
 });
 
 var INVALID_REV = new PouchError({
   status: 400,
   error: 'bad_request',
-  reason: 'Invalid rev format'
+  reason: 'Invalid rev format',
 });
 
 var FILE_EXISTS = new PouchError({
   status: 412,
   error: 'file_exists',
-  reason: 'The database could not be created, the file already exists.'
+  reason: 'The database could not be created, the file already exists.',
 });
 
 var MISSING_STUB = new PouchError({
   status: 412,
-  error: 'missing_stub'
+  error: 'missing_stub',
 });
 
 var INVALID_URL = new PouchError({
   status: 413,
   error: 'invalid_url',
-  reason: 'Provided URL is invalid'
+  reason: 'Provided URL is invalid',
 });
 
 var allErrors = {
@@ -185,12 +185,12 @@ var allErrors = {
   FILE_EXISTS: FILE_EXISTS,
   MISSING_STUB: MISSING_STUB,
   IDB_ERROR: IDB_ERROR,
-  INVALID_URL: INVALID_URL
+  INVALID_URL: INVALID_URL,
 };
 
 function createError(error, reason, name) {
   function CustomPouchError(reason) {
-    // inherit error properties from our parent error manually
+    // Inherit error properties from our parent error manually
     // so as to allow proper JSON parsing.
     /* jshint ignore:start */
     for (var p in error) {
@@ -242,17 +242,17 @@ function generateErrorFromResponse(res) {
       errName === 'not_found') {
     errType = MISSING_DOC;
   } else if (errName === 'doc_validation') {
-    // doc validation needs special treatment since
+    // Doc validation needs special treatment since
     // res.reason depends on the validation error.
     // see utils.js
     errType = DOC_VALIDATION;
     errMsg = errReason;
   } else if (errName === 'bad_request' && errType.message !== errReason) {
-    // if bad_request error already found based on reason don't override.
+    // If bad_request error already found based on reason don't override.
     errType = BAD_REQUEST;
   }
 
-  // fallback to error by status or unknown error.
+  // Fallback to error by status or unknown error.
   if (!errType) {
     errType = getErrorTypeByProp('status', res.status, errReason) ||
                 UNKNOWN_ERROR;

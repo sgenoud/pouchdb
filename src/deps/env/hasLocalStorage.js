@@ -1,4 +1,4 @@
-// in Node of course this is false
+// In Node of course this is false
 function hasLocalStorage() {
   return false;
 }

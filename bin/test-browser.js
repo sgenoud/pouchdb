@@ -6,7 +6,7 @@ wd.configureHttp({timeout: 180000}); // 3 minutes
 
 var sauceConnectLauncher = require('sauce-connect-launcher');
 var selenium = require('selenium-standalone');
-var querystring = require("querystring");
+var querystring = require('querystring');
 var request = require('request').defaults({json: true});
 
 var devserver = require('./dev-server.js');
@@ -21,14 +21,14 @@ var SELENIUM_VERSION = process.env.SELENIUM_VERSION || '2.45.0';
 // BAIL=0 to disable bailing
 var bail = process.env.BAIL !== '0';
 
-// process.env.CLIENT is a colon seperated list of
+// Process.env.CLIENT is a colon seperated list of
 // (saucelabs|selenium):browserName:browserVerion:platform
 var tmp = (process.env.CLIENT || 'selenium:firefox').split(':');
 var client = {
   runner: tmp[0] || 'selenium',
   browser: tmp[1] || 'firefox',
   version: tmp[2] || null, // Latest
-  platform: tmp[3] || null
+  platform: tmp[3] || null,
 };
 
 var testRoot = 'http://127.0.0.1:8000/tests/';
@@ -104,13 +104,13 @@ function postResult(result) {
     request({
       method: 'GET',
       uri: commits + result.commit,
-      headers: {'User-Agent': 'request'}
+      headers: {'User-Agent': 'request'},
     }, function (error, response, body) {
       result._id = result.date = body.committer.date;
       request({
         method: 'POST',
         uri: process.env.DASHBOARD_HOST + '/performance_results',
-        json: result
+        json: result,
       }, function (error, response, body) {
         console.log(result);
         process.exit(!!error);
@@ -155,7 +155,7 @@ function startSauceConnect(callback) {
   var options = {
     username: username,
     accessKey: accessKey,
-    tunnelIdentifier: tunnelId
+    tunnelIdentifier: tunnelId,
   };
 
   sauceConnectLauncher(options, function (err, process) {
@@ -165,7 +165,7 @@ function startSauceConnect(callback) {
       return process.exit(1);
     }
     sauceConnectProcess = process;
-    sauceClient = wd.promiseChainRemote("localhost", 4445, username, accessKey);
+    sauceClient = wd.promiseChainRemote('localhost', 4445, username, accessKey);
     callback();
   });
 }
@@ -183,7 +183,7 @@ function startTest() {
     'max-duration': 60 * 45,
     'command-timeout': 599,
     'idle-timeout': 599,
-    'tunnel-identifier': tunnelId
+    'tunnel-identifier': tunnelId,
   };
 
   sauceClient.init(opts).get(testUrl, function () {

@@ -49,7 +49,7 @@ var sequentialize = function (queue, promiseFactory) {
   };
 };
 
-// uniq an array of strings, order not guaranteed
+// Uniq an array of strings, order not guaranteed
 // similar to underscore/lodash _.uniq
 var uniq = function (arr) {
   var map = {};
@@ -72,5 +72,5 @@ export default {
   sequentialize: sequentialize,
   fin: fin,
   callbackify: callbackify,
-  promisedCallback: promisedCallback
+  promisedCallback: promisedCallback,
 };

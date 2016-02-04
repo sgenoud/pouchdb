@@ -2,7 +2,7 @@
 
 'use strict';
 
-// use query parameter pluginFile if present,
+// Use query parameter pluginFile if present,
 // eg: test.html?pluginFile=memory.pouchdb.js
 var preferredAdapters = window.location.search.match(/[?&]adapters=([^&]+)/);
 var pouchdbSrc = window.location.search.match(/[?&]src=([^&]+)/);
@@ -16,7 +16,7 @@ if (preferredAdapters) {
   preferredAdapters = preferredAdapters[1].split(',');
   preferredAdapters.forEach(function (adapter) {
     if (adapter !== 'websql' && adapter !== 'idb') {
-      // load from plugin
+      // Load from plugin
       scriptsToLoad.push('../../dist/pouchdb.' + adapter + '.js');
     }
   });
@@ -26,30 +26,30 @@ if (preferredAdapters) {
 function asyncLoadScript(url, callback) {
 
   // Create a new script and setup the basics.
-  var script = document.createElement("script"),
-  firstScript = document.getElementsByTagName('script')[0];
+  var script = document.createElement('script');
+  var firstScript = document.getElementsByTagName('script')[0];
 
   script.async = true;
   script.src = url;
 
   // Handle the case where an optional callback was passed in.
-  if ("function" === typeof(callback)) {
+  if ('function' === typeof (callback)) {
     script.onload = function () {
       callback();
 
-      // Clear it out to avoid getting called more than once or any 
+      // Clear it out to avoid getting called more than once or any
       // memory leaks.
       script.onload = script.onreadystatechange = undefined;
     };
     script.onreadystatechange = function () {
-      if ("loaded" === script.readyState || "complete" === script.readyState) {
+      if ('loaded' === script.readyState || 'complete' === script.readyState) {
         script.onload();
       }
     };
   }
 
   // Attach the script tag to the page (before the first script) so the
-  //magic can happen.
+  // magic can happen.
   firstScript.parentNode.insertBefore(script, firstScript);
 }
 
@@ -81,7 +81,7 @@ function startTests() {
     // Capture logs for selenium output
     var logs = [];
 
-    (function(){
+    (function() {
 
       var oldLog = console.log;
       console.log = function() {
@@ -106,7 +106,7 @@ function startTests() {
       lastPassed: '',
       passed: 0,
       failed: 0,
-      failures: []
+      failures: [],
     };
 
     runner.on('pass', function (e) {
@@ -120,7 +120,7 @@ function startTests() {
       window.results.failures.push({
         title: e.title,
         message: e.err.message,
-        stack: e.err.stack
+        stack: e.err.stack,
       });
     });
 
@@ -157,7 +157,7 @@ if (window.cordova) {
     window.location.search += (window.location.search ? '&' : '?') +
       params.join('&');
   } else {
-    document.addEventListener("deviceready", startTests, false);
+    document.addEventListener('deviceready', startTests, false);
   }
 } else {
   startTests();

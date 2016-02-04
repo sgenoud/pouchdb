@@ -23,7 +23,7 @@ commonUtils.params = function () {
 
 commonUtils.couchHost = function () {
   if (typeof window !== 'undefined' && window.cordova) {
-    // magic route to localhost on android emulator
+    // Magic route to localhost on android emulator
     return 'http://10.0.2.2:5984';
   }
 
@@ -43,7 +43,7 @@ commonUtils.couchHost = function () {
 };
 
 commonUtils.safeRandomDBName = function () {
-  return "test" + Math.random().toString().replace('.', '_');
+  return 'test' + Math.random().toString().replace('.', '_');
 };
 
 commonUtils.createDocId = function (i) {

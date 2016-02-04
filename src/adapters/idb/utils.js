@@ -23,7 +23,7 @@ function tryCode(fun, that, args, PouchDB) {
 
 var taskQueue = {
   running: false,
-  queue: []
+  queue: [],
 };
 
 function applyNext(PouchDB) {
@@ -63,8 +63,8 @@ function encodeMetadata(metadata, winningRev, deleted) {
     data: safeJsonStringify(metadata),
     winningRev: winningRev,
     deletedOrLocal: deleted ? '1' : '0',
-    seq: metadata.seq, // highest seq for this doc
-    id: metadata.id
+    seq: metadata.seq, // Highest seq for this doc
+    id: metadata.id,
   };
 }
 
@@ -79,7 +79,7 @@ function decodeMetadata(storedObject) {
   return metadata;
 }
 
-// read the doc back out from the database. we don't store the
+// Read the doc back out from the database. we don't store the
 // _id or _rev because we already have _doc_id_rev.
 function decodeDoc(doc) {
   if (!doc) {
@@ -99,19 +99,19 @@ function readBlobData(body, type, asBlob, callback) {
   if (asBlob) {
     if (!body) {
       callback(createBlob([''], {type: type}));
-    } else if (typeof body !== 'string') { // we have blob support
+    } else if (typeof body !== 'string') { // We have blob support
       callback(body);
-    } else { // no blob support
+    } else { // No blob support
       callback(b64StringToBlob(body, type));
     }
-  } else { // as base64 string
+  } else { // As base64 string
     if (!body) {
       callback('');
-    } else if (typeof body !== 'string') { // we have blob support
+    } else if (typeof body !== 'string') { // We have blob support
       readAsBinaryString(body, function (binary) {
         callback(btoa(binary));
       });
-    } else { // no blob support
+    } else { // No blob support
       callback(body);
     }
   }
@@ -160,7 +160,7 @@ function postProcessAttachments(results, asBlob) {
       var attNames = Object.keys(row.doc._attachments);
       return Promise.all(attNames.map(function (att) {
         var attObj = row.doc._attachments[att];
-        if (!('body' in attObj)) { // already processed
+        if (!('body' in attObj)) { // Already processed
           return;
         }
         var body = attObj.body;
@@ -189,7 +189,7 @@ function compactRevs(revs, docId, txn) {
 
   function checkDone() {
     count--;
-    if (!count) { // done processing all revs
+    if (!count) { // Done processing all revs
       deleteOrphanedAttachments();
     }
   }
@@ -205,7 +205,7 @@ function compactRevs(revs, docId, txn) {
       countReq.onsuccess = function (e) {
         var count = e.target.result;
         if (!count) {
-          // orphaned
+          // Orphaned
           attStore.delete(digest);
         }
       };
@@ -214,7 +214,7 @@ function compactRevs(revs, docId, txn) {
 
   revs.forEach(function (rev) {
     var index = seqStore.index('_doc_id_rev');
-    var key = docId + "::" + rev;
+    var key = docId + '::' + rev;
     index.getKey(key).onsuccess = function (e) {
       var seq = e.target.result;
       if (typeof seq !== 'number') {
@@ -232,7 +232,7 @@ function compactRevs(revs, docId, txn) {
           possiblyOrphanedDigests.push(digest);
           attAndSeqStore.delete(cursor.primaryKey);
           cursor.continue();
-        } else { // done
+        } else { // Done
           checkDone();
         }
       };
@@ -243,11 +243,11 @@ function compactRevs(revs, docId, txn) {
 function openTransactionSafely(idb, stores, mode) {
   try {
     return {
-      txn: idb.transaction(stores, mode)
+      txn: idb.transaction(stores, mode),
     };
   } catch (err) {
     return {
-      error: err
+      error: err,
     };
   }
 }

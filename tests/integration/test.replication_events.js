@@ -4,7 +4,7 @@ var adapters = [
   ['local', 'http'],
   ['http', 'http'],
   ['http', 'local'],
-  ['local', 'local']
+  ['local', 'local'],
 ];
 
 if ('saucelabs' in testUtils.params()) {
@@ -121,7 +121,7 @@ adapters.forEach(function (adapters) {
         var repl = db.replicate.to(dbs.remote, {
           retry: true,
           live: true,
-          back_off_function: function () { return 0; }
+          back_off_function: function () { return 0; },
         });
 
         var counter = 0;
@@ -171,7 +171,7 @@ adapters.forEach(function (adapters) {
     });
 
 
-    // this test sets up a 2 way replication which initially transfers
+    // This test sets up a 2 way replication which initially transfers
     // documents from a remote to a local database.
     // At the same time, we insert documents locally - the changes
     // should propagate to the remote database and then back to the
@@ -195,7 +195,7 @@ adapters.forEach(function (adapters) {
           docId += 1;
           return {
             _id: docId.toString(),
-            foo: Math.random().toString()
+            foo: Math.random().toString(),
           };
         });
       }
@@ -211,7 +211,7 @@ adapters.forEach(function (adapters) {
         firstReplication = db.replicate.to(remote, {
           live: true,
           retry: true,
-          since: 0
+          since: 0,
         })
         .on('error', done)
         .on('complete', complete);
@@ -219,27 +219,27 @@ adapters.forEach(function (adapters) {
         secondReplication = remote.replicate.to(db, {
           live: true,
           retry: true,
-          since: 0
+          since: 0,
         })
         .on('error', done)
         .on('complete', complete)
         .on('change', function (feed) {
-          // attempt to detect changes loop
+          // Attempt to detect changes loop
           var ids = feed.docs.map(function (d) {
             return parseInt(d._id, 10);
           }).sort();
 
           var firstChange = ids[0];
           if (firstChange <= lastChange) {
-            done(new Error("Duplicate change events detected"));
+            done(new Error('Duplicate change events detected'));
           }
 
           lastChange = ids[ids.length - 1];
 
           if (lastChange === docsToGenerate - 1) {
-            // if a change loop doesn't occur within 2 seconds, assume success
+            // If a change loop doesn't occur within 2 seconds, assume success
             setTimeout(function () {
-              // success!
+              // Success!
               // cancelling the replications to clean up and trigger
               // the 'complete' event, which in turn ends the test
               firstReplication.cancel();
@@ -247,7 +247,7 @@ adapters.forEach(function (adapters) {
             }, 2000);
           }
 
-          // write doc to local db - should round trip in _changes
+          // Write doc to local db - should round trip in _changes
           // but not generate a change event
           db.bulkDocs(generateDocs(1));
         });

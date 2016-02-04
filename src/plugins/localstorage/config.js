@@ -3,5 +3,5 @@ export default {
   valid: function () {
     return typeof localStorage !== 'undefined';
   },
-  use_prefix: true
+  use_prefix: true,
 };

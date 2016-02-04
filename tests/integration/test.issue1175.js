@@ -33,7 +33,7 @@ function MockDatabase(statusCodeToReturn, dataToReturn) {
   };
 }
 function getCallback(expectError, done) {
-  // returns a function which expects to be called within a certain time.
+  // Returns a function which expects to be called within a certain time.
   // Fails the test otherwise
   var maximumTimeToWait = 500;
   var hasBeenCalled = false;

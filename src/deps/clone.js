@@ -18,7 +18,7 @@ function clone(object) {
     return newObject;
   }
 
-  // special case: to avoid inconsistencies between IndexedDB
+  // Special case: to avoid inconsistencies between IndexedDB
   // and other backends, we automatically stringify Dates
   if (object instanceof Date) {
     return object.toISOString();

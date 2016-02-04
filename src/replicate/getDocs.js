@@ -12,7 +12,7 @@ function createBulkGetOpts(diffs) {
     missingRevs.forEach(function (missingRev) {
       requests.push({
         id: id,
-        rev: missingRev
+        rev: missingRev,
       });
     });
   });
@@ -21,7 +21,7 @@ function createBulkGetOpts(diffs) {
     docs: requests,
     revs: true,
     attachments: true,
-    binary: true
+    binary: true,
   };
 }
 
@@ -32,7 +32,7 @@ function createBulkGetOpts(diffs) {
 // Else it will be resolved with a list of fetched documents.
 //
 function getDocs(src, diffs, state) {
-  diffs = clone(diffs); // we do not need to modify this
+  diffs = clone(diffs); // We do not need to modify this
 
   var resultDocs = [];
 
@@ -40,7 +40,7 @@ function getDocs(src, diffs, state) {
 
     var bulkGetOpts = createBulkGetOpts(diffs);
 
-    if (!bulkGetOpts.docs.length) { // optimization: skip empty requests
+    if (!bulkGetOpts.docs.length) { // Optimization: skip empty requests
       return;
     }
 
@@ -68,7 +68,7 @@ function getDocs(src, diffs, state) {
     // a single request using _all_docs
     return src.allDocs({
       keys: ids,
-      include_docs: true
+      include_docs: true,
     }).then(function (res) {
       if (state.cancelled) {
         throw new Error('cancelled');
@@ -76,11 +76,11 @@ function getDocs(src, diffs, state) {
       res.rows.forEach(function (row) {
         if (row.deleted || !row.doc || !isGenOne(row.value.rev) ||
             hasAttachments(row.doc)) {
-          // if any of these conditions apply, we need to fetch using get()
+          // If any of these conditions apply, we need to fetch using get()
           return;
         }
 
-        // the doc we got back from allDocs() is sufficient
+        // The doc we got back from allDocs() is sufficient
         resultDocs.push(row.doc);
         delete diffs[row.id];
       });
@@ -88,7 +88,7 @@ function getDocs(src, diffs, state) {
   }
 
   function getRevisionOneDocs() {
-    // filter out the generation 1 docs and get them
+    // Filter out the generation 1 docs and get them
     // leaving the non-generation one docs to be got otherwise
     var ids = Object.keys(diffs).filter(function (id) {
       var missing = diffs[id].missing;

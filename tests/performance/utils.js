@@ -75,7 +75,7 @@ exports.runTests = function (PouchDB, suiteName, testCases, opts) {
 
         testCaseTeardown.then(function () {
           reporter.end(testCase);
-          var opts = {adapter : db.adapter};
+          var opts = {adapter: db.adapter};
           if (levelAdapter) {
             opts.db = require(levelAdapter);
           }

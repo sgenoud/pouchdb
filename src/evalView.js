@@ -9,7 +9,7 @@ function evalView(input) {
     'view(doc);',
     'if (emitted) {',
     '  return true;',
-    '}'
+    '}',
   ].join('\n'));
 }
 

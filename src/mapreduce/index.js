@@ -28,13 +28,13 @@ var tempViewQueue = new TaskQueue();
 var CHANGES_BATCH_SIZE = 50;
 
 function parseViewName(name) {
-  // can be either 'ddocname/viewname' or just 'viewname'
+  // Can be either 'ddocname/viewname' or just 'viewname'
   // (where the ddoc name is the same)
   return name.indexOf('/') === -1 ? [name, name] : name.split('/');
 }
 
 function isGenOne(changes) {
-  // only return true if the current change is 1-
+  // Only return true if the current change is 1-
   // and there are no other leafs
   return changes.length === 1 && /^1-/.test(changes[0].rev);
 }
@@ -53,11 +53,11 @@ function emitError(db, e) {
 }
 
 function tryCode(db, fun, args) {
-  // emit an event if there was an error thrown by a map/reduce function.
+  // Emit an event if there was an error thrown by a map/reduce function.
   // putting try/catches in a single function also avoids deoptimizations.
   try {
     return {
-      output : fun.apply(null, args)
+      output: fun.apply(null, args),
     };
   } catch (e) {
     emitError(db, e);
@@ -123,7 +123,7 @@ function sum(values) {
     var num = values[i];
     if (typeof num !== 'number') {
       if (Array.isArray(num)) {
-        // lists of numbers are also allowed, sum them separately
+        // Lists of numbers are also allowed, sum them separately
         result = typeof result === 'number' ? [result] : result;
         for (var j = 0, jLen = num.length; j < jLen; j++) {
           var jNum = num[j];
@@ -135,12 +135,12 @@ function sum(values) {
             result[j] += jNum;
           }
         }
-      } else { // not array/number
+      } else { // Not array/number
         throw createBuiltInError('_sum');
       }
     } else if (typeof result === 'number') {
       result += num;
-    } else { // add number to array
+    } else { // Add number to array
       result[0] += num;
     }
   }
@@ -157,7 +157,7 @@ var builtInReduce = {
   },
 
   _stats: function (keys, values) {
-    // no need to implement rereduce=true, because Pouch
+    // No need to implement rereduce=true, because Pouch
     // will never call it
     function sumsqr(values) {
       var _sumsqr = 0;
@@ -168,17 +168,17 @@ var builtInReduce = {
       return _sumsqr;
     }
     return {
-      sum     : sum(values),
-      min     : Math.min.apply(null, values),
-      max     : Math.max.apply(null, values),
-      count   : values.length,
-      sumsqr : sumsqr(values)
+      sum: sum(values),
+      min: Math.min.apply(null, values),
+      max: Math.max.apply(null, values),
+      count: values.length,
+      sumsqr: sumsqr(values),
     };
-  }
+  },
 };
 
 function addHttpParam(paramName, opts, params, asJson) {
-  // add an http param from opts to params, optionally json-encoded
+  // Add an http param from opts to params, optionally json-encoded
   var val = opts[paramName];
   if (typeof val !== 'undefined') {
     if (asJson) {
@@ -191,7 +191,7 @@ function addHttpParam(paramName, opts, params, asJson) {
 function coerceInteger (integerCandidate) {
   if (typeof integerCandidate !== 'undefined') {
     var asNumber = Number(integerCandidate);
-    // prevents e.g. '1foo' or '1.1' being coerced to 1
+    // Prevents e.g. '1foo' or '1.1' being coerced to 1
     if (!isNaN(asNumber) && asNumber === parseInt(integerCandidate, 10)) {
       return asNumber;
     } else {
@@ -210,7 +210,7 @@ function coerceOptions(opts) {
 function checkPositiveInteger (number) {
   if (number) {
     if (typeof number !== 'number') {
-      return  new QueryParseError('Invalid value for integer: "' +
+      return new QueryParseError('Invalid value for integer: "' +
       number + '"');
     }
     if (number < 0) {
@@ -294,7 +294,7 @@ function httpQuery(db, fun, opts) {
       method = 'POST';
       if (typeof fun === 'string') {
         body = {keys: opts.keys};
-      } else { // fun is {map : mapfun}, so append to this
+      } else { // Fun is {map : mapfun}, so append to this
         fun.keys = opts.keys;
       }
     }
@@ -306,7 +306,7 @@ function httpQuery(db, fun, opts) {
     return db.request({
       method: method,
       url: '_design/' + parts[0] + '/_view/' + parts[1] + params,
-      body: body
+      body: body,
     }).then(postprocessAttachments(opts));
   }
 
@@ -322,11 +322,11 @@ function httpQuery(db, fun, opts) {
   return db.request({
     method: 'POST',
     url: '_temp_view' + params,
-    body: body
+    body: body,
   }).then(postprocessAttachments(opts));
 }
 
-// custom adapters can define their own api._query
+// Custom adapters can define their own api._query
 // and override the default behavior
 /* istanbul ignore next */
 function customQuery(db, fun, opts) {
@@ -340,7 +340,7 @@ function customQuery(db, fun, opts) {
   });
 }
 
-// custom adapters can define their own api._viewCleanup
+// Custom adapters can define their own api._viewCleanup
 // and override the default behavior
 /* istanbul ignore next */
 function customViewCleanup(db) {
@@ -365,7 +365,7 @@ function defaultsTo(value) {
   };
 }
 
-// returns a promise for a list of docs to update, based on the input docId.
+// Returns a promise for a list of docs to update, based on the input docId.
 // the order doesn't matter, because post-3.2.0, bulkDocs
 // is an atomic operation in all three adapters.
 function getDocsToPersist(docId, view, docIdsToChangesAndEmits) {
@@ -377,7 +377,7 @@ function getDocsToPersist(docId, view, docIdsToChangesAndEmits) {
 
   function getMetaDoc() {
     if (isGenOne(changes)) {
-      // generation 1, so we can safely assume initial state
+      // Generation 1, so we can safely assume initial state
       // for performance reasons (avoids unnecessary GETs)
       return Promise.resolve(defaultMetaDoc);
     }
@@ -386,12 +386,12 @@ function getDocsToPersist(docId, view, docIdsToChangesAndEmits) {
 
   function getKeyValueDocs(metaDoc) {
     if (!metaDoc.keys.length) {
-      // no keys, no need for a lookup
+      // No keys, no need for a lookup
       return Promise.resolve({rows: []});
     }
     return view.db.allDocs({
       keys: metaDoc.keys,
-      include_docs: true
+      include_docs: true,
     });
   }
 
@@ -402,7 +402,7 @@ function getDocsToPersist(docId, view, docIdsToChangesAndEmits) {
     for (var i = 0, len = kvDocsRes.rows.length; i < len; i++) {
       var row = kvDocsRes.rows[i];
       var doc = row.doc;
-      if (!doc) { // deleted
+      if (!doc) { // Deleted
         continue;
       }
       kvDocs.push(doc);
@@ -419,9 +419,9 @@ function getDocsToPersist(docId, view, docIdsToChangesAndEmits) {
     var newKeys = Object.keys(indexableKeysToKeyValues);
     newKeys.forEach(function (key) {
       if (!oldKeysMap[key]) {
-        // new doc
+        // New doc
         var kvDoc = {
-          _id: key
+          _id: key,
         };
         var keyValue = indexableKeysToKeyValues[key];
         if ('value' in keyValue) {
@@ -443,7 +443,7 @@ function getDocsToPersist(docId, view, docIdsToChangesAndEmits) {
   });
 }
 
-// updates all emitted key/value docs and metaDocs in the mrview database
+// Updates all emitted key/value docs and metaDocs in the mrview database
 // for the given batch of documents from the source database
 function saveKeyValues(view, docIdsToChangesAndEmits, seq) {
   var seqDocId = '_local/lastSeq';
@@ -457,8 +457,8 @@ function saveKeyValues(view, docIdsToChangesAndEmits, seq) {
       var docsToPersist = flatten(listOfDocsToPersist);
       lastSeqDoc.seq = seq;
       docsToPersist.push(lastSeqDoc);
-      // write all docs in a single operation, update the seq once
-      return view.db.bulkDocs({docs : docsToPersist});
+      // Write all docs in a single operation, update the seq once
+      return view.db.bulkDocs({docs: docsToPersist});
     });
   });
 }
@@ -479,7 +479,7 @@ function updateView(view) {
 }
 
 function updateViewInQueue(view) {
-  // bind the emit function once
+  // Bind the emit function once
   var mapResults;
   var doc;
 
@@ -494,8 +494,8 @@ function updateViewInQueue(view) {
   }
 
   var mapFun;
-  // for temp_views one can use emit(doc, emit), see #38
-  if (typeof view.mapFun === "function" && view.mapFun.length === 2) {
+  // For temp_views one can use emit(doc, emit), see #38
+  if (typeof view.mapFun === 'function' && view.mapFun.length === 2) {
     var origMap = view.mapFun;
     mapFun = function (doc) {
       return origMap(doc, emit);
@@ -531,7 +531,7 @@ function updateViewInQueue(view) {
         include_docs: true,
         style: 'all_docs',
         since: currentSeq,
-        limit: CHANGES_BATCH_SIZE
+        limit: CHANGES_BATCH_SIZE,
       }).on('complete', function (response) {
         var results = response.results;
         if (!results.length) {
@@ -555,7 +555,7 @@ function updateViewInQueue(view) {
               var obj = mapResults[j];
               var complexKey = [obj.key, obj.id];
               if (collate(obj.key, lastKey) === 0) {
-                complexKey.push(j); // dup key+id, so make it unique
+                complexKey.push(j); // Dup key+id, so make it unique
               }
               var indexableKey = toIndexableString(complexKey);
               indexableKeysToKeyValues[indexableKey] = obj;
@@ -563,7 +563,7 @@ function updateViewInQueue(view) {
             }
             docIdsToChangesAndEmits[change.doc._id] = {
               indexableKeysToKeyValues: indexableKeysToKeyValues,
-              changes: change.changes
+              changes: change.changes,
             };
           }
           currentSeq = change.seq;
@@ -605,7 +605,7 @@ function reduceView(view, results, options) {
     var last = groups[groups.length - 1];
     var key = shouldGroup ? e.key : null;
 
-    // only set group_level for array keys
+    // Only set group_level for array keys
     if (shouldGroup && Array.isArray(key) && typeof lvl === 'number') {
       key = key.length > lvl ? key.slice(0, lvl) : key;
     }
@@ -616,8 +616,8 @@ function reduceView(view, results, options) {
       return;
     }
     groups.push({key: [
-      [key, e.id]
-    ], value: [e.value]});
+      [key, e.id],
+    ], value: [e.value],});
   });
   for (var i = 0, len = groups.length; i < len; i++) {
     var e = groups[i];
@@ -630,7 +630,7 @@ function reduceView(view, results, options) {
     e.value = reduceTry.error ? null : reduceTry.output;
     e.key = e.key[0][0];
   }
-  // no total_rows/offset when reducing
+  // No total_rows/offset when reducing
   return {rows: sliceResults(groups, options.limit, options.skip)};
 }
 
@@ -645,7 +645,7 @@ function queryViewInQueue(view, opts) {
   var shouldReduce = view.reduceFun && opts.reduce !== false;
   var skip = opts.skip || 0;
   if (typeof opts.keys !== 'undefined' && !opts.keys.length) {
-    // equivalent query
+    // Equivalent query
     opts.limit = 0;
     delete opts.keys;
   }
@@ -656,14 +656,14 @@ function queryViewInQueue(view, opts) {
       totalRows = res.total_rows;
       return res.rows.map(function (result) {
 
-        // implicit migration - in older versions of PouchDB,
+        // Implicit migration - in older versions of PouchDB,
         // we explicitly stored the doc as {id: ..., key: ..., value: ...}
         // this is tested in a migration test
         /* istanbul ignore next */
         if ('value' in result.doc && typeof result.doc.value === 'object' &&
             result.doc.value !== null) {
           var keys = Object.keys(result.doc.value).sort();
-          // this detection method is not perfect, but it's unlikely the user
+          // This detection method is not perfect, but it's unlikely the user
           // emitted a value which was an object with these 3 exact keys
           var expectedKeys = ['id', 'key', 'value'];
           if (!(keys < expectedKeys || keys > expectedKeys)) {
@@ -675,7 +675,7 @@ function queryViewInQueue(view, opts) {
         return {
           key: parsedKeyAndDocId[0],
           id: parsedKeyAndDocId[1],
-          value: ('value' in result.doc ? result.doc.value : null)
+          value: ('value' in result.doc ? result.doc.value : null),
         };
       });
     });
@@ -689,7 +689,7 @@ function queryViewInQueue(view, opts) {
       finalResults = {
         total_rows: totalRows,
         offset: skip,
-        rows: rows
+        rows: rows,
       };
     }
     if (opts.include_docs) {
@@ -700,7 +700,7 @@ function queryViewInQueue(view, opts) {
         include_docs: true,
         conflicts: opts.conflicts,
         attachments: opts.attachments,
-        binary: opts.binary
+        binary: opts.binary,
       }).then(function (allDocsRes) {
         var docIdsToDocs = {};
         allDocsRes.rows.forEach(function (row) {
@@ -726,21 +726,21 @@ function queryViewInQueue(view, opts) {
     var keys = opts.keys;
     var fetchPromises = keys.map(function (key) {
       var viewOpts = {
-        startkey : toIndexableString([key]),
-        endkey   : toIndexableString([key, {}])
+        startkey: toIndexableString([key]),
+        endkey: toIndexableString([key, {}]),
       };
       return fetchFromView(viewOpts);
     });
     return Promise.all(fetchPromises).then(flatten).then(onMapResultsReady);
-  } else { // normal query, no 'keys'
+  } else { // Normal query, no 'keys'
     var viewOpts = {
-      descending : opts.descending
+      descending: opts.descending,
     };
     if (opts.start_key) {
-        opts.startkey = opts.start_key;
+      opts.startkey = opts.start_key;
     }
     if (opts.end_key) {
-        opts.endkey = opts.end_key;
+      opts.endkey = opts.end_key;
     }
     if (typeof opts.startkey !== 'undefined') {
       viewOpts.startkey = opts.descending ?
@@ -780,7 +780,7 @@ function queryViewInQueue(view, opts) {
 function httpViewCleanup(db) {
   return db.request({
     method: 'POST',
-    url: '_view_cleanup'
+    url: '_view_cleanup',
   });
 }
 
@@ -795,8 +795,8 @@ function localViewCleanup(db) {
       docsToViews[designDocName][viewName] = true;
     });
     var opts = {
-      keys : Object.keys(docsToViews),
-      include_docs : true
+      keys: Object.keys(docsToViews),
+      include_docs: true,
     };
     return db.allDocs(opts).then(function (res) {
       var viewsToStatus = {};
@@ -806,12 +806,12 @@ function localViewCleanup(db) {
           var fullViewName = ddocName + '/' + viewName;
           /* istanbul ignore if */
           if (!metaDoc.views[fullViewName]) {
-            // new format, without slashes, to support PouchDB 2.2.0
+            // New format, without slashes, to support PouchDB 2.2.0
             // migration test in pouchdb's browser.migration.js verifies this
             fullViewName = viewName;
           }
           var viewDBNames = Object.keys(metaDoc.views[fullViewName]);
-          // design doc deleted, or view function nonexistent
+          // Design doc deleted, or view function nonexistent
           var statusIsGood = row.doc && row.doc.views &&
             row.doc.views[viewName];
           viewDBNames.forEach(function (viewDBName) {
@@ -857,15 +857,15 @@ function queryPromised(db, fun, opts) {
   }
 
   if (typeof fun !== 'string') {
-    // temp_view
+    // Temp_view
     checkQueryParseError(opts, fun);
 
     var createViewOpts = {
-      db : db,
-      viewName : 'temp_view/temp_view',
-      map : fun.map,
-      reduce : fun.reduce,
-      temporary : true
+      db: db,
+      viewName: 'temp_view/temp_view',
+      map: fun.map,
+      reduce: fun.reduce,
+      temporary: true,
     };
     tempViewQueue.add(function () {
       return createView(createViewOpts).then(function (view) {
@@ -879,7 +879,7 @@ function queryPromised(db, fun, opts) {
     });
     return tempViewQueue.finish();
   } else {
-    // persistent view
+    // Persistent view
     var fullViewName = fun;
     var parts = parseViewName(fullViewName);
     var designDocName = parts[0];
@@ -894,10 +894,10 @@ function queryPromised(db, fun, opts) {
       checkQueryParseError(opts, fun);
 
       var createViewOpts = {
-        db : db,
-        viewName : fullViewName,
-        map : fun.map,
-        reduce : fun.reduce
+        db: db,
+        viewName: fullViewName,
+        map: fun.map,
+        reduce: fun.reduce,
       };
       return createView(createViewOpts).then(function (view) {
         if (opts.stale === 'ok' || opts.stale === 'update_after') {
@@ -907,7 +907,7 @@ function queryPromised(db, fun, opts) {
             });
           }
           return queryView(view, opts);
-        } else { // stale not ok
+        } else { // Stale not ok
           return updateView(view).then(function () {
             return queryView(view, opts);
           });
@@ -925,7 +925,7 @@ var query = function (fun, opts, callback) {
   opts = opts ? coerceOptions(opts) : {};
 
   if (typeof fun === 'function') {
-    fun = {map : fun};
+    fun = {map: fun};
   }
 
   var db = this;
@@ -974,5 +974,5 @@ inherits(BuiltInError, Error);
 
 export default {
   query: query,
-  viewCleanup: viewCleanup
+  viewCleanup: viewCleanup,
 };

@@ -24,7 +24,7 @@ function replicateWrapper(src, target, opts, callback) {
 
   if (opts.doc_ids && !Array.isArray(opts.doc_ids)) {
     throw createError(BAD_REQUEST,
-                       "`doc_ids` filter parameter is not a list.");
+                       '`doc_ids` filter parameter is not a list.');
   }
 
   opts.complete = callback;
@@ -42,5 +42,5 @@ function replicateWrapper(src, target, opts, callback) {
 
 export default {
   replicate: replicateWrapper,
-  toPouch: toPouch
+  toPouch: toPouch,
 };

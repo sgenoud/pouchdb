@@ -16,11 +16,11 @@ module.exports = function (PouchDB, opts) {
       assertions: 1,
       iterations: 1000,
       setup: function (db, callback) {
-        callback(null, {'yo': 'dawg'});
+        callback(null, {yo: 'dawg'});
       },
       test: function (db, itr, doc, done) {
         db.post(doc, done);
-      }
+      },
     }, {
       name: 'bulk-inserts',
       assertions: 1,
@@ -28,13 +28,13 @@ module.exports = function (PouchDB, opts) {
       setup: function (db, callback) {
         var docs = [];
         for (var i = 0; i < 100; i++) {
-          docs.push({much : 'docs', very : 'bulk'});
+          docs.push({much: 'docs', very: 'bulk'});
         }
-        callback(null, {docs : docs});
+        callback(null, {docs: docs});
       },
       test: function (db, itr, docs, done) {
         db.bulkDocs(docs, done);
-      }
+      },
     }, {
       name: 'basic-updates',
       assertions: 1,
@@ -54,7 +54,7 @@ module.exports = function (PouchDB, opts) {
           var docs = res.rows.map(function (x) { return x.doc; });
           db.bulkDocs(docs, done);
         });
-      }
+      },
     }, {
       name: 'basic-gets',
       assertions: 1,
@@ -62,14 +62,14 @@ module.exports = function (PouchDB, opts) {
       setup: function (db, callback) {
         var docs = [];
         for (var i = 0; i < 10000; i++) {
-          docs.push({_id : commonUtils.createDocId(i),
-            foo : 'bar', baz : 'quux'});
+          docs.push({_id: commonUtils.createDocId(i),
+            foo: 'bar', baz: 'quux',});
         }
-        db.bulkDocs({docs : docs}, callback);
+        db.bulkDocs({docs: docs}, callback);
       },
       test: function (db, itr, docs, done) {
         db.get(commonUtils.createDocId(itr), done);
-      }
+      },
     }, {
       name: 'all-docs-skip-limit',
       assertions: 1,
@@ -77,10 +77,10 @@ module.exports = function (PouchDB, opts) {
       setup: function (db, callback) {
         var docs = [];
         for (var i = 0; i < 1000; i++) {
-          docs.push({_id : commonUtils.createDocId(i),
-            foo : 'bar', baz : 'quux'});
+          docs.push({_id: commonUtils.createDocId(i),
+            foo: 'bar', baz: 'quux',});
         }
-        db.bulkDocs({docs : docs}, callback);
+        db.bulkDocs({docs: docs}, callback);
       },
       test: function (db, itr, docs, done) {
         var tasks = [];
@@ -88,11 +88,11 @@ module.exports = function (PouchDB, opts) {
           tasks.push(i);
         }
         Promise.all(tasks.map(function (doc, i) {
-          return db.allDocs({skip : i * 100, limit : 10});
+          return db.allDocs({skip: i * 100, limit: 10});
         })).then(function () {
           done();
         }, done);
-      }
+      },
     }, {
       name: 'all-docs-startkey-endkey',
       assertions: 1,
@@ -103,7 +103,7 @@ module.exports = function (PouchDB, opts) {
           docs.push({
             _id: commonUtils.createDocId(i),
             foo: 'bar',
-            baz: 'quux'
+            baz: 'quux',
           });
         }
         db.bulkDocs({docs: docs}, callback);
@@ -116,12 +116,12 @@ module.exports = function (PouchDB, opts) {
         Promise.all(tasks.map(function (doc, i) {
           return db.allDocs({
             startkey: commonUtils.createDocId(i * 100),
-            endkey: commonUtils.createDocId((i * 100) + 10)
+            endkey: commonUtils.createDocId((i * 100) + 10),
           });
         })).then(function () {
           done();
         }, done);
-      }
+      },
     }, {
       name: 'all-docs-include-docs',
       assertions: 1,
@@ -133,7 +133,7 @@ module.exports = function (PouchDB, opts) {
             _id: commonUtils.createDocId(i),
             foo: 'bar',
             baz: 'quux',
-            _deleted: i % 2 === 1
+            _deleted: i % 2 === 1,
           });
         }
         db.bulkDocs({docs: docs}, callback);
@@ -141,22 +141,22 @@ module.exports = function (PouchDB, opts) {
       test: function (db, itr, docs, done) {
         return db.allDocs({
           include_docs: true,
-          limit: 100
+          limit: 100,
         }).then(function () {
-          return db.post({}); // to invalidate the doc count
+          return db.post({}); // To invalidate the doc count
         }).then(function () {
           done();
         }, done);
-      }
+      },
     },
     {
       name: 'pull-replication-perf-skimdb',
       assertions: 1,
       iterations: 0,
       setup: function (localDB, callback) {
-        var remoteCouchUrl = "http://skimdb.iriscouch.com/registry";
+        var remoteCouchUrl = 'http://skimdb.iriscouch.com/registry';
         var remoteDB = new PouchDB(remoteCouchUrl, {
-          ajax: {pool: {maxSockets: 15}}
+          ajax: {pool: {maxSockets: 15}},
         });
         var localPouches = [];
 
@@ -166,7 +166,7 @@ module.exports = function (PouchDB, opts) {
 
         return callback(null, {
           localPouches: localPouches,
-          remoteDB: remoteDB
+          remoteDB: remoteDB,
         });
       },
       test: function (ignoreDB, itr, testContext, done) {
@@ -175,7 +175,7 @@ module.exports = function (PouchDB, opts) {
 
         var replication = PouchDB.replicate(remoteDB, localDB, {
           live: false,
-          batch_size: 100
+          batch_size: 100,
         });
         replication.on('change', function (info) {
           if (info.docs_written >= 200) {
@@ -191,7 +191,7 @@ module.exports = function (PouchDB, opts) {
               return localPouch.destroy();
             }));
         }
-      }
+      },
     },
     {
       name: 'pull-replication-one-generation',
@@ -199,7 +199,7 @@ module.exports = function (PouchDB, opts) {
       iterations: 1,
       setup: oneGen.setup(1, 1),
       test: oneGen.test(),
-      tearDown: oneGen.tearDown()
+      tearDown: oneGen.tearDown(),
     },
     {
       name: 'pull-replication-two-generation',
@@ -207,8 +207,8 @@ module.exports = function (PouchDB, opts) {
       iterations: 1,
       setup: twoGen.setup(1, 2),
       test: twoGen.test(),
-      tearDown: twoGen.tearDown()
-    }
+      tearDown: twoGen.tearDown(),
+    },
   ];
 
   utils.runTests(PouchDB, 'basics', testCases, opts);

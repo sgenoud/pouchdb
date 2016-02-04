@@ -10,7 +10,7 @@ function rawToBase64(raw) {
 
 function appendBuffer(buffer, data, start, end) {
   if (start > 0 || end < data.byteLength) {
-    // only create a subarray if we really need to
+    // Only create a subarray if we really need to
     data = new Uint8Array(data, start,
       Math.min(end, data.byteLength) - start);
   }
@@ -19,7 +19,7 @@ function appendBuffer(buffer, data, start, end) {
 
 function appendString(buffer, data, start, end) {
   if (start > 0 || end < data.length) {
-    // only create a substring if we really need to
+    // Only create a substring if we really need to
     data = data.substring(start, end);
   }
   buffer.appendBinary(data);

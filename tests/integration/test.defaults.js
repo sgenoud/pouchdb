@@ -1,7 +1,7 @@
 'use strict';
 if (!process.env.LEVEL_ADAPTER &&
     !process.env.LEVEL_PREFIX && !process.env.AUTO_COMPACTION) {
-  // these tests don't make sense for anything other than default leveldown
+  // These tests don't make sense for anything other than default leveldown
   var path = require('path');
   var mkdirp = require('mkdirp');
   var rimraf = require('rimraf');
@@ -30,7 +30,7 @@ if (!process.env.LEVEL_ADAPTER &&
       mkdirp.sync(dir3);
 
       return new PouchDB('mydb', {
-        prefix: prefix
+        prefix: prefix,
       }).then(function (db) {
         return db.info().then(function (info1) {
           info1.db_name.should.equal('mydb');
@@ -49,7 +49,7 @@ if (!process.env.LEVEL_ADAPTER &&
       mkdirp.sync(dir3);
 
       var CustomPouch = PouchDB.defaults({
-        prefix: prefix
+        prefix: prefix,
       });
       /* jshint newcap:false */
       var db = CustomPouch({name: 'mydb'});
@@ -162,7 +162,7 @@ if (!process.env.LEVEL_ADAPTER &&
       new PouchDB('mydb');
     });
 
-    // somewhat odd behavior (CustomPouch constructor always mirrors PouchDB),
+    // Somewhat odd behavior (CustomPouch constructor always mirrors PouchDB),
     // but better to test it explicitly
     it('PouchDB emits destroyed when using defaults', function () {
       var CustomPouch = PouchDB.defaults({db: require('memdown')});
@@ -178,7 +178,7 @@ if (!process.env.LEVEL_ADAPTER &&
       });
     });
 
-    // somewhat odd behavior (CustomPouch constructor always mirrors PouchDB),
+    // Somewhat odd behavior (CustomPouch constructor always mirrors PouchDB),
     // but better to test it explicitly
     it('PouchDB emits created when using defaults', function (done) {
       var CustomPouch = PouchDB.defaults({db: require('memdown')});

@@ -36,7 +36,7 @@ if (global.window && global.window.location && global.window.location.search) {
     var script = global.document.createElement('script');
     script.src = params.src;
     script.onreadystatechange = function () {
-      if ("loaded" === script.readyState || "complete" === script.readyState) {
+      if ('loaded' === script.readyState || 'complete' === script.readyState) {
         runTestSuites(global.window.PouchDB);
       }
     };

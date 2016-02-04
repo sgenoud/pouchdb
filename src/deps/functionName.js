@@ -1,4 +1,4 @@
-// shim for Function.prototype.name,
+// Shim for Function.prototype.name,
 // for browsers that don't support it like IE
 
 /* istanbul ignore next */

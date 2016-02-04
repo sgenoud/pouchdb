@@ -83,7 +83,7 @@ function fetchAttachmentsIfNecessary(doc, opts, api, txn, cb) {
 
 var POUCH_VERSION = 1;
 
-// these indexes cover the ground for most allDocs queries
+// These indexes cover the ground for most allDocs queries
 var BY_SEQ_STORE_DELETED_INDEX_SQL =
   'CREATE INDEX IF NOT EXISTS \'by-seq-deleted-idx\' ON ' +
   BY_SEQ_STORE + ' (seq, deleted)';
@@ -116,7 +116,7 @@ function WebSqlPouch(opts, callback) {
   var idRequests = [];
   var encoding;
 
-  api._docCount = -1; // cache sqlite count(*) for performance
+  api._docCount = -1; // Cache sqlite count(*) for performance
   api._name = opts.name;
 
   var openDBResult = openDB({
@@ -126,19 +126,19 @@ function WebSqlPouch(opts, callback) {
     size: size,
     location: opts.location,
     createFromLocation: opts.createFromLocation,
-    androidDatabaseImplementation: opts.androidDatabaseImplementation
+    androidDatabaseImplementation: opts.androidDatabaseImplementation,
   });
   if (openDBResult.error) {
     return websqlError(callback)(openDBResult.error);
   }
   var db = openDBResult.db;
   if (typeof db.readTransaction !== 'function') {
-    // doesn't exist in sqlite plugin
+    // Doesn't exist in sqlite plugin
     db.readTransaction = db.transaction;
   }
 
   function dbCreated() {
-    // note the db name in case the browser upgrades to idb
+    // Note the db name in case the browser upgrades to idb
     if (hasLocalStorage()) {
       window.localStorage['_pouch__websqldb_' + api._name] = true;
     }
@@ -151,7 +151,7 @@ function WebSqlPouch(opts, callback) {
   // and add these values.
   // Called migration2 because it corresponds to adapter version (db_version) #2
   function runMigration2(tx, callback) {
-    // index used for the join in the allDocs query
+    // Index used for the join in the allDocs query
     tx.executeSql(DOC_STORE_WINNINGSEQ_INDEX_SQL);
 
     tx.executeSql('ALTER TABLE ' + BY_SEQ_STORE +
@@ -193,7 +193,7 @@ function WebSqlPouch(opts, callback) {
     });
   }
 
-  // in this migration, we make all the local docs unversioned
+  // In this migration, we make all the local docs unversioned
   function runMigration3(tx, callback) {
     var local = 'CREATE TABLE IF NOT EXISTS ' + LOCAL_STORE +
       ' (id UNIQUE, rev, json)';
@@ -231,7 +231,7 @@ function WebSqlPouch(opts, callback) {
     });
   }
 
-  // in this migration, we remove doc_id_rev and just use rev
+  // In this migration, we remove doc_id_rev and just use rev
   function runMigration4(tx, callback) {
 
     function updateRows(rows) {
@@ -271,12 +271,12 @@ function WebSqlPouch(opts, callback) {
     });
   }
 
-  // in this migration, we add the attach_and_seq table
+  // In this migration, we add the attach_and_seq table
   // for issue #2818
   function runMigration5(tx, callback) {
 
     function migrateAttsAndSeqs(tx) {
-      // need to actually populate the table. this is the expensive part,
+      // Need to actually populate the table. this is the expensive part,
       // so as an optimization, check first that this database even
       // contains attachments
       var sql = 'SELECT COUNT(*) AS cnt FROM ' + ATTACH_STORE;
@@ -304,7 +304,7 @@ function WebSqlPouch(opts, callback) {
             }
             var digestSeqs = {};
             function addDigestSeq(digest, seq) {
-              // uniq digest/seq pairs, just in case there are dups
+              // Uniq digest/seq pairs, just in case there are dups
               var seqs = digestSeqs[digest] = (digestSeqs[digest] || []);
               if (seqs.indexOf(seq) === -1) {
                 seqs.push(seq);
@@ -357,7 +357,7 @@ function WebSqlPouch(opts, callback) {
     });
   }
 
-  // in this migration, we use escapeBlob() and unescapeBlob()
+  // In this migration, we use escapeBlob() and unescapeBlob()
   // instead of reading out the binary as HEX, which is slow
   function runMigration6(tx, callback) {
     var sql = 'ALTER TABLE ' + ATTACH_STORE +
@@ -365,7 +365,7 @@ function WebSqlPouch(opts, callback) {
     tx.executeSql(sql, [], callback);
   }
 
-  // issue #3136, in this migration we need a "latest seq" as well
+  // Issue #3136, in this migration we need a "latest seq" as well
   // as the "winning seq" in the doc store
   function runMigration7(tx, callback) {
     var sql = 'ALTER TABLE ' + DOC_STORE +
@@ -374,7 +374,7 @@ function WebSqlPouch(opts, callback) {
       var sql = 'UPDATE ' + DOC_STORE + ' SET max_seq=(SELECT MAX(seq) FROM ' +
         BY_SEQ_STORE + ' WHERE doc_id=id)';
       tx.executeSql(sql, [], function (tx) {
-        // add unique index after filling, else we'll get a constraint
+        // Add unique index after filling, else we'll get a constraint
         // error when we do the ALTER TABLE
         var sql =
           'CREATE UNIQUE INDEX IF NOT EXISTS \'doc-max-seq-idx\' ON ' +
@@ -403,7 +403,7 @@ function WebSqlPouch(opts, callback) {
 
   function onGetVersion(tx, dbVersion) {
     if (dbVersion === 0) {
-      // initial schema
+      // Initial schema
 
       var meta = 'CREATE TABLE IF NOT EXISTS ' + META_STORE +
         ' (dbid, db_version INTEGER)';
@@ -420,7 +420,7 @@ function WebSqlPouch(opts, callback) {
       var local = 'CREATE TABLE IF NOT EXISTS ' + LOCAL_STORE +
         ' (id UNIQUE, rev, json)';
 
-      // creates
+      // Creates
       tx.executeSql(attach);
       tx.executeSql(local);
       tx.executeSql(attachAndRev, [], function () {
@@ -433,7 +433,7 @@ function WebSqlPouch(opts, callback) {
           tx.executeSql(BY_SEQ_STORE_DELETED_INDEX_SQL);
           tx.executeSql(BY_SEQ_STORE_DOC_ID_REV_INDEX_SQL);
           tx.executeSql(meta, [], function () {
-            // mark the db version, and new dbid
+            // Mark the db version, and new dbid
             var initSeq = 'INSERT INTO ' + META_STORE +
               ' (db_version, dbid) VALUES (?,?)';
             instanceId = uuid();
@@ -444,16 +444,16 @@ function WebSqlPouch(opts, callback) {
           });
         });
       });
-    } else { // version > 0
+    } else { // Version > 0
 
       var setupDone = function () {
         var migrated = dbVersion < ADAPTER_VERSION;
         if (migrated) {
-          // update the db version within this transaction
+          // Update the db version within this transaction
           tx.executeSql('UPDATE ' + META_STORE + ' SET db_version = ' +
             ADAPTER_VERSION);
         }
-        // notify db.id() callers
+        // Notify db.id() callers
         var sql = 'SELECT dbid FROM ' + META_STORE;
         tx.executeSql(sql, [], function (tx, result) {
           instanceId = result.rows.item(0).dbid;
@@ -461,7 +461,7 @@ function WebSqlPouch(opts, callback) {
         });
       };
 
-      // would love to use promises here, but then websql
+      // Would love to use promises here, but then websql
       // ends the transaction early
       var tasks = [
         runMigration2,
@@ -470,10 +470,10 @@ function WebSqlPouch(opts, callback) {
         runMigration5,
         runMigration6,
         runMigration7,
-        setupDone
+        setupDone,
       ];
 
-      // run each migration sequentially
+      // Run each migration sequentially
       var i = dbVersion;
       var nextMigration = function (tx) {
         tasks[i - 1](tx, nextMigration);
@@ -485,9 +485,9 @@ function WebSqlPouch(opts, callback) {
 
   function setup() {
     db.transaction(function (tx) {
-      // first check the encoding
+      // First check the encoding
       checkEncoding(tx, function () {
-        // then get the version
+        // Then get the version
         fetchVersion(tx);
       });
     }, websqlError(callback), dbCreated);
@@ -497,17 +497,17 @@ function WebSqlPouch(opts, callback) {
     var sql = 'SELECT sql FROM sqlite_master WHERE tbl_name = ' + META_STORE;
     tx.executeSql(sql, [], function (tx, result) {
       if (!result.rows.length) {
-        // database hasn't even been created yet (version 0)
+        // Database hasn't even been created yet (version 0)
         onGetVersion(tx, 0);
       } else if (!/db_version/.test(result.rows.item(0).sql)) {
-        // table was created, but without the new db_version column,
+        // Table was created, but without the new db_version column,
         // so add it.
         tx.executeSql('ALTER TABLE ' + META_STORE +
           ' ADD COLUMN db_version INTEGER', [], function () {
-          // before version 2, this column didn't even exist
+          // Before version 2, this column didn't even exist
           onGetVersion(tx, 1);
         });
-      } else { // column exists, we can safely get it
+      } else { // Column exists, we can safely get it
         tx.executeSql('SELECT db_version FROM ' + META_STORE,
           [], function (tx, result) {
           var dbVersion = result.rows.item(0).db_version;
@@ -536,9 +536,9 @@ function WebSqlPouch(opts, callback) {
           callback(null, {
             doc_count: docCount,
             update_seq: updateSeq,
-            // for debugging
+            // For debugging
             sqlite_plugin: db._sqlitePlugin,
-            websql_encoding: encoding
+            websql_encoding: encoding,
           });
         });
       });
@@ -603,7 +603,7 @@ function WebSqlPouch(opts, callback) {
       return callback(api._docCount);
     }
 
-    // count the total rows
+    // Count the total rows
     var sql = select(
       'COUNT(' + DOC_STORE + '.id) AS \'num\'',
       [DOC_STORE, BY_SEQ_STORE],
@@ -654,13 +654,13 @@ function WebSqlPouch(opts, callback) {
     }
 
     if (opts.deleted !== 'ok') {
-      // report deleted if keys are specified
+      // Report deleted if keys are specified
       criteria.push(BY_SEQ_STORE + '.deleted = 0');
     }
 
     db.readTransaction(function (tx) {
 
-      // first count up the total rows
+      // First count up the total rows
       countDocs(tx, function (count) {
         totalRows = count;
 
@@ -668,7 +668,7 @@ function WebSqlPouch(opts, callback) {
           return;
         }
 
-        // then actually fetch the documents
+        // Then actually fetch the documents
         var sql = select(
           SELECT_DOCS,
           [DOC_STORE, BY_SEQ_STORE],
@@ -688,7 +688,7 @@ function WebSqlPouch(opts, callback) {
             var doc = {
               id: id,
               key: id,
-              value: {rev: winningRev}
+              value: {rev: winningRev},
             };
             if (opts.include_docs) {
               doc.doc = data;
@@ -714,7 +714,7 @@ function WebSqlPouch(opts, callback) {
       callback(null, {
         total_rows: totalRows,
         offset: opts.skip,
-        rows: results
+        rows: results,
       });
     });
   };
@@ -729,7 +729,7 @@ function WebSqlPouch(opts, callback) {
       return {
         cancel: function () {
           WebSqlPouch.Changes.removeListener(api._name, id);
-        }
+        },
       };
     }
 
@@ -740,7 +740,7 @@ function WebSqlPouch(opts, callback) {
 
     var limit = 'limit' in opts ? opts.limit : -1;
     if (limit === 0) {
-      limit = 1; // per CouchDB _changes spec
+      limit = 1; // Per CouchDB _changes spec
     }
 
     var returnDocs;
@@ -782,7 +782,7 @@ function WebSqlPouch(opts, callback) {
 
       var filter = filterChange(opts);
       if (!opts.view && !opts.filter) {
-        // we can just limit in the query
+        // We can just limit in the query
         sql += ' LIMIT ' + limit;
       }
 
@@ -814,7 +814,7 @@ function WebSqlPouch(opts, callback) {
               if (returnDocs) {
                 results.push(change);
               }
-              // process the attachment immediately
+              // Process the attachment immediately
               // for the benefit of live listeners
               if (opts.attachments && opts.include_docs) {
                 fetchAttachmentsIfNecessary(doc, opts, api, tx,
@@ -832,7 +832,7 @@ function WebSqlPouch(opts, callback) {
         if (!opts.continuous) {
           opts.complete(null, {
             results: results,
-            last_seq: lastSeq
+            last_seq: lastSeq,
           });
         }
       });
@@ -842,7 +842,7 @@ function WebSqlPouch(opts, callback) {
   };
 
   api._close = function (callback) {
-    //WebSQL databases do not need to be closed
+    // WebSQL databases do not need to be closed
     callback();
   };
 
@@ -855,7 +855,7 @@ function WebSqlPouch(opts, callback) {
       'CASE WHEN escaped = 1 THEN body ELSE HEX(body) END AS body FROM ' +
       ATTACH_STORE + ' WHERE digest=?';
     tx.executeSql(sql, [digest], function (tx, result) {
-      // websql has a bug where \u0000 causes early truncation in strings
+      // Websql has a bug where \u0000 causes early truncation in strings
       // and blobs. to work around this, we used to use the hex() function,
       // but that's not performant. after migration 6, we remove \u0000
       // and add it back in afterwards
@@ -891,7 +891,7 @@ function WebSqlPouch(opts, callback) {
     }
     db.transaction(function (tx) {
 
-      // update doc store
+      // Update doc store
       var sql = 'SELECT json AS metadata FROM ' + DOC_STORE + ' WHERE id = ?';
       tx.executeSql(sql, [docId], function (tx, result) {
         var metadata = safeJsonParse(result.rows.item(0).metadata);
@@ -933,7 +933,7 @@ function WebSqlPouch(opts, callback) {
       callback = opts;
       opts = {};
     }
-    delete doc._revisions; // ignore this, trust the rev
+    delete doc._revisions; // Ignore this, trust the rev
     var oldRev = doc._rev;
     var id = doc._id;
     var newRev;
@@ -959,7 +959,7 @@ function WebSqlPouch(opts, callback) {
       tx.executeSql(sql, values, function (tx, res) {
         if (res.rowsAffected) {
           ret = {ok: true, id: id, rev: newRev};
-          if (opts.ctx) { // return immediately
+          if (opts.ctx) { // Return immediately
             callback(null, ret);
           }
         } else {
@@ -967,7 +967,7 @@ function WebSqlPouch(opts, callback) {
         }
       }, function () {
         callback(createError(REV_CONFLICT));
-        return false; // ack that we handled the error
+        return false; // Ack that we handled the error
       });
     }
 
@@ -997,7 +997,7 @@ function WebSqlPouch(opts, callback) {
           return callback(createError(MISSING_DOC));
         }
         ret = {ok: true, id: doc._id, rev: '0-0'};
-        if (opts.ctx) { // return immediately
+        if (opts.ctx) { // Return immediately
           callback(null, ret);
         }
       });
@@ -1018,7 +1018,7 @@ function WebSqlPouch(opts, callback) {
     WebSqlPouch.Changes.removeAllListeners(api._name);
     db.transaction(function (tx) {
       var stores = [DOC_STORE, BY_SEQ_STORE, ATTACH_STORE, META_STORE,
-        LOCAL_STORE, ATTACH_AND_SEQ_STORE];
+        LOCAL_STORE, ATTACH_AND_SEQ_STORE,];
       stores.forEach(function (store) {
         tx.executeSql('DROP TABLE IF EXISTS ' + store, []);
       });
@@ -1027,7 +1027,7 @@ function WebSqlPouch(opts, callback) {
         delete window.localStorage['_pouch__websqldb_' + api._name];
         delete window.localStorage[api._name];
       }
-      callback(null, {'ok': true});
+      callback(null, {ok: true});
     });
   };
 }

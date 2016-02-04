@@ -1,7 +1,7 @@
 import winningRev from './winningRev';
 import collectLeaves from './collectLeaves';
 
-// returns revs of all conflicts that is leaves such that
+// Returns revs of all conflicts that is leaves such that
 // 1. are not deleted and
 // 2. are different than winning revision
 function collectConflicts(metadata) {

@@ -2,7 +2,7 @@
 
 var http = require('http');
 var PouchDB = require('../../lib');
-var should = require("chai").should();
+var should = require('chai').should();
 
 describe('test.auth.js', function () {
 

@@ -1,4 +1,4 @@
-// like underscore/lodash _.pick()
+// Like underscore/lodash _.pick()
 function pick(obj, arr) {
   var res = {};
   for (var i = 0, len = arr.length; i < len; i++) {

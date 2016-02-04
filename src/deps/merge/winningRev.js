@@ -13,7 +13,7 @@ function winningRev(metadata) {
     var tree = node.ids;
     var branches = tree[2];
     var pos = node.pos;
-    if (branches.length) { // non-leaf
+    if (branches.length) { // Non-leaf
       for (var i = 0, len = branches.length; i < len; i++) {
         toVisit.push({pos: pos + 1, ids: branches[i]});
       }
@@ -21,7 +21,7 @@ function winningRev(metadata) {
     }
     var deleted = !!tree[1].deleted;
     var id = tree[0];
-    // sort by deleted, then pos, then id
+    // Sort by deleted, then pos, then id
     if (!winningId || (winningDeleted !== deleted ? winningDeleted :
         winningPos !== pos ? winningPos < pos : winningId < id)) {
       winningId = id;

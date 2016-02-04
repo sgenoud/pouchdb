@@ -55,7 +55,7 @@ function highlightEs6() {
     regex: '<span class="nx">(await|async|of)</span>',
     replacement: '<span class="kd">$1</span>',
     paths: [path],
-    recursive: true
+    recursive: true,
   });
 }
 

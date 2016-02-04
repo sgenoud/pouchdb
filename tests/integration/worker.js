@@ -3,7 +3,7 @@
 
 function onError(err) {
   setTimeout(function () {
-    throw err; // can catch this in the worker's 'error' listener
+    throw err; // Can catch this in the worker's 'error' listener
   }, 0);
 }
 
@@ -11,7 +11,7 @@ function bigTest(name) {
   var db = new PouchDB(name);
   db.post({
     _id: 'blablah',
-    key: 'lala'
+    key: 'lala',
   }).then(function () {
     return db.get('blablah');
   }).then(function (doc) {
@@ -27,11 +27,11 @@ function allDocs(name) {
     _id: 'blah',
     title: 'lalaa',
     _attachments: {
-      'test': {
+      test: {
         data: new Blob(),
-        content_type: ''
-      }
-    }
+        content_type: '',
+      },
+    },
   }).then(function () {
     return db.get('blah');
   }).then(function (doc) {

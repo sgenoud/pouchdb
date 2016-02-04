@@ -39,7 +39,7 @@ function fetchRequest(options, callback) {
   var fetchOptions = {
     method: options.method,
     credentials: 'include',
-    headers: headers
+    headers: headers,
   };
 
   if (options.json) {
@@ -79,7 +79,7 @@ function fetchRequest(options, callback) {
 
   wrappedPromise.promise.then(function(fetchResponse) {
     response = {
-      statusCode: fetchResponse.status
+      statusCode: fetchResponse.status,
     };
 
     if (options.timeout > 0) {
@@ -121,7 +121,7 @@ function xhRequest(options, callback) {
   try {
     xhr.open(options.method, options.url);
   } catch (exception) {
-   /* error code hardcoded to throw INVALID_URL */
+    /* Error code hardcoded to throw INVALID_URL */
     callback(exception, {statusCode: 413});
   }
 
@@ -136,7 +136,7 @@ function xhRequest(options, callback) {
       'application/json';
     if (options.body &&
         options.processData &&
-        typeof options.body !== "string") {
+        typeof options.body !== 'string') {
       options.body = JSON.stringify(options.body);
     }
   }
@@ -161,7 +161,7 @@ function xhRequest(options, callback) {
       clearTimeout(timer);
       timer = setTimeout(abortReq, options.timeout);
     };
-    if (typeof xhr.upload !== 'undefined') { // does not exist in ie9
+    if (typeof xhr.upload !== 'undefined') { // Does not exist in ie9
       xhr.upload.onprogress = xhr.onprogress;
     }
   }
@@ -172,14 +172,14 @@ function xhRequest(options, callback) {
     }
 
     var response = {
-      statusCode: xhr.status
+      statusCode: xhr.status,
     };
 
     if (xhr.status >= 200 && xhr.status < 300) {
       var data;
       if (options.binary) {
         data = createBlob([xhr.response || ''], {
-          type: xhr.getResponseHeader('Content-Type')
+          type: xhr.getResponseHeader('Content-Type'),
         });
       } else {
         data = xhr.responseText;
@@ -189,7 +189,7 @@ function xhRequest(options, callback) {
       var err = {};
       try {
         err = JSON.parse(xhr.response);
-      } catch(e) {}
+      } catch (e) {}
       callback(err, response);
     }
   };

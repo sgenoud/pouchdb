@@ -1,6 +1,6 @@
 import { extend as extend } from 'js-extend';
 
-import PouchDB from "./constructor";
+import PouchDB from './constructor';
 import inherits from 'inherits';
 import collections from 'pouchdb-collections';
 import { EventEmitter as EE } from 'events';
@@ -20,7 +20,7 @@ function setUpEventEmitter(Pouch) {
     }
   });
 
-  // these are created in constructor.js, and allow us to notify each DB with
+  // These are created in constructor.js, and allow us to notify each DB with
   // the same name that it was destroyed, via the constructor object
   var destructListeners = Pouch._destructionListeners = new collections.Map();
   Pouch.on('destroyed', function onConstructorDestroyed(name) {
@@ -40,7 +40,7 @@ PouchDB.parseAdapter = function (name, opts) {
   var match = name.match(/([a-z\-]*):\/\/(.*)/);
   var adapter, adapterName;
   if (match) {
-    // the http adapter expects the fully qualified name
+    // The http adapter expects the fully qualified name
     name = /http(s?)/.test(match[1]) ? match[1] + '://' + match[2] : match[2];
     adapter = match[1];
     /* istanbul ignore if */
@@ -50,7 +50,7 @@ PouchDB.parseAdapter = function (name, opts) {
     return {name: name, adapter: match[1]};
   }
 
-  // check for browsers that have been upgraded from websql-only to websql+idb
+  // Check for browsers that have been upgraded from websql-only to websql+idb
   var skipIdb = 'idb' in PouchDB.adapters && 'websql' in PouchDB.adapters &&
     hasLocalStorage() &&
     localStorage['_pouch__websqldb_' + PouchDB.prefix + name];
@@ -60,16 +60,16 @@ PouchDB.parseAdapter = function (name, opts) {
     adapterName = opts.adapter;
   } else if (typeof opts !== 'undefined' && opts.db) {
     adapterName = 'leveldb';
-  } else { // automatically determine adapter
+  } else { // Automatically determine adapter
     for (var i = 0; i < PouchDB.preferredAdapters.length; ++i) {
       adapterName = PouchDB.preferredAdapters[i];
       if (adapterName in PouchDB.adapters) {
         /* istanbul ignore if */
         if (skipIdb && adapterName === 'idb') {
-          // log it, because this can be confusing during development
+          // Log it, because this can be confusing during development
           console.log('PouchDB is downgrading "' + name + '" to WebSQL to' +
             ' avoid data loss, because it was already opened with WebSQL.');
-          continue; // keep using websql to avoid user data loss
+          continue; // Keep using websql to avoid user data loss
         }
         break;
       }
@@ -78,13 +78,13 @@ PouchDB.parseAdapter = function (name, opts) {
 
   adapter = PouchDB.adapters[adapterName];
 
-  // if adapter is invalid, then an error will be thrown later
+  // If adapter is invalid, then an error will be thrown later
   var usePrefix = (adapter && 'use_prefix' in adapter) ?
       adapter.use_prefix : true;
 
   return {
     name: usePrefix ? (PouchDB.prefix + name) : name,
-    adapter: adapterName
+    adapter: adapterName,
   };
 };
 

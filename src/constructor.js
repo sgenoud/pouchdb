@@ -29,7 +29,7 @@ function prepareForDestruction(self, opts) {
 
   function onDestroyed() {
     ctor.emit('destroyed', name);
-    //so we don't have to sift through all dbnames
+    // So we don't have to sift through all dbnames
     ctor.emit(name, 'destroyed');
   }
 
@@ -40,7 +40,7 @@ function prepareForDestruction(self, opts) {
 
   self.once('destroyed', onDestroyed);
 
-  // in setup.js, the constructor is primed to listen for destroy events
+  // In setup.js, the constructor is primed to listen for destroy events
   if (!destructionListeners.has(name)) {
     destructionListeners.set(name, []);
   }
@@ -68,7 +68,7 @@ function PouchDB(name, opts, callback) {
   }
   name = name || opts.name;
   opts = clone(opts);
-  // if name was specified via opts, ignore for the sake of dependentDbs
+  // If name was specified via opts, ignore for the sake of dependentDbs
   delete opts.name;
   this.__opts = opts;
   var oldCB = callback;
@@ -85,7 +85,7 @@ function PouchDB(name, opts, callback) {
       delete resp.then;
       fulfill(resp);
     };
-  
+
     opts = clone(opts);
     var originalName = opts.name || name;
     var backend, error;
@@ -99,7 +99,7 @@ function PouchDB(name, opts, callback) {
         }
 
         backend = PouchDB.parseAdapter(originalName, opts);
-        
+
         opts.originalName = originalName;
         opts.name = backend.name;
         if (opts.prefix && backend.adapter !== 'http' &&
@@ -128,11 +128,11 @@ function PouchDB(name, opts, callback) {
       }
     }());
     if (error) {
-      return reject(error); // constructor error, see above
+      return reject(error); // Constructor error, see above
     }
     self.adapter = opts.adapter;
 
-    // needs access to PouchDB;
+    // Needs access to PouchDB;
     self.replicate = {};
 
     self.replicate.from = function (url, opts, callback) {

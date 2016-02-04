@@ -6,13 +6,13 @@ function altFactory(adapterConfig, downAdapter) {
 
   function LevelPouchAlt(opts, callback) {
     var _opts = extend({
-      db: downAdapter
+      db: downAdapter,
     }, opts);
 
     LevelPouch.call(this, _opts, callback);
   }
 
-  // overrides for normal LevelDB behavior on Node
+  // Overrides for normal LevelDB behavior on Node
   LevelPouchAlt.valid = function () {
     return adapterConfig.valid();
   };
@@ -24,7 +24,7 @@ function altFactory(adapterConfig, downAdapter) {
       opts = {};
     }
     var _opts = extend({
-      db: downAdapter
+      db: downAdapter,
     }, opts);
 
     return LevelPouch.destroy(name, _opts, callback);

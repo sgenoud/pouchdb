@@ -5,7 +5,7 @@ var repl_adapters = [
   ['local', 'http'],
   ['http', 'http'],
   ['http', 'local'],
-  ['local', 'local']
+  ['local', 'local'],
 ];
 
 adapters.forEach(function (adapter) {
@@ -55,10 +55,10 @@ adapters.forEach(function (adapter) {
         {_id: 'part/doc2', int: 2, _attachments: {
           'attachment/with/slash': {
             content_type: 'text/plain',
-            data: 'c29tZSBkYXRh'
-          }
-        }},
-        {_id: 'part/doc3', int: 3}
+            data: 'c29tZSBkYXRh',
+          },
+        },},
+        {_id: 'part/doc3', int: 3},
       ];
       db.bulkDocs({ docs: docs }, function (err, res) {
         for (var i = 0; i < 3; i++) {
@@ -66,7 +66,7 @@ adapters.forEach(function (adapter) {
         }
         db.allDocs({
           include_docs: true,
-          attachments: true
+          attachments: true,
         }, function (err, res) {
           res.rows.sort(function (a, b) {
             return a.doc.int - b.doc.int;
@@ -118,16 +118,16 @@ repl_adapters.forEach(function (adapters) {
         _attachments: {
           'foo/with/slash.txt': {
             content_type: 'text/plain',
-            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ='
-          }
-        }
+            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
+          },
+        },
       };
       var docs1 = [
         binAttDoc,
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
         {_id: '2', integer: 2},
-        {_id: '3', integer: 3}
+        {_id: '3', integer: 3},
       ];
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);

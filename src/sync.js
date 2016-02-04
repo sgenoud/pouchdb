@@ -40,25 +40,25 @@ function Sync(src, target, opts, callback) {
   function pullChange(change) {
     self.emit('change', {
       direction: 'pull',
-      change: change
+      change: change,
     });
   }
   function pushChange(change) {
     self.emit('change', {
       direction: 'push',
-      change: change
+      change: change,
     });
   }
   function pushDenied(doc) {
     self.emit('denied', {
       direction: 'push',
-      doc: doc
+      doc: doc,
     });
   }
   function pullDenied(doc) {
     self.emit('denied', {
       direction: 'pull',
-      doc: doc
+      doc: doc,
     });
   }
   function pushPaused() {
@@ -77,7 +77,7 @@ function Sync(src, target, opts, callback) {
     self.pushPaused = false;
     if (self.pullPaused) {
       self.emit('active', {
-        direction: 'push'
+        direction: 'push',
       });
     }
   }
@@ -86,14 +86,14 @@ function Sync(src, target, opts, callback) {
     /* istanbul ignore if */
     if (self.pushPaused) {
       self.emit('active', {
-        direction: 'pull'
+        direction: 'pull',
       });
     }
   }
 
   var removed = {};
 
-  function removeAll(type) { // type is 'push' or 'pull'
+  function removeAll(type) { // Type is 'push' or 'pull'
     return function (event, func) {
       var isChange = event === 'change' &&
         (func === pullChange || func === pushChange);
@@ -110,7 +110,7 @@ function Sync(src, target, opts, callback) {
         }
         removed[event][type] = true;
         if (Object.keys(removed[event]).length === 2) {
-          // both push and pull have asked to be removed
+          // Both push and pull have asked to be removed
           self.removeAllListeners(event);
         }
       }
@@ -159,11 +159,11 @@ function Sync(src, target, opts, callback) {
 
   var promise = Promise.all([
     this.push,
-    this.pull
+    this.pull,
   ]).then(function (resp) {
     var out = {
       push: resp[0],
-      pull: resp[1]
+      pull: resp[1],
     };
     self.emit('complete', out);
     if (callback) {
@@ -174,18 +174,18 @@ function Sync(src, target, opts, callback) {
   }, function (err) {
     self.cancel();
     if (callback) {
-      // if there's a callback, then the callback can receive
+      // If there's a callback, then the callback can receive
       // the error event
       callback(err);
     } else {
-      // if there's no callback, then we're safe to emit an error
+      // If there's no callback, then we're safe to emit an error
       // event, which would otherwise throw an unhandled error
       // due to 'error' being a special event in EventEmitters
       self.emit('error', err);
     }
     self.removeAllListeners();
     if (callback) {
-      // no sense throwing if we're already emitting an 'error' event
+      // No sense throwing if we're already emitting an 'error' event
       throw err;
     }
   });

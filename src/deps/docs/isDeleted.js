@@ -4,7 +4,7 @@ function getTrees(node) {
   return node.ids;
 }
 
-// check if a specific revision of a doc has been deleted
+// Check if a specific revision of a doc has been deleted
 //  - metadata: the metadata object from the doc store
 //  - rev: (optional) the revision to check. defaults to winning revision
 function isDeleted(metadata, rev) {

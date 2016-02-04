@@ -4,7 +4,7 @@
 
 var lie = require('lie');
 if (typeof Promise === 'undefined') {
-  global.Promise = lie; // required for denodeify in node 0.10
+  global.Promise = lie; // Required for denodeify in node 0.10
 }
 var denodeify = require('denodeify');
 var browserify = require('browserify');
@@ -25,7 +25,7 @@ var spawn = require('child_process').spawn;
 var pkg = require('../package.json');
 var version = pkg.version;
 var external = Object.keys(pkg.dependencies).concat([
- 'fs', 'crypto', 'events', 'path', 'pouchdb', 'level-sublevel/legacy'
+ 'fs', 'crypto', 'events', 'path', 'pouchdb', 'level-sublevel/legacy',
 ]);
 
 var plugins = ['fruitdown', 'localstorage', 'memory'];
@@ -37,13 +37,13 @@ var extras = {
   'src_browser/deps/ajax/prequest.js': 'ajax-browser.js',
   'src_browser/replicate/checkpointer.js': 'checkpointer-browser.js',
   'src_browser/replicate/generateReplicationId.js':
-    'generateReplicationId-browser.js'
+    'generateReplicationId-browser.js',
 };
 
 var currentYear = new Date().getFullYear();
 
 var comments = {
-  'pouchdb': '// PouchDB ' + version +
+  pouchdb: '// PouchDB ' + version +
   '\n// ' +
   '\n// (c) 2012-' + currentYear + ' Dale Harvey and the PouchDB team' +
   '\n// PouchDB may be freely distributed under the Apache license, ' +
@@ -51,7 +51,7 @@ var comments = {
   '\n// For all details and documentation:' +
   '\n// http://pouchdb.com\n',
 
-  'memory': '// PouchDB in-memory plugin ' + version +
+  memory: '// PouchDB in-memory plugin ' + version +
   '\n// Based on MemDOWN: https://github.com/rvagg/memdown' +
   '\n// ' +
   '\n// (c) 2012-' + currentYear + ' Dale Harvey and the PouchDB team' +
@@ -60,7 +60,7 @@ var comments = {
   '\n// For all details and documentation:' +
   '\n// http://pouchdb.com\n',
 
-  'localstorage': '// PouchDB localStorage plugin ' + version +
+  localstorage: '// PouchDB localStorage plugin ' + version +
   '\n// Based on localstorage-down: https://github.com/No9/localstorage-down' +
   '\n// ' +
   '\n// (c) 2012-' + currentYear + ' Dale Harvey and the PouchDB team' +
@@ -69,14 +69,14 @@ var comments = {
   '\n// For all details and documentation:' +
   '\n// http://pouchdb.com\n',
 
-  'fruitdown': '// PouchDB fruitdown plugin ' + version +
+  fruitdown: '// PouchDB fruitdown plugin ' + version +
   '\n// Based on FruitDOWN: https://github.com/nolanlawson/fruitdown' +
   '\n// ' +
   '\n// (c) 2012-' + currentYear + ' Dale Harvey and the PouchDB team' +
   '\n// PouchDB may be freely distributed under the Apache license, ' +
   'version 2.0.' +
   '\n// For all details and documentation:' +
-  '\n// http://pouchdb.com\n'
+  '\n// http://pouchdb.com\n',
 };
 
 function writeFile(filename, contents) {
@@ -92,7 +92,7 @@ function addVersion(code) {
   return code.replace('__VERSION__', version);
 }
 
-// do uglify in a separate process for better perf
+// Do uglify in a separate process for better perf
 function doUglify(code, prepend, fileOut) {
   var binPath = require.resolve('uglify-js/bin/uglifyjs');
   var args = [binPath, '-c', '-m', 'warnings=false', '-'];
@@ -124,21 +124,21 @@ function doBrowserify(path, opts, exclude) {
 function doRollup(entry, fileOut) {
   return rollup.rollup({
     entry: entry,
-    external: external
+    external: external,
   }).then(function (bundle) {
     var code = bundle.generate({format: 'cjs'}).code;
     return writeFile(fileOut, addVersion(code));
   });
 }
 
-// build for Node (index.js)
+// Build for Node (index.js)
 function buildForNode() {
   return mkdirp('lib').then(function() {
     return doRollup('src/index.js', 'lib/index.js');
   });
 }
 
-// build for Browserify/Webpack (index-browser.js)
+// Build for Browserify/Webpack (index-browser.js)
 function buildForBrowserify() {
   return ncp('src', 'src_browser').then(function () {
     return new Promise(function (resolve, reject) {
@@ -160,7 +160,7 @@ function buildForBrowserify() {
   });
 }
 
-// build for the browser (dist)
+// Build for the browser (dist)
 function buildForBrowser() {
   return mkdirp('dist').then(function() {
     return doBrowserify('.', {standalone: 'PouchDB'});
@@ -168,7 +168,7 @@ function buildForBrowser() {
     code = comments.pouchdb + code;
     return Promise.all([
       writeFile('dist/pouchdb.js', code),
-      doUglify(code, comments.pouchdb, 'dist/pouchdb.min.js')
+      doUglify(code, comments.pouchdb, 'dist/pouchdb.min.js'),
     ]);
   });
 }
@@ -176,7 +176,7 @@ function buildForBrowser() {
 function buildPerformanceBundle() {
   return doBrowserify('tests/performance', {
     debug: true,
-    fullPaths: true
+    fullPaths: true,
   }).then(function (code) {
     return writeFile('tests/performance-bundle.js', code);
   });
@@ -210,9 +210,10 @@ function buildPluginsForBrowser() {
       var source = 'lib/extras/' + plugin + '.js';
       return doBrowserify(source, {}, 'pouchdb').then(function (code) {
         code = comments[plugin] + code;
+        var pouchPlugin = 'dist/pouchdb.' + plugin;
         return Promise.all([
-          writeFile('dist/pouchdb.' + plugin + '.js', code),
-          doUglify(code, comments[plugin], 'dist/pouchdb.' + plugin + '.min.js')
+          writeFile(pouchPlugin + '.js', code),
+          doUglify(code, comments[plugin], pouchPlugin + '.min.js'),
         ]);
       });
     }));

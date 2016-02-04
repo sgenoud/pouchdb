@@ -13,14 +13,14 @@ describe('test.mapreduce.js-upsert', function () {
     return upsert({
       get: function (foo, cb) {
         cb(new Error('a fake error!'));
-      }
+      },
     }, 'foo').should.be.rejected;
   });
   it('should fulfill if the diff returns false', function () {
     return upsert({
       get: function (foo, cb) {
         cb(null, 'lalala');
-      }
+      },
     }, 'foo', function () {
       return false;
     }).should.be.fulfilled;
@@ -32,7 +32,7 @@ describe('test.mapreduce.js-upsert', function () {
       },
       put: function () {
         return Promise.reject(new Error('falala'));
-      }
+      },
     }, 'foo', function () {
       return true;
     }).should.be.rejected;

@@ -27,25 +27,25 @@ var reservedWords = toObject([
   '_deleted_conflicts',
   '_local_seq',
   '_rev_tree',
-  //replication documents
+  // Replication documents
   '_replication_id',
   '_replication_state',
   '_replication_state_time',
   '_replication_state_reason',
   '_replication_stats',
   // Specific to Couchbase Sync Gateway
-  '_removed'
+  '_removed',
 ]);
 
 // List of reserved words that should end up the document
 var dataWords = toObject([
   '_attachments',
-  //replication documents
+  // Replication documents
   '_replication_id',
   '_replication_state',
   '_replication_state_time',
   '_replication_state_reason',
-  '_replication_stats'
+  '_replication_stats',
 ]);
 
 // Determine id an ID is valid
@@ -76,7 +76,7 @@ function parseRevisionInfo(rev) {
   var right = rev.substring(idx + 1);
   return {
     prefix: parseInt(left, 10),
-    id: right
+    id: right,
   };
 }
 
@@ -92,8 +92,8 @@ function makeRevTreeFromRevisions(revisions, opts) {
 
   return [{
     pos: pos,
-    ids: ids
-  }];
+    ids: ids,
+  },];
 }
 
 // Preprocess documents, parse their revisions, assign an id and a
@@ -120,14 +120,14 @@ function parseDoc(doc, newEdits) {
       }
       doc._rev_tree = [{
         pos: revInfo.prefix,
-        ids: [revInfo.id, {status: 'missing'}, [[newRevId, opts, []]]]
-      }];
+        ids: [revInfo.id, {status: 'missing'}, [[newRevId, opts, []]]],
+      },];
       nRevNum = revInfo.prefix + 1;
     } else {
       doc._rev_tree = [{
         pos: 1,
-        ids : [newRevId, opts, []]
-      }];
+        ids: [newRevId, opts, []],
+      },];
       nRevNum = 1;
     }
   } else {
@@ -145,8 +145,8 @@ function parseDoc(doc, newEdits) {
       newRevId = revInfo.id;
       doc._rev_tree = [{
         pos: nRevNum,
-        ids: [newRevId, opts, []]
-      }];
+        ids: [newRevId, opts, []],
+      },];
     }
   }
 
@@ -154,7 +154,7 @@ function parseDoc(doc, newEdits) {
 
   doc._rev = nRevNum + '-' + newRevId;
 
-  var result = {metadata : {}, data : {}};
+  var result = {metadata: {}, data: {}};
   for (var key in doc) {
     /* istanbul ignore else */
     if (Object.prototype.hasOwnProperty.call(doc, key)) {

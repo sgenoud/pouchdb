@@ -10,7 +10,7 @@ function slowJsonParse(str) {
 }
 
 function safeJsonParse(str) {
-  // try/catch is deoptimized in V8, leading to slower
+  // Try/catch is deoptimized in V8, leading to slower
   // times than we'd like to have. Most documents are _not_
   // huge, and do not require a slower code path just to parse them.
   // We can be pretty sure that a document under 50000 characters

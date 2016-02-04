@@ -4,7 +4,7 @@ var adapters = [
   ['local', 'http'],
   ['http', 'http'],
   ['http', 'local'],
-  ['local', 'local']
+  ['local', 'local'],
 ];
 
 adapters.forEach(function (adapters) {
@@ -38,7 +38,7 @@ adapters.forEach(function (adapters) {
         // Compact the db.
         return remote.compact();
       }).then(function () {
-       return remote.get(doc._id, { revs_info: true });
+        return remote.get(doc._id, { revs_info: true });
       }).then(function (data) {
         var correctRev = data._revs_info[0];
         return local.replicate.from(remote).then(function () {

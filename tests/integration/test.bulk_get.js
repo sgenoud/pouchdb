@@ -21,11 +21,11 @@ adapters.forEach(function (adapter) {
         var rev = response.rev;
         db.bulkGet({
           docs: [
-            {id: 'foo', rev: rev}
-          ]
+            {id: 'foo', rev: rev},
+          ],
         }).then(function (response) {
           var result = response.results[0];
-          result.id.should.equal("foo");
+          result.id.should.equal('foo');
           result.docs[0].ok._rev.should.equal(rev);
           done();
         });
@@ -38,11 +38,11 @@ adapters.forEach(function (adapter) {
         var rev = response.rev;
         db.bulkGet({
           docs: [
-            {id: 'foo'}
-          ]
+            {id: 'foo'},
+          ],
         }).then(function (response) {
           var result = response.results[0];
-          result.id.should.equal("foo");
+          result.id.should.equal('foo');
           result.docs[0].ok._rev.should.equal(rev);
           done();
         });
@@ -55,8 +55,8 @@ adapters.forEach(function (adapter) {
         var rev = response.rev;
         db.bulkGet({
           docs: [
-            {id: 'foo', rev: rev}
-          ]
+            {id: 'foo', rev: rev},
+          ],
         }).then(function (response) {
           var result = response.results[0];
           should.not.exist(result.docs[0].ok._revisions);
@@ -71,9 +71,9 @@ adapters.forEach(function (adapter) {
         var rev = response.rev;
         db.bulkGet({
           docs: [
-            {id: 'foo', rev: rev}
+            {id: 'foo', rev: rev},
           ],
-          revs: true
+          revs: true,
         }).then(function (response) {
           var result = response.results[0];
           result.docs[0].ok._revisions.ids[0].should.equal(rev.substring(2));
@@ -89,9 +89,9 @@ adapters.forEach(function (adapter) {
         var rev = response.rev;
         db.bulkGet({
           docs: [
-            {id: 'foo'}
+            {id: 'foo'},
           ],
-          revs: true
+          revs: true,
         }).then(function (response) {
           var result = response.results[0];
           result.docs[0].ok._revisions.ids[0].should.equal(rev.substring(2));
@@ -108,16 +108,16 @@ adapters.forEach(function (adapter) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ='
-          }
-        }
+            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
+          },
+        },
       }).then(function (response) {
         var rev = response.rev;
 
         db.bulkGet({
           docs: [
-            {id: 'foo', rev: rev}
-          ]
+            {id: 'foo', rev: rev},
+          ],
         }).then(function (response) {
           var result = response.results[0];
           result.docs[0].ok._attachments['foo.txt'].stub.should.equal(true);
@@ -134,21 +134,21 @@ adapters.forEach(function (adapter) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ='
-          }
-        }
+            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
+          },
+        },
       }).then(function (response) {
         var rev = response.rev;
 
         db.bulkGet({
           docs: [
-            {id: 'foo', rev: rev}
+            {id: 'foo', rev: rev},
           ],
-          attachments: true
+          attachments: true,
         }).then(function (response) {
           var result = response.results[0];
           result.docs[0].ok._attachments['foo.txt'].data
-            .should.equal("VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=");
+            .should.equal('VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=');
           done();
         });
       });
@@ -163,19 +163,19 @@ adapters.forEach(function (adapter) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ='
-          }
-        }
+            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
+          },
+        },
       }).then(function (response) {
         db.bulkGet({
           docs: [
-            {id: 'foo'}
+            {id: 'foo'},
           ],
-          attachments: true
+          attachments: true,
         }).then(function (response) {
           var result = response.results[0];
           result.docs[0].ok._attachments['foo.txt'].data
-            .should.equal("VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=");
+            .should.equal('VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=');
           done();
         });
       });

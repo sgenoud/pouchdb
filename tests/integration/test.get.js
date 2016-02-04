@@ -21,7 +21,7 @@ adapters.forEach(function (adapter) {
       {_id: '0', a: 1, b: 1},
       {_id: '3', a: 4, b: 16},
       {_id: '1', a: 2, b: 4},
-      {_id: '2', a: 3, b: 9}
+      {_id: '2', a: 3, b: 9},
     ];
 
     it('Get doc', function (done) {
@@ -36,7 +36,7 @@ adapters.forEach(function (adapter) {
                                   'correct error name returned');
             err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
                                     'correct error message returned');
-            // todo: does not work in pouchdb-server.
+            // Todo: does not work in pouchdb-server.
             // err.reason.should.equal(PouchDB.Errors.MISSING_DOC.reason,
             //                           'correct error reason returned');
             done();
@@ -49,7 +49,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       db.put({
         _id: '_design/someid',
-        test: 'somestuff'
+        test: 'somestuff',
       }, function (err, info) {
         db.get(info.id, function (err, doc) {
           db.get(info.id + 'asdf', function (err) {
@@ -59,7 +59,7 @@ adapters.forEach(function (adapter) {
                                   'correct error name returned');
             err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
                                     'correct error message returned');
-            // todo: does not work in pouchdb-server.
+            // Todo: does not work in pouchdb-server.
             // err.reason.should.equal(PouchDB.Errors.MISSING_DOC.reason,
             //                           'correct error reason returned');
             done();
@@ -73,7 +73,7 @@ adapters.forEach(function (adapter) {
       db.post({ test: 'somestuff' }, function (err, info) {
         db.remove({
           _id: info.id,
-          _rev: info.rev
+          _rev: info.rev,
         }, function (err, res) {
           db.get(info.id, function (err, res) {
             err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
@@ -82,7 +82,7 @@ adapters.forEach(function (adapter) {
                                       'correct error name returned');
             err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
                                       'correct error message returned');
-            // todo: does not work in pouchdb-server.
+            // Todo: does not work in pouchdb-server.
             // err.reason.should.equal(PouchDB.Errors.MISSING_DOC.reason,
             //                          'correct error reason returned');
             done();
@@ -98,7 +98,7 @@ adapters.forEach(function (adapter) {
         db.remove({
           test: 'somestuff',
           _id: info.id,
-          _rev: info.rev
+          _rev: info.rev,
         }, function (doc) {
           db.get(info.id, { rev: rev }, function (err, doc) {
             should.not.exist(err);
@@ -113,7 +113,7 @@ adapters.forEach(function (adapter) {
         testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
           function () {
           db.get('3', function (err, parent) {
-            // add conflicts
+            // Add conflicts
             var pRevId = parent._rev.split('-')[1];
             var conflicts = [
               {
@@ -124,9 +124,9 @@ adapters.forEach(function (adapter) {
                   start: 2,
                   ids: [
                     'aaa',
-                    pRevId
-                  ]
-                }
+                    pRevId,
+                  ],
+                },
               },
               {
                 _id: '3',
@@ -138,9 +138,9 @@ adapters.forEach(function (adapter) {
                   ids: [
                     'bbb',
                     'some',
-                    pRevId
-                  ]
-                }
+                    pRevId,
+                  ],
+                },
               },
               {
                 _id: '3',
@@ -152,10 +152,10 @@ adapters.forEach(function (adapter) {
                     'ccc',
                     'even',
                     'more',
-                    pRevId
-                  ]
-                }
-              }
+                    pRevId,
+                  ],
+                },
+              },
             ];
             db.put(conflicts[0], { new_edits: false }, function (err, doc) {
               db.put(conflicts[1], { new_edits: false }, function (err, doc) {
@@ -189,13 +189,13 @@ adapters.forEach(function (adapter) {
         db.put({
           _id: info.id,
           _rev: info.rev,
-          another: 'test1'
+          another: 'test1',
         }, function (err, info2) {
           revs.unshift(info2.rev.split('-')[1]);
           db.put({
             _id: info.id,
             _rev: info2.rev,
-            last: 'test2'
+            last: 'test2',
           }, function (err, info3) {
             revs.unshift(info3.rev.split('-')[1]);
             db.get(info.id, { revs: true }, function (err, doc) {
@@ -214,12 +214,12 @@ adapters.forEach(function (adapter) {
         {_id: 'foo', _rev: '1-a', value: 'foo a'},
         {_id: 'foo', _rev: '2-b', value: 'foo b'},
         {_id: 'foo', _rev: '3-c', value: 'foo c'},
-        {_id: 'foo', _rev: '4-d', value: 'foo d'}
+        {_id: 'foo', _rev: '4-d', value: 'foo d'},
       ];
       testUtils.putBranch(db, docs, function () {
         db.get('foo', {
           rev: '3-c',
-          revs: true
+          revs: true,
         }, function (err, doc) {
           doc._revisions.ids.length.should.equal(3, 'correct revisions length');
           doc._revisions.start.should.equal(3, 'correct revisions start');
@@ -236,12 +236,12 @@ adapters.forEach(function (adapter) {
       var simpleTree = [
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
          {_id: 'foo', _rev: '2-b', value: 'foo b'},
-         {_id: 'foo', _rev: '3-c', value: 'foo c'}],
+         {_id: 'foo', _rev: '3-c', value: 'foo c'},],
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
          {_id: 'foo', _rev: '2-d', value: 'foo d'},
          {_id: 'foo', _rev: '3-e', value: 'foo e'},
-         {_id: 'foo', _rev: '4-f', value: 'foo f'}
-        ]
+         {_id: 'foo', _rev: '4-f', value: 'foo f'},
+        ],
       ];
       testUtils.putTree(db, simpleTree, function () {
         db.get('foo', { revs: true }, function (err, doc) {
@@ -262,12 +262,12 @@ adapters.forEach(function (adapter) {
         db.put({
           _id: info.id,
           _rev: info.rev,
-          another: 'test'
+          another: 'test',
         }, function (err, info) {
           db.put({
             _id: info.id,
             _rev: info.rev,
-            a: 'change'
+            a: 'change',
           }, function (err, info2) {
             db.get(info.id, { revs_info: true }, function (err, doc) {
               doc._revs_info.length.should.equal(3, 'updated a doc with put');
@@ -283,10 +283,10 @@ adapters.forEach(function (adapter) {
       var simpleTree = [
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
          {_id: 'foo', _rev: '2-b', value: 'foo b'},
-         {_id: 'foo', _rev: '3-c', value: 'foo c'}],
+         {_id: 'foo', _rev: '3-c', value: 'foo c'},],
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
          {_id: 'foo', _rev: '2-d', value: 'foo d'},
-         {_id: 'foo', _rev: '3-e', _deleted: true}]
+         {_id: 'foo', _rev: '3-e', _deleted: true},],
       ];
       testUtils.putTree(db, simpleTree, function () {
         db.get('foo', { revs_info: true }, function (err, doc) {
@@ -314,36 +314,36 @@ adapters.forEach(function (adapter) {
           {
             _id: 'foo',
             _rev: '1-a',
-            value: 'foo a'
+            value: 'foo a',
           },
           {
             _id: 'foo',
             _rev: '2-b',
-            value: 'foo d'
+            value: 'foo d',
           },
           {
             _id: 'foo',
             _rev: '3-c',
-            value: 'foo c'
-          }
+            value: 'foo c',
+          },
         ],
         [
           {
             _id: 'foo',
             _rev: '1-a',
-            value: 'foo a'
+            value: 'foo a',
           },
           {
             _id: 'foo',
             _rev: '2-d',
-            value: 'foo d'
+            value: 'foo d',
           },
           {
             _id: 'foo',
             _rev: '3-e',
-            _deleted: true
-          }
-        ]
+            _deleted: true,
+          },
+        ],
       ];
       testUtils.putTree(db, simpleTree, function () {
         db.compact(function (err, ok) {
@@ -386,7 +386,7 @@ adapters.forEach(function (adapter) {
           defaultDoc._id = id;
           return db.put(defaultDoc).catch(function (err) {
             /* istanbul ignore if */
-            if (err.status !== 409) { // conflict
+            if (err.status !== 409) { // Conflict
               throw err;
             }
           }).then(function () {
@@ -424,7 +424,7 @@ adapters.forEach(function (adapter) {
           defaultDoc._id = id;
           return db.put(defaultDoc).catch(function (err) {
             /* istanbul ignore if */
-            if (err.status !== 409) { // conflict
+            if (err.status !== 409) { // Conflict
               throw err;
             }
           }).then(function () {
@@ -445,39 +445,39 @@ adapters.forEach(function (adapter) {
           {
             _id: 'foo',
             _rev: '1-a',
-            value: 'foo a'
+            value: 'foo a',
           },
           {
             _id: 'foo',
             _rev: '2-b',
-            value: 'foo b'
-          }
+            value: 'foo b',
+          },
         ],
         [
           {
             _id: 'foo',
             _rev: '1-a',
-            value: 'foo a'
+            value: 'foo a',
           },
           {
             _id: 'foo',
             _rev: '2-c',
-            value: 'foo c'
-          }
+            value: 'foo c',
+          },
         ],
         [
           {
             _id: 'foo',
             _rev: '1-a',
-            value: 'foo a'
+            value: 'foo a',
           },
           {
             _id: 'foo',
             _rev: '2-d',
             value: 'foo d',
-            _deleted: true
-          }
-        ]
+            _deleted: true,
+          },
+        ],
       ];
       testUtils.putTree(db, simpleTree, function () {
         db.get('foo', { conflicts: true }, function (err, doc) {
@@ -495,7 +495,7 @@ adapters.forEach(function (adapter) {
         db.put({
           _id: info.id,
           _rev: info.rev,
-          version: 'second'
+          version: 'second',
         }, function (err, info2) {
           should.not.exist(err);
           db.get(info.id, { rev: info.rev }, function (err, oldRev) {
@@ -514,7 +514,7 @@ adapters.forEach(function (adapter) {
       testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
         function () {
         db.get('3', function (err, parent) {
-          // add conflicts
+          // Add conflicts
           var previd = parent._rev.split('-')[1];
           var conflicts = [
             {
@@ -525,9 +525,9 @@ adapters.forEach(function (adapter) {
                 start: 2,
                 ids: [
                   'aaa',
-                  previd
-                ]
-              }
+                  previd,
+                ],
+              },
             },
             {
               _id: '3',
@@ -539,9 +539,9 @@ adapters.forEach(function (adapter) {
                 ids: [
                   'bbb',
                   'some',
-                  previd
-                ]
-              }
+                  previd,
+                ],
+              },
             },
             {
               _id: '3',
@@ -553,10 +553,10 @@ adapters.forEach(function (adapter) {
                   'ccc',
                   'even',
                   'more',
-                  previd
-                ]
-              }
-            }
+                  previd,
+                ],
+              },
+            },
           ];
           db.put(conflicts[0], { new_edits: false }, function (err, doc) {
             db.put(conflicts[1], { new_edits: false }, function (err, doc) {
@@ -587,7 +587,7 @@ adapters.forEach(function (adapter) {
       testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
         function () {
         db.get('3', function (err, parent) {
-          // add conflicts
+          // Add conflicts
           var previd = parent._rev.split('-')[1];
           var conflicts = [
             {
@@ -598,9 +598,9 @@ adapters.forEach(function (adapter) {
                 start: 2,
                 ids: [
                   'aaa',
-                  previd
-                ]
-              }
+                  previd,
+                ],
+              },
             },
             {
               _id: '3',
@@ -612,9 +612,9 @@ adapters.forEach(function (adapter) {
                 ids: [
                   'bbb',
                   'some',
-                  previd
-                ]
-              }
+                  previd,
+                ],
+              },
             },
             {
               _id: '3',
@@ -626,10 +626,10 @@ adapters.forEach(function (adapter) {
                   'ccc',
                   'even',
                   'more',
-                  previd
-                ]
-              }
-            }
+                  previd,
+                ],
+              },
+            },
           ];
           db.put(conflicts[0], { new_edits: false }, function (err, doc) {
             db.put(conflicts[1], { new_edits: false }, function (err, doc) {
@@ -638,13 +638,14 @@ adapters.forEach(function (adapter) {
                   open_revs: [
                     '2-aaa',
                     '5-nonexistent',
-                    '3-bbb'
-                  ]
+                    '3-bbb',
+                  ],
                 }, function (err, res) {
                   res.sort(function (a, b) {
                     if (a.ok) {
                       if (b.ok) {
-                        var x = a.ok._rev, y = b.ok._rev;
+                        var x = a.ok._rev;
+                        var y = b.ok._rev;
                         return x === y ? 0 : x < y ? -1 : 1;
                       } else {
                         return -1;
@@ -669,15 +670,15 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var docs = [
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
-         {_id: 'foo', _rev: '2-b', value: 'foo b'}
+         {_id: 'foo', _rev: '2-b', value: 'foo b'},
         ],
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
-         {_id: 'foo', _rev: '2-c', value: 'foo c'}]
+         {_id: 'foo', _rev: '2-c', value: 'foo c'},],
       ];
       testUtils.putTree(db, docs, function () {
         db.get('foo', {
           open_revs: ['2-b'],
-          revs: true
+          revs: true,
         }, function (err, res) {
           var doc = res[0].ok;
           doc._revisions.ids.length.should.equal(2, 'got two revs');
@@ -712,20 +713,20 @@ adapters.forEach(function (adapter) {
       db.put({ _id: 'foo' }, function (err, res) {
         db.get('foo', {
           open_revs: {
-            'whatever': 'which is',
-            'not an array': 'or all string'
-          }
+            whatever: 'which is',
+            'not an array': 'or all string',
+          },
         }, function (err, res) {
           var acceptable_errors = ['unknown_error', 'bad_request'];
           acceptable_errors.indexOf(err.name)
             .should.not.equal(-1, 'correct error');
-          // unfortunately!
+          // Unfortunately!
           db.get('foo', {
             open_revs: [
               '1-almost',
               '2-correct',
-              'keys'
-            ]
+              'keys',
+            ],
           }, function (err, res) {
             err.name.should.equal('bad_request', 'correct error');
             done();

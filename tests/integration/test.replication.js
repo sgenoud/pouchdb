@@ -4,7 +4,7 @@ var adapters = [
   ['local', 'http'],
   ['http', 'http'],
   ['http', 'local'],
-  ['local', 'local']
+  ['local', 'local'],
 ];
 
 if ('saucelabs' in testUtils.params()) {
@@ -17,64 +17,63 @@ adapters.forEach(function (adapters) {
   describe('suite2 test.replication.js-' + adapters[0] + '-' + adapters[1],
     function () {
 
-    var dbs = {};
+      var dbs = {};
 
-    beforeEach(function (done) {
-      dbs.name = testUtils.adapterUrl(adapters[0], 'testdb');
-      dbs.remote = testUtils.adapterUrl(adapters[1], 'test_repl_remote');
-      testUtils.cleanup([dbs.name, dbs.remote], done);
-    });
-
-    after(function (done) {
-      testUtils.cleanup([dbs.name, dbs.remote], done);
-    });
-
-
-    var docs = [
-      {_id: '0', integer: 0, string: '0'},
-      {_id: '1', integer: 1, string: '1'},
-      {_id: '2', integer: 2, string: '2'}
-    ];
-
-    // simplify for easier deep equality checks
-    function simplifyChanges(res) {
-      var changes = res.results.map(function (change) {
-        if (testUtils.isSyncGateway() &&
-          change.doc && change.doc._conflicts) {
-          // CSG does not render conflict metadata inline
-          // in the document. Remove it for comparisons.
-          delete change.doc._conflicts;
-        }
-        return {
-          id: change.id,
-          deleted: change.deleted,
-          changes: change.changes.map(function (x) {
-            return x.rev;
-          }).sort(),
-          doc: change.doc
-        };
+      beforeEach(function (done) {
+        dbs.name = testUtils.adapterUrl(adapters[0], 'testdb');
+        dbs.remote = testUtils.adapterUrl(adapters[1], 'test_repl_remote');
+        testUtils.cleanup([dbs.name, dbs.remote], done);
       });
 
-      // in CouchDB 2.0, changes is not guaranteed to be
-      // ordered
-      if (testUtils.isCouchMaster() || testUtils.isSyncGateway()) {
-        changes.sort(function (a, b) {
-          return a.id > b.id;
-        });
-      }
-      // CSG will send a change event when just the ACL changed
-      if (testUtils.isSyncGateway()) {
-        changes = changes.filter(function(change){
-          return change.id !== "_user/";
-        });
-      }
-      return changes;
-    }
+      after(function (done) {
+        testUtils.cleanup([dbs.name, dbs.remote], done);
+      });
 
-    function verifyInfo(info, expected) {
+      var docs = [
+        {_id: '0', integer: 0, string: '0'},
+        {_id: '1', integer: 1, string: '1'},
+        {_id: '2', integer: 2, string: '2'},
+      ];
+
+      // Simplify for easier deep equality checks
+      function simplifyChanges(res) {
+        var changes = res.results.map(function (change) {
+          if (testUtils.isSyncGateway() &&
+            change.doc && change.doc._conflicts) {
+            // CSG does not render conflict metadata inline
+            // in the document. Remove it for comparisons.
+            delete change.doc._conflicts;
+          }
+          return {
+            id: change.id,
+            deleted: change.deleted,
+            changes: change.changes.map(function (x) {
+              return x.rev;
+            }).sort(),
+            doc: change.doc,
+          };
+        });
+
+        // In CouchDB 2.0, changes is not guaranteed to be
+        // ordered
+        if (testUtils.isCouchMaster() || testUtils.isSyncGateway()) {
+          changes.sort(function (a, b) {
+            return a.id > b.id;
+          });
+        }
+        // CSG will send a change event when just the ACL changed
+        if (testUtils.isSyncGateway()) {
+          changes = changes.filter(function(change) {
+            return change.id !== '_user/';
+          });
+        }
+        return changes;
+      }
+
+      function verifyInfo(info, expected) {
       if (!testUtils.isCouchMaster()) {
         if (typeof info.doc_count === 'undefined') {
-          // info is from Sync Gateway, which allocates an extra seqnum
+          // Info is from Sync Gateway, which allocates an extra seqnum
           // for user access control purposes.
           info.update_seq.should.be.within(expected.update_seq,
             expected.update_seq + 1, 'update_seq');
@@ -82,12 +81,12 @@ adapters.forEach(function (adapters) {
           info.update_seq.should.equal(expected.update_seq, 'update_seq');
         }
       }
-      if (info.doc_count) { // info is NOT from Sync Gateway
+      if (info.doc_count) { // Info is NOT from Sync Gateway
         info.doc_count.should.equal(expected.doc_count, 'doc_count');
       }
     }
 
-    it('Test basic pull replication', function (done) {
+      it('Test basic pull replication', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       remote.bulkDocs({ docs: docs }, {}, function (err, results) {
@@ -97,7 +96,7 @@ adapters.forEach(function (adapters) {
           db.info(function (err, info) {
             verifyInfo(info, {
               update_seq: 3,
-              doc_count: 3
+              doc_count: 3,
             });
             done();
           });
@@ -105,7 +104,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test basic pull replication plain api', function (done) {
+      it('Test basic pull replication plain api', function (done) {
       var remote = new PouchDB(dbs.remote);
       remote.bulkDocs({ docs: docs }, {}, function (err, results) {
         PouchDB.replicate(dbs.remote, dbs.name, {}, function (err, result) {
@@ -114,7 +113,7 @@ adapters.forEach(function (adapters) {
           new PouchDB(dbs.name).info(function (err, info) {
             verifyInfo(info, {
               update_seq: 3,
-              doc_count: 3
+              doc_count: 3,
             });
             done();
           });
@@ -122,7 +121,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test basic pull replication plain api 2', function (done) {
+      it('Test basic pull replication plain api 2', function (done) {
       var remote = new PouchDB(dbs.remote);
       remote.bulkDocs({ docs: docs }, {}, function (err, results) {
         PouchDB.replicate(
@@ -132,7 +131,7 @@ adapters.forEach(function (adapters) {
           new PouchDB(dbs.name).info(function (err, info) {
             verifyInfo(info, {
               update_seq: 3,
-              doc_count: 3
+              doc_count: 3,
             });
             done();
           });
@@ -140,7 +139,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test pull replication with many changes', function (done) {
+      it('Test pull replication with many changes', function (done) {
       var remote = new PouchDB(dbs.remote);
 
       var numDocs = 201;
@@ -158,7 +157,7 @@ adapters.forEach(function (adapters) {
           new PouchDB(dbs.name).info(function (err, info) {
             verifyInfo(info, {
               update_seq: numDocs,
-              doc_count: numDocs
+              doc_count: numDocs,
             });
             done();
           });
@@ -166,11 +165,11 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test basic pull replication with funny ids', function (done) {
+      it('Test basic pull replication with funny ids', function (done) {
       var docs = [
         {_id: '4/5', integer: 0, string: '0'},
         {_id: '3&2', integer: 1, string: '1'},
-        {_id: '1>0', integer: 2, string: '2'}
+        {_id: '1>0', integer: 2, string: '2'},
       ];
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -181,7 +180,7 @@ adapters.forEach(function (adapters) {
           db.info(function (err, info) {
             verifyInfo(info, {
               update_seq: 3,
-              doc_count: 3
+              doc_count: 3,
             });
             done();
           });
@@ -189,10 +188,11 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('pull replication with many changes + a conflict (#2543)', function () {
+      it('pull replication with many changes + a conflict (#2543)',
+         function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      // simulate 5000 normal commits with two conflicts at the very end
+      // Simulate 5000 normal commits with two conflicts at the very end
       function uuid() {
         return PouchDB.utils.uuid(32, 16).toLowerCase();
       }
@@ -202,7 +202,7 @@ adapters.forEach(function (adapters) {
         /Safari/.test(window.navigator.userAgent) &&
         !/Chrome/.test(window.navigator.userAgent);
       if (isSafari) {
-        numRevs = 10; // fuck safari, we've hit the storage limit again
+        numRevs = 10; // Fuck safari, we've hit the storage limit again
       }
 
       var uuids = [];
@@ -217,16 +217,16 @@ adapters.forEach(function (adapters) {
         _rev: numRevs + '-' + conflict1,
         _revisions: {
           start: numRevs,
-          ids: [conflict1].concat(uuids)
-        }
+          ids: [conflict1].concat(uuids),
+        },
       };
       var doc2 = {
         _id: 'doc',
         _rev: numRevs + '-' + conflict2,
         _revisions: {
           start: numRevs,
-          ids: [conflict2].concat(uuids)
-        }
+          ids: [conflict2].concat(uuids),
+        },
       };
       return remote.bulkDocs([doc1], {new_edits: false}).then(function () {
         return remote.replicate.to(db);
@@ -238,9 +238,9 @@ adapters.forEach(function (adapters) {
         if (!testUtils.isSyncGateway() || info.doc_count) {
           info.doc_count.should.equal(1, 'doc_count');
         }
-        return db.get('doc', {open_revs: "all"});
+        return db.get('doc', {open_revs: 'all'});
       }).then(function (doc) {
-        doc[0].ok._id.should.equal("doc");
+        doc[0].ok._id.should.equal('doc');
         doc[0].ok._rev.should.equal(doc1._rev);
         return remote.bulkDocs([doc2], {new_edits: false});
       }).then(function () {
@@ -253,20 +253,20 @@ adapters.forEach(function (adapters) {
         if (!testUtils.isSyncGateway() || info.doc_count) {
           info.doc_count.should.equal(1, 'doc_count');
         }
-        return db.get('doc', {open_revs: "all"});
+        return db.get('doc', {open_revs: 'all'});
       }).then(function (docs) {
-        // order with open_revs is unspecified
+        // Order with open_revs is unspecified
         docs.sort(function (a, b) {
           return a.ok._rev < b.ok._rev ? -1 : 1;
         });
-        docs[0].ok._id.should.equal("doc");
-        docs[1].ok._id.should.equal("doc");
+        docs[0].ok._id.should.equal('doc');
+        docs[1].ok._id.should.equal('doc');
         docs[0].ok._rev.should.equal(doc1._rev);
         docs[1].ok._rev.should.equal(doc2._rev);
       });
     });
 
-    it('issue 2779, undeletion when replicating', function () {
+      it('issue 2779, undeletion when replicating', function () {
       if (testUtils.isCouchMaster()) {
         return true;
       }
@@ -277,14 +277,14 @@ adapters.forEach(function (adapters) {
       function checkNumRevisions(num) {
         return db.get('foo', {
           open_revs: 'all',
-          revs: true
+          revs: true,
         }).then(function (fullDocs) {
           fullDocs[0].ok._revisions.ids.should.have.length(num,
             'local is correct');
         }).then(function () {
           return remote.get('foo', {
             open_revs: 'all',
-            revs: true
+            revs: true,
           });
         }).then(function (fullDocs) {
           fullDocs[0].ok._revisions.ids.should.have.length(num,
@@ -307,7 +307,7 @@ adapters.forEach(function (adapters) {
         return db.allDocs({keys: ['foo']});
       }).then(function (res) {
         if (testUtils.isSyncGateway() && !res.rows[0].value) {
-          return remote.get('foo', {open_revs:'all'}).then(function(doc){
+          return remote.get('foo', {open_revs: 'all'}).then(function(doc) {
             return db.put({_id: 'foo', _rev: doc[0].ok._rev});
           });
         } else {
@@ -321,10 +321,10 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test pull replication with many conflicts', function (done) {
+      it('Test pull replication with many conflicts', function (done) {
       var remote = new PouchDB(dbs.remote);
 
-      var numRevs = 200; // repro "url too long" error with open_revs
+      var numRevs = 200; // Repro "url too long" error with open_revs
       var docs = [];
       for (var i = 0; i < numRevs; i++) {
         var rev =  '1-' + PouchDB.utils.uuid(32, 16).toLowerCase();
@@ -341,7 +341,7 @@ adapters.forEach(function (adapters) {
           db.info(function (err, info) {
             should.not.exist(err);
             info.doc_count.should.equal(1, 'doc_count');
-            db.get('doc', {open_revs: "all"}, function (err, docs) {
+            db.get('doc', {open_revs: 'all'}, function (err, docs) {
               should.not.exist(err);
               var okDocs = docs.filter(function (doc) { return doc.ok; });
               okDocs.should.have.length(numRevs);
@@ -352,8 +352,8 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test correct # docs replicated with staggered revs', function (done) {
-      // ensure we don't just process all the open_revs with
+      it('Test correct # docs replicated with staggered revs', function (done) {
+      // Ensure we don't just process all the open_revs with
       // every replication; we should only process the current subset
       var remote = new PouchDB(dbs.remote);
 
@@ -376,7 +376,7 @@ adapters.forEach(function (adapters) {
               db.info(function (err, info) {
                 should.not.exist(err);
                 info.doc_count.should.equal(1, 'doc_count');
-                db.get('doc', {open_revs: "all"}, function (err, docs) {
+                db.get('doc', {open_revs: 'all'}, function (err, docs) {
                   should.not.exist(err);
                   var okDocs = docs.filter(function (doc) {
                     return doc.ok;
@@ -391,7 +391,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Local DB contains documents', function (done) {
+      it('Local DB contains documents', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       remote.bulkDocs({ docs: docs }, {}, function (err, _) {
@@ -420,7 +420,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test basic push replication', function (done) {
+      it('Test basic push replication', function (done) {
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs }, {}, function (err, results) {
         db.replicate.to(dbs.remote, function (err, result) {
@@ -429,7 +429,7 @@ adapters.forEach(function (adapters) {
           db.info(function (err, info) {
             verifyInfo(info, {
               update_seq: 3,
-              doc_count: 3
+              doc_count: 3,
             });
             done();
           });
@@ -437,7 +437,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test basic push replication take 2', function (done) {
+      it('Test basic push replication take 2', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       db.bulkDocs({ docs: docs }, {}, function (err, _) {
@@ -447,7 +447,7 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               verifyInfo(info, {
                 update_seq: 3,
-                doc_count: 3
+                doc_count: 3,
               });
               done();
             });
@@ -456,7 +456,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test basic push replication sequence tracking', function (done) {
+      it('Test basic push replication sequence tracking', function (done) {
       var db = new PouchDB(dbs.name);
       var doc1 = {_id: 'adoc', foo: 'bar'};
       db.put(doc1, function (err, result) {
@@ -469,7 +469,7 @@ adapters.forEach(function (adapters) {
               db.info(function (err, info) {
                 verifyInfo(info, {
                   update_seq: 1,
-                  doc_count: 1
+                  doc_count: 1,
                 });
                 done();
               });
@@ -479,7 +479,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test checkpoint', function (done) {
+      it('Test checkpoint', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       remote.bulkDocs({ docs: docs }, {}, function (err, results) {
@@ -493,7 +493,7 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               verifyInfo(info, {
                 update_seq: 3,
-                doc_count: 3
+                doc_count: 3,
               });
               done();
             });
@@ -502,13 +502,13 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test live pull checkpoint', function (done) {
+      it('Test live pull checkpoint', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       remote.bulkDocs({ docs: docs }).then(function () {
         var changeCount = docs.length;
         var changes = db.changes({
-          live: true
+          live: true,
         }).on('change', function (change) {
           if (--changeCount) {
             return;
@@ -521,7 +521,7 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               verifyInfo(info, {
                 update_seq: 3,
-                doc_count: 3
+                doc_count: 3,
               });
               done();
             });
@@ -531,33 +531,33 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test live push checkpoint', function (done) {
+      it('Test live push checkpoint', function (done) {
 
-      var db = new PouchDB(dbs.name);
-      var remote = new PouchDB(dbs.remote);
+        var db = new PouchDB(dbs.name);
+        var remote = new PouchDB(dbs.remote);
 
-      function complete(details) {
+        function complete(details) {
 
-        if (testUtils.isSyncGateway()) {
-          // TODO investigate why Sync Gateway sometimes reads a
-          // document. This seems to come up 1 more in the browser
-          // and 0 more in node, but I've seen 1 in node.
-          details.docs_read.should.be.within(0, 1);
-        } else {
-          details.docs_read.should.equal(0);
-        }
+          if (testUtils.isSyncGateway()) {
+            // TODO investigate why Sync Gateway sometimes reads a
+            // document. This seems to come up 1 more in the browser
+            // and 0 more in node, but I've seen 1 in node.
+            details.docs_read.should.be.within(0, 1);
+          } else {
+            details.docs_read.should.equal(0);
+          }
 
-        db.info(function (err, info) {
+          db.info(function (err, info) {
           verifyInfo(info, {
             update_seq: 3,
-            doc_count: 3
+            doc_count: 3,
           });
           done();
         });
-      }
+        }
 
-      var finished = 0;
-      function isFinished () {
+        var finished = 0;
+        function isFinished () {
         if (++finished !== 2) {
           return;
         }
@@ -566,10 +566,10 @@ adapters.forEach(function (adapters) {
           .on('complete', complete);
       }
 
-      db.bulkDocs({ docs: docs }).then(function () {
+        db.bulkDocs({ docs: docs }).then(function () {
 
-        var changeCount = docs.length;
-        function onChange(change) {
+          var changeCount = docs.length;
+          function onChange(change) {
           if (--changeCount) {
             return;
           }
@@ -577,19 +577,19 @@ adapters.forEach(function (adapters) {
           changes.cancel();
         }
 
-        var changes = remote.changes({live: true})
-          .on('error', done)
-          .on('change', onChange)
-          .on('complete', isFinished);
+          var changes = remote.changes({live: true})
+            .on('error', done)
+            .on('change', onChange)
+            .on('complete', isFinished);
 
-        var replication = db.replicate.to(remote, {live: true})
-          .on('error', done)
-          .on('complete', isFinished);
+          var replication = db.replicate.to(remote, {live: true})
+            .on('error', done)
+            .on('complete', isFinished);
 
-      }).catch(done);
-    });
+        }).catch(done);
+      });
 
-    it('Test checkpoint 2', function (done) {
+      it('Test checkpoint 2', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var doc = {_id: '3', count: 0};
@@ -608,7 +608,7 @@ adapters.forEach(function (adapters) {
                 db.info(function (err, info) {
                   verifyInfo(info, {
                     update_seq: 2,
-                    doc_count: 1
+                    doc_count: 1,
                   });
                   done();
                 });
@@ -619,7 +619,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test checkpoint 3 :)', function (done) {
+      it('Test checkpoint 3 :)', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var doc = {_id: '3', count: 0};
@@ -638,7 +638,7 @@ adapters.forEach(function (adapters) {
                 db.info(function (err, info) {
                   verifyInfo(info, {
                     update_seq: 3,
-                    doc_count: 1
+                    doc_count: 1,
                   });
                   done();
                 });
@@ -649,62 +649,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3136 open revs returned correctly 1', function () {
-      var db = new PouchDB(dbs.name);
-      var remote = new PouchDB(dbs.remote);
-
-      var doc = {_id: 'foo'};
-      var firstRev;
-
-      var chain = PouchDB.utils.Promise.resolve().then(function () {
-        return db.put(doc).then(function (info) {
-          firstRev = info.rev;
-        });
-      });
-
-      function addConflict(i) {
-        chain = chain.then(function () {
-          return db.bulkDocs({
-            docs: [{
-              _id: 'foo',
-              _rev: '2-' + i
-            }],
-            new_edits: false
-          });
-        });
-      }
-
-      for (var i = 0; i < 50; i++) {
-        addConflict(i);
-      }
-      return chain.then(function () {
-        var revs1;
-        var revs2;
-        return db.get('foo', {
-          conflicts: true,
-          revs: true,
-          open_revs: 'all'
-        }).then(function (res) {
-          revs1 = res.map(function (x) {
-            return x.ok._rev;
-          }).sort();
-          return db.replicate.to(remote);
-        }).then(function () {
-          return remote.get('foo', {
-            conflicts: true,
-            revs: true,
-            open_revs: 'all'
-          });
-        }).then(function (res) {
-          revs2 = res.map(function (x) {
-            return x.ok._rev;
-          }).sort();
-          revs1.should.deep.equal(revs2);
-        });
-      });
-    });
-
-    it('#3136 open revs returned correctly 2', function () {
+      it('#3136 open revs returned correctly 1', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
@@ -723,9 +668,8 @@ adapters.forEach(function (adapters) {
             docs: [{
               _id: 'foo',
               _rev: '2-' + i,
-              _deleted: (i % 3 === 1)
-            }],
-            new_edits: false
+            },],
+            new_edits: false,
           });
         });
       }
@@ -739,7 +683,7 @@ adapters.forEach(function (adapters) {
         return db.get('foo', {
           conflicts: true,
           revs: true,
-          open_revs: 'all'
+          open_revs: 'all',
         }).then(function (res) {
           revs1 = res.map(function (x) {
             return x.ok._rev;
@@ -749,7 +693,7 @@ adapters.forEach(function (adapters) {
           return remote.get('foo', {
             conflicts: true,
             revs: true,
-            open_revs: 'all'
+            open_revs: 'all',
           });
         }).then(function (res) {
           revs2 = res.map(function (x) {
@@ -760,36 +704,92 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3136 winningRev has a lower seq', function () {
+      it('#3136 open revs returned correctly 2', function () {
+      var db = new PouchDB(dbs.name);
+      var remote = new PouchDB(dbs.remote);
+
+      var doc = {_id: 'foo'};
+      var firstRev;
+
+      var chain = PouchDB.utils.Promise.resolve().then(function () {
+        return db.put(doc).then(function (info) {
+          firstRev = info.rev;
+        });
+      });
+
+      function addConflict(i) {
+        chain = chain.then(function () {
+          return db.bulkDocs({
+            docs: [{
+              _id: 'foo',
+              _rev: '2-' + i,
+              _deleted: (i % 3 === 1),
+            },],
+            new_edits: false,
+          });
+        });
+      }
+
+      for (var i = 0; i < 50; i++) {
+        addConflict(i);
+      }
+      return chain.then(function () {
+        var revs1;
+        var revs2;
+        return db.get('foo', {
+          conflicts: true,
+          revs: true,
+          open_revs: 'all',
+        }).then(function (res) {
+          revs1 = res.map(function (x) {
+            return x.ok._rev;
+          }).sort();
+          return db.replicate.to(remote);
+        }).then(function () {
+          return remote.get('foo', {
+            conflicts: true,
+            revs: true,
+            open_revs: 'all',
+          });
+        }).then(function (res) {
+          revs2 = res.map(function (x) {
+            return x.ok._rev;
+          }).sort();
+          revs1.should.deep.equal(revs2);
+        });
+      });
+    });
+
+      it('#3136 winningRev has a lower seq', function () {
       var db1 = new PouchDB(dbs.name);
       var db2 = new PouchDB(dbs.remote);
       var tree = [
         [
           {_id: 'foo', _rev: '1-a',
-           _revisions: {start: 1, ids: ['a']}},
+           _revisions: {start: 1, ids: ['a']},},
           {_id: 'foo', _rev: '2-e', _deleted: true,
-           _revisions: { start: 2, ids: ['e', 'a']}},
+           _revisions: { start: 2, ids: ['e', 'a']},},
           {_id: 'foo', _rev: '3-g',
-           _revisions: { start: 3, ids: ['g', 'e', 'a']}}
+           _revisions: { start: 3, ids: ['g', 'e', 'a']},},
         ],
         [
           {_id: 'foo', _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}},
+            _revisions: {start: 1, ids: ['a']},},
           {_id: 'foo', _rev: '2-b',
-            _revisions: {start: 2, ids: ['b', 'a']}},
+            _revisions: {start: 2, ids: ['b', 'a']},},
           {_id: 'foo', _rev: '3-c',
-            _revisions: {start: 3, ids: ['c', 'b', 'a']}}
+            _revisions: {start: 3, ids: ['c', 'b', 'a']},},
         ],
         [
           {_id: 'foo', _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}},
+            _revisions: {start: 1, ids: ['a']},},
           {_id: 'foo', _rev: '2-d',
-            _revisions: {start: 2, ids: ['d', 'a']}},
+            _revisions: {start: 2, ids: ['d', 'a']},},
           {_id: 'foo', _rev: '3-h',
-            _revisions: {start: 3, ids: ['h', 'd', 'a']}},
+            _revisions: {start: 3, ids: ['h', 'd', 'a']},},
           {_id: 'foo', _rev: '4-f',
-            _revisions: {start: 4, ids: ['f', 'h', 'd', 'a']}}
-        ]
+            _revisions: {start: 4, ids: ['f', 'h', 'd', 'a']},},
+        ],
       ];
 
       var chain = PouchDB.utils.Promise.resolve();
@@ -800,14 +800,14 @@ adapters.forEach(function (adapters) {
 
           return db1.bulkDocs({
             docs: docs,
-            new_edits: false
+            new_edits: false,
           }).then(function () {
             return db1.replicate.to(db2);
           }).then(function () {
             return db1.get('foo', {
               open_revs: 'all',
               revs: true,
-              conflicts: true
+              conflicts: true,
             });
           }).then(function (res1) {
             revs1 = res1.map(function (x) {
@@ -817,7 +817,7 @@ adapters.forEach(function (adapters) {
             return db2.get('foo', {
               open_revs: 'all',
               revs: true,
-              conflicts: true
+              conflicts: true,
             });
           }).then(function (res2) {
             revs2 = res2.map(function (x) {
@@ -830,36 +830,36 @@ adapters.forEach(function (adapters) {
       return chain;
     });
 
-    it('#3136 same changes with style=all_docs', function () {
+      it('#3136 same changes with style=all_docs', function () {
       var db1 = new PouchDB(dbs.name);
       var db2 = new PouchDB(dbs.remote);
       var tree = [
         [
           {_id: 'foo', _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}},
+            _revisions: {start: 1, ids: ['a']},},
           {_id: 'foo', _rev: '2-e', _deleted: true,
-            _revisions: { start: 2, ids: ['e', 'a']}},
+            _revisions: { start: 2, ids: ['e', 'a']},},
           {_id: 'foo', _rev: '3-g',
-            _revisions: { start: 3, ids: ['g', 'e', 'a']}}
+            _revisions: { start: 3, ids: ['g', 'e', 'a']},},
         ],
         [
           {_id: 'foo', _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}},
+            _revisions: {start: 1, ids: ['a']},},
           {_id: 'foo', _rev: '2-b',
-            _revisions: {start: 2, ids: ['b', 'a']}},
+            _revisions: {start: 2, ids: ['b', 'a']},},
           {_id: 'foo', _rev: '3-c',
-            _revisions: {start: 3, ids: ['c', 'b', 'a']}}
+            _revisions: {start: 3, ids: ['c', 'b', 'a']},},
         ],
         [
           {_id: 'foo', _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}},
+            _revisions: {start: 1, ids: ['a']},},
           {_id: 'foo', _rev: '2-d',
-            _revisions: {start: 2, ids: ['d', 'a']}},
+            _revisions: {start: 2, ids: ['d', 'a']},},
           {_id: 'foo', _rev: '3-h',
-            _revisions: {start: 3, ids: ['h', 'd', 'a']}},
+            _revisions: {start: 3, ids: ['h', 'd', 'a']},},
           {_id: 'foo', _rev: '4-f',
-            _revisions: {start: 4, ids: ['f', 'h', 'd', 'a']}}
-        ]
+            _revisions: {start: 4, ids: ['f', 'h', 'd', 'a']},},
+        ],
       ];
 
       var chain = PouchDB.utils.Promise.resolve();
@@ -870,7 +870,7 @@ adapters.forEach(function (adapters) {
 
           return db1.bulkDocs({
             docs: docs,
-            new_edits: false
+            new_edits: false,
           }).then(function () {
             return db1.replicate.to(db2);
           }).then(function () {
@@ -888,7 +888,7 @@ adapters.forEach(function (adapters) {
       return chain;
     });
 
-    it('#3136 style=all_docs with conflicts', function () {
+      it('#3136 style=all_docs with conflicts', function () {
       var docs1 = [
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
@@ -912,26 +912,26 @@ adapters.forEach(function (adapters) {
         rev2 = info.rev;
         return PouchDB.replicate(db, remote);
       }).then(function () {
-        // update remote once, local twice, then replicate from
+        // Update remote once, local twice, then replicate from
         // remote to local so the remote losing conflict is later in
         // the tree
         return db.put({
           _id: '3',
           _rev: rev2,
-          integer: 20
+          integer: 20,
         });
       }).then(function (resp) {
         var rev3Doc = {
           _id: '3',
           _rev: resp.rev,
-          integer: 30
+          integer: 30,
         };
         return db.put(rev3Doc);
       }).then(function () {
         var rev4Doc = {
           _id: '3',
           _rev: rev2,
-          integer: 100
+          integer: 100,
         };
         return remote.put(rev4Doc).then(function () {
           return PouchDB.replicate(remote, db).then(function () {
@@ -940,13 +940,13 @@ adapters.forEach(function (adapters) {
             return db.changes({
               include_docs: true,
               style: 'all_docs',
-              conflicts: true
+              conflicts: true,
             });
           }).then(function (localChanges) {
             return remote.changes({
               include_docs: true,
               style: 'all_docs',
-              conflicts: true
+              conflicts: true,
             }).then(function (remoteChanges) {
               localChanges = simplifyChanges(localChanges);
               remoteChanges = simplifyChanges(remoteChanges);
@@ -959,7 +959,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3136 style=all_docs with conflicts reversed', function () {
+      it('#3136 style=all_docs with conflicts reversed', function () {
       var docs1 = [
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
@@ -983,26 +983,26 @@ adapters.forEach(function (adapters) {
         rev2 = info.rev;
         return PouchDB.replicate(db, remote);
       }).then(function () {
-        // update remote once, local twice, then replicate from
+        // Update remote once, local twice, then replicate from
         // remote to local so the remote losing conflict is later in
         // the tree
         return db.put({
           _id: '3',
           _rev: rev2,
-          integer: 20
+          integer: 20,
         });
       }).then(function (resp) {
         var rev3Doc = {
           _id: '3',
           _rev: resp.rev,
-          integer: 30
+          integer: 30,
         };
         return db.put(rev3Doc);
       }).then(function () {
         var rev4Doc = {
           _id: '3',
           _rev: rev2,
-          integer: 100
+          integer: 100,
         };
         return remote.put(rev4Doc).then(function () {
           return PouchDB.replicate(remote, db).then(function () {
@@ -1012,14 +1012,14 @@ adapters.forEach(function (adapters) {
               include_docs: true,
               style: 'all_docs',
               conflicts: true,
-              descending: true
+              descending: true,
             });
           }).then(function (localChanges) {
             return remote.changes({
               include_docs: true,
               style: 'all_docs',
               conflicts: true,
-              descending: true
+              descending: true,
             }).then(function (remoteChanges) {
               localChanges = simplifyChanges(localChanges);
               remoteChanges = simplifyChanges(remoteChanges);
@@ -1032,7 +1032,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test checkpoint read only 3 :)', function (done) {
+      it('Test checkpoint read only 3 :)', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var put = function (doc) {
@@ -1041,9 +1041,9 @@ adapters.forEach(function (adapters) {
         });
       };
       var err = {
-        "message": "_writer access is required for this request",
-        "name": "unauthorized",
-        "status": 401
+        message: '_writer access is required for this request',
+        name: 'unauthorized',
+        status: 401,
       };
       db.put = function () {
         if (typeof arguments[arguments.length - 1] === 'function') {
@@ -1072,7 +1072,7 @@ adapters.forEach(function (adapters) {
         db.info(function (err, info) {
           verifyInfo(info, {
             update_seq: 3,
-            doc_count: 1
+            doc_count: 1,
           });
           done();
         });
@@ -1081,27 +1081,27 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Testing allDocs with some conflicts (issue #468)', function (done) {
+      it('Testing allDocs with some conflicts (issue #468)', function (done) {
       var db1 = new PouchDB(dbs.name);
       var db2 = new PouchDB(dbs.remote);
-      // we indeed needed replication to create failing test here!
+      // We indeed needed replication to create failing test here!
       var doc = {_id: 'foo', _rev: '1-a', value: 'generic'};
       db1.put(doc, { new_edits: false }, function (err, res) {
         db2.put(doc, { new_edits: false }, function (err, res) {
           testUtils.putAfter(db2, {
             _id: 'foo',
             _rev: '2-b',
-            value: 'db2'
+            value: 'db2',
           }, '1-a', function (err, res) {
             testUtils.putAfter(db1, {
               _id: 'foo',
               _rev: '2-c',
-              value: 'whatever'
+              value: 'whatever',
             }, '1-a', function (err, res) {
               testUtils.putAfter(db1, {
                 _id: 'foo',
                 _rev: '3-c',
-                value: 'db1'
+                value: 'db1',
               }, '2-c', function (err, res) {
                 db1.get('foo', function (err, doc) {
                   doc.value.should.equal('db1');
@@ -1116,14 +1116,14 @@ adapters.forEach(function (adapters) {
                             db1.allDocs({ include_docs: true },
                               function (err, res) {
                               res.rows.should.have.length.above(0, 'first');
-                              // redundant but we want to test it
+                              // Redundant but we want to test it
                               res.rows[0].doc.value.should.equal('db1');
                               db2.allDocs({ include_docs: true },
                                 function (err, res) {
                                 res.rows.should.have.length.above(0, 'second');
                                 res.rows[0].doc.value.should.equal('db1');
                                 db1.info(function (err, info) {
-                                  // if auto_compaction is enabled, will
+                                  // If auto_compaction is enabled, will
                                   // be 5 because 2-c goes "missing" and
                                   // the other db tries to re-put it
                                   if (!testUtils.isCouchMaster()) {
@@ -1133,7 +1133,7 @@ adapters.forEach(function (adapters) {
                                   db2.info(function (err, info2) {
                                     verifyInfo(info2, {
                                       update_seq: 3,
-                                      doc_count: 1
+                                      doc_count: 1,
                                     });
                                     done();
                                   });
@@ -1153,10 +1153,10 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    // CouchDB will not generate a conflict here, it uses a deteministic
-    // method to generate the revision number, however we cannot copy its
-    // method as it depends on erlangs internal data representation
-    it('Test basic conflict', function (done) {
+      // CouchDB will not generate a conflict here, it uses a deteministic
+      // method to generate the revision number, however we cannot copy its
+      // method as it depends on erlangs internal data representation
+      it('Test basic conflict', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var doc1 = {_id: 'adoc', foo: 'bar'};
@@ -1169,7 +1169,7 @@ adapters.forEach(function (adapters) {
               db.info(function (err, info) {
                 verifyInfo(info, {
                   update_seq: 1,
-                  doc_count: 1
+                  doc_count: 1,
                 });
                 done();
               });
@@ -1179,22 +1179,22 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test _conflicts key', function (done) {
+      it('Test _conflicts key', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var doc1 = {_id: 'adoc', foo: 'bar'};
       var doc2 = {_id: 'adoc', bar: 'baz'};
       var ddoc = {
-        "_id": "_design/conflicts",
+        _id: '_design/conflicts',
         views: {
           conflicts: {
             map: function (doc) {
               if (doc._conflicts) {
                 emit(doc._id, [doc._rev].concat(doc._conflicts));
               }
-            }.toString()
-          }
-        }
+            }.toString(),
+          },
+        },
       };
       remote.put(ddoc, function (err, localres) {
         db.put(doc1, function (err, localres) {
@@ -1202,13 +1202,13 @@ adapters.forEach(function (adapters) {
             db.replicate.to(dbs.remote, function (err, _) {
               remote.query('conflicts/conflicts', {
                 reduce: false,
-                conflicts: true
+                conflicts: true,
               }, function (_, res) {
                 res.rows.length.should.equal(1);
                 db.info(function (err, info) {
                   verifyInfo(info, {
                     update_seq: 1,
-                    doc_count: 1
+                    doc_count: 1,
                   });
                   done();
                 });
@@ -1219,7 +1219,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test basic live pull replication', function (done) {
+      it('Test basic live pull replication', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var doc1 = {_id: 'adoc', foo: 'bar'};
@@ -1233,16 +1233,16 @@ adapters.forEach(function (adapters) {
           db.info(function (err, info) {
             verifyInfo(info, {
               update_seq: 4,
-              doc_count: 4
+              doc_count: 4,
             });
             done();
           });
         };
         var rep = db.replicate.from(dbs.remote, {
-          live: true
+          live: true,
         }).on('complete', isFinished);
         var changes = db.changes({
-          live: true
+          live: true,
         }).on('change', function (change) {
           ++count;
           if (count === 3) {
@@ -1256,7 +1256,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test basic live push replication', function (done) {
+      it('Test basic live push replication', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var doc1 = {_id: 'adoc', foo: 'bar'};
@@ -1270,16 +1270,16 @@ adapters.forEach(function (adapters) {
           db.info(function (err, info) {
             verifyInfo(info, {
               update_seq: 4,
-              doc_count: 4
+              doc_count: 4,
             });
             done();
           });
         };
         var rep = remote.replicate.from(db, {
-          live: true
+          live: true,
         }).on('complete', isFinished);
         var changes = remote.changes({
-          live: true
+          live: true,
         }).on('change', function (change) {
           ++count;
           if (count === 3) {
@@ -1293,20 +1293,20 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('test-cancel-pull-replication', function (done) {
+      it('test-cancel-pull-replication', function (done) {
       new PouchDB(dbs.remote, function (err, remote) {
         var db = new PouchDB(dbs.name);
         var docs = [
           {_id: '0', integer: 0, string: '0'},
           {_id: '1', integer: 1, string: '1'},
-          {_id: '2', integer: 2, string: '2'}
+          {_id: '2', integer: 2, string: '2'},
         ];
         var doc1 = {_id: 'adoc', foo: 'bar' };
         var doc2 = {_id: 'anotherdoc', foo: 'baz'};
         remote.bulkDocs({ docs: docs }, {}, function (err, results) {
           var count = 0;
           var replicate = db.replicate.from(remote, {
-            live: true
+            live: true,
           }).on('complete', function () {
             remote.put(doc2);
             setTimeout(function () {
@@ -1314,13 +1314,13 @@ adapters.forEach(function (adapters) {
             }, 100);
           });
           var changes = db.changes({
-            live: true
+            live: true,
           }).on('complete', function (reason) {
             count.should.equal(4);
             db.info(function (err, info) {
               verifyInfo(info, {
                 update_seq: 4,
-                doc_count: 4
+                doc_count: 4,
               });
               done();
             });
@@ -1337,7 +1337,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test basic events', function (done) {
+      it('Test basic events', function (done) {
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs }).then(function () {
         db.replicate.to(dbs.remote)
@@ -1352,20 +1352,20 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replication filter', function (done) {
+      it('Replication filter', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var docs1 = [
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
         {_id: '2', integer: 2},
-        {_id: '3', integer: 3}
+        {_id: '3', integer: 3},
       ];
       remote.bulkDocs({ docs: docs1 }, function (err, info) {
         db.replicate.from(remote, {
           filter: function (doc) {
             return doc.integer % 2 === 0;
-          }
+          },
         }).on('error', done).on('complete', function (res) {
           db.allDocs(function (err, docs) {
             if (err) { done(err); }
@@ -1373,7 +1373,7 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               verifyInfo(info, {
                 update_seq: 2,
-                doc_count: 2
+                doc_count: 2,
               });
               done();
             });
@@ -1382,18 +1382,18 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replication with different filters', function (done) {
+      it('Replication with different filters', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var more_docs = [
         {_id: '3', integer: 3, string: '3'},
-        {_id: '4', integer: 4, string: '4'}
+        {_id: '4', integer: 4, string: '4'},
       ];
       remote.bulkDocs({ docs: docs }, function (err, info) {
         db.replicate.from(remote, {
           filter: function (doc) {
             return doc.integer % 2 === 0;
-          }
+          },
         }, function (err, response) {
           remote.bulkDocs({ docs: more_docs }, function (err, info) {
             db.replicate.from(remote, {}, function (err, response) {
@@ -1401,7 +1401,7 @@ adapters.forEach(function (adapters) {
               db.info(function (err, info) {
                 verifyInfo(info, {
                   update_seq: 5,
-                  doc_count: 5
+                  doc_count: 5,
                 });
                 done();
               });
@@ -1411,23 +1411,23 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replication doc ids', function (done) {
+      it('Replication doc ids', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var thedocs = [
         {_id: '3', integer: 3, string: '3'},
         {_id: '4', integer: 4, string: '4'},
-        {_id: '5', integer: 5, string: '5'}
+        {_id: '5', integer: 5, string: '5'},
       ];
       remote.bulkDocs({ docs: thedocs }, function (err, info) {
         db.replicate.from(remote, {
-          doc_ids: ['3', '4']
+          doc_ids: ['3', '4'],
         }, function (err, response) {
           response.docs_written.should.equal(2);
           db.info(function (err, info) {
             verifyInfo(info, {
               update_seq: 2,
-              doc_count: 2
+              doc_count: 2,
             });
             done();
           });
@@ -1435,50 +1435,50 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('2204 Invalid doc_ids', function () {
+      it('2204 Invalid doc_ids', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var thedocs = [
         {_id: '3', integer: 3, string: '3'},
         {_id: '4', integer: 4, string: '4'},
-        {_id: '5', integer: 5, string: '5'}
+        {_id: '5', integer: 5, string: '5'},
       ];
       return remote.bulkDocs({docs: thedocs}).then(function (err, info) {
         return db.replicate.from(remote, {doc_ids: 'foo'});
       }).catch(function (err) {
         err.name.should.equal('bad_request');
-        err.reason.should.equal("`doc_ids` filter parameter is not a list.");
+        err.reason.should.equal('`doc_ids` filter parameter is not a list.');
       });
     });
 
-    it('Replication since', function (done) {
+      it('Replication since', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var docs1 = [
         {_id: '1', integer: 1, string: '1'},
         {_id: '2', integer: 2, string: '2'},
-        {_id: '3', integer: 3, string: '3'}
+        {_id: '3', integer: 3, string: '3'},
       ];
       remote.bulkDocs({ docs: docs1 }, function (err, info) {
         remote.info(function (err, info) {
           var update_seq = info.update_seq;
           var docs2 = [
             {_id: '4', integer: 4, string: '4'},
-            {_id: '5', integer: 5, string: '5'}
+            {_id: '5', integer: 5, string: '5'},
           ];
           remote.bulkDocs({ docs: docs2 }, function (err, info) {
             db.replicate.from(remote, {
-              since: update_seq
+              since: update_seq,
             }).on('complete', function (result) {
               result.docs_written.should.equal(2);
               db.replicate.from(remote, {
-                since: 0
+                since: 0,
               }).on('complete', function (result) {
                 result.docs_written.should.equal(3);
                 db.info(function (err, info) {
                   verifyInfo(info, {
                     update_seq: 5,
-                    doc_count: 5
+                    doc_count: 5,
                   });
                   done();
                 });
@@ -1489,30 +1489,30 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replication with same filters', function (done) {
+      it('Replication with same filters', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var more_docs = [
         {_id: '3', integer: 3, string: '3'},
-        {_id: '4', integer: 4, string: '4'}
+        {_id: '4', integer: 4, string: '4'},
       ];
       remote.bulkDocs({ docs: docs }, function (err, info) {
         db.replicate.from(remote, {
           filter: function (doc) {
             return doc.integer % 2 === 0;
-          }
+          },
         }, function (err, response) {
           remote.bulkDocs({ docs: more_docs }, function (err, info) {
             db.replicate.from(remote, {
               filter: function (doc) {
                 return doc.integer % 2 === 0;
-              }
+              },
             }, function (err, response) {
               response.docs_written.should.equal(1);
               db.info(function (err, info) {
                 verifyInfo(info, {
                   update_seq: 3,
-                  doc_count: 3
+                  doc_count: 3,
                 });
                 done();
               });
@@ -1522,7 +1522,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replication with filter that leads to some empty batches (#2689)',
+      it('Replication with filter that leads to some empty batches (#2689)',
        function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -1532,14 +1532,14 @@ adapters.forEach(function (adapters) {
         {_id: '2', integer: 1},
         {_id: '3', integer: 1},
         {_id: '4', integer: 2},
-        {_id: '5', integer: 2}
+        {_id: '5', integer: 2},
       ];
       remote.bulkDocs({ docs: docs1 }, function (err, info) {
         db.replicate.from(remote, {
           batch_size: 2,
           filter: function (doc) {
             return doc.integer % 2 === 0;
-          }
+          },
         }).on('complete', function (res) {
           db.allDocs(function (err, docs) {
             if (err) { done(err); }
@@ -1547,7 +1547,7 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               verifyInfo(info, {
                 update_seq: 3,
-                doc_count: 3
+                doc_count: 3,
               });
               done();
             });
@@ -1556,7 +1556,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replication with deleted doc', function (done) {
+      it('Replication with deleted doc', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var docs1 = [
@@ -1564,7 +1564,7 @@ adapters.forEach(function (adapters) {
         {_id: '1', integer: 1},
         {_id: '2', integer: 2},
         {_id: '3', integer: 3},
-        {_id: '4', integer: 4, _deleted: true}
+        {_id: '4', integer: 4, _deleted: true},
       ];
       remote.bulkDocs({ docs: docs1 }, function (err, info) {
         db.replicate.from(remote, function () {
@@ -1573,7 +1573,7 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               verifyInfo(info, {
                 update_seq: 5,
-                doc_count: 4
+                doc_count: 4,
               });
               done();
             });
@@ -1582,7 +1582,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replication with doc deleted twice', function (done) {
+      it('Replication with doc deleted twice', function (done) {
       if (testUtils.isCouchMaster()) {
         return done();
       }
@@ -1602,13 +1602,13 @@ adapters.forEach(function (adapters) {
       }).then(function (res) {
         var row = res.rows[0];
         should.not.exist(row.error);
-        // set rev to latest so we go at the end (otherwise new
+        // Set rev to latest so we go at the end (otherwise new
         // rev is 1 and the subsequent remove below won't win)
         var doc = {
           _id: '0',
           integer: 10,
           string: '10',
-          _rev: row.value.rev
+          _rev: row.value.rev,
         };
         return remote.put(doc);
       }).then(function () {
@@ -1624,7 +1624,7 @@ adapters.forEach(function (adapters) {
         db.info(function (err, info) {
           verifyInfo(info, {
             update_seq: 4,
-            doc_count: 2
+            doc_count: 2,
           });
           done();
         });
@@ -1633,7 +1633,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replication notifications', function (done) {
+      it('Replication notifications', function (done) {
       var changes = 0;
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -1644,7 +1644,7 @@ adapters.forEach(function (adapters) {
           db.info(function (err, info) {
             verifyInfo(info, {
               update_seq: 3,
-              doc_count: 3
+              doc_count: 3,
             });
             done();
           });
@@ -1655,10 +1655,11 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replication with remote conflict', function (done) {
+      it('Replication with remote conflict', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var doc = {_id: 'test', test: 'Remote 1'}, winningRev;
+      var doc = {_id: 'test', test: 'Remote 1'};
+      var winningRev;
       remote.post(doc, function (err, resp) {
         doc._rev = resp.rev;
         PouchDB.replicate(remote, db, function (err, resp) {
@@ -1681,7 +1682,7 @@ adapters.forEach(function (adapters) {
                         db.info(function (err, info) {
                           verifyInfo(info, {
                             update_seq: 3,
-                            doc_count: 1
+                            doc_count: 1,
                           });
                           done();
                         });
@@ -1696,13 +1697,13 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replicate and modify three times', function () {
+      it('Replicate and modify three times', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
       var doc = {
         _id: 'foo',
-        generation: 1
+        generation: 1,
       };
 
       return db.put(doc).then(function (res) {
@@ -1738,7 +1739,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    function waitForChange(db, fun) {
+      function waitForChange(db, fun) {
       return new PouchDB.utils.Promise(function (resolve) {
         var remoteChanges = db.changes({live: true, include_docs: true});
         remoteChanges.on('change', function (change) {
@@ -1750,16 +1751,16 @@ adapters.forEach(function (adapters) {
       });
     }
 
-    it('live replication, starting offline', function () {
+      it('live replication, starting offline', function () {
 
-      var db = new PouchDB(dbs.name);
-      var remote = new PouchDB(dbs.remote);
-      var Promise = PouchDB.utils.Promise;
+        var db = new PouchDB(dbs.name);
+        var remote = new PouchDB(dbs.remote);
+        var Promise = PouchDB.utils.Promise;
 
-      // id() is the first thing called
-      var origId = remote.id;
-      var i = 0;
-      remote.id = function () {
+        // Id() is the first thing called
+        var origId = remote.id;
+        var i = 0;
+        remote.id = function () {
         // Reject only the first 3 times
         if (++i <= 3) {
           return Promise.reject(new Error('flunking you'));
@@ -1767,10 +1768,10 @@ adapters.forEach(function (adapters) {
         return origId.apply(remote, arguments);
       };
 
-      return remote.post({}).then(function() {
+        return remote.post({}).then(function() {
         return new Promise(function (resolve, reject) {
           var rep = db.replicate.from(remote, {
-            live: true
+            live: true,
           });
           rep.on('error', reject);
         }).then(function () {
@@ -1779,20 +1780,20 @@ adapters.forEach(function (adapters) {
             should.exist(err);
           });
       });
-    });
+      });
 
-    it('Replicates deleted docs (issue #2636)', function () {
+      it('Replicates deleted docs (issue #2636)', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
       var replication = db.replicate.to(remote, {
-        live: true
+        live: true,
       });
 
       return db.post({}).then(function (res) {
         var doc = {
           _id: res.id,
-          _rev: res.rev
+          _rev: res.rev,
         };
         return db.remove(doc);
       }).then(function () {
@@ -1811,12 +1812,12 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replicates deleted docs w/ delay (issue #2636)', function () {
+      it('Replicates deleted docs w/ delay (issue #2636)', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
       var replication = db.replicate.to(remote, {
-        live: true
+        live: true,
       });
 
       var doc;
@@ -1841,7 +1842,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replicates deleted docs w/ compaction', function () {
+      it('Replicates deleted docs w/ compaction', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
@@ -1869,19 +1870,19 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replicates modified docs (issue #2636)', function () {
+      it('Replicates modified docs (issue #2636)', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
       var replication = db.replicate.to(remote, {
-        live: true
+        live: true,
       });
 
       return db.post({}).then(function (res) {
         var doc = {
           _id: res.id,
           _rev: res.rev,
-          modified: 'yep'
+          modified: 'yep',
         };
 
         return db.put(doc);
@@ -1903,7 +1904,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replication of multiple remote conflicts (#789)', function (done) {
+      it('Replication of multiple remote conflicts (#789)', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var doc = {_id: '789', _rev: '1-a', value: 'test'};
@@ -1912,17 +1913,17 @@ adapters.forEach(function (adapters) {
           testUtils.putAfter(db, {
             _id: '789',
             _rev: '2-a',
-            value: 'v1'
+            value: 'v1',
           }, '1-a', function (err, res) {
             testUtils.putAfter(db, {
               _id: '789',
               _rev: '2-b',
-              value: 'v2'
+              value: 'v2',
             }, '1-a', function (err, res) {
               testUtils.putAfter(db, {
                 _id: '789',
                 _rev: '2-c',
-                value: 'v3'
+                value: 'v3',
               }, '1-a', function (err, res) {
                 callback();
               });
@@ -1933,7 +1934,7 @@ adapters.forEach(function (adapters) {
       createConflicts(remote, function () {
         db.replicate.from(remote, function (err, result) {
           result.ok.should.equal(true);
-          // in this situation, all the conflicting revisions should be read and
+          // In this situation, all the conflicting revisions should be read and
           // written to the target database (this is consistent with CouchDB)
           result.docs_written.should.equal(3);
           result.docs_read.should.equal(3);
@@ -1948,7 +1949,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replicate large number of docs', function (done) {
+      it('Replicate large number of docs', function (done) {
       if ('saucelabs' in testUtils.params()) {
         return done();
       }
@@ -1959,7 +1960,7 @@ adapters.forEach(function (adapters) {
       for (var i = 0; i < num; i++) {
         docs.push({
           _id: 'doc_' + i,
-          foo: 'bar_' + i
+          foo: 'bar_' + i,
         });
       }
       remote.bulkDocs({ docs: docs }, function (err, info) {
@@ -1969,7 +1970,7 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               verifyInfo(info, {
                 update_seq: 30,
-                doc_count: 30
+                doc_count: 30,
               });
               done();
             });
@@ -1978,10 +1979,10 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Ensure checkpoint after deletion', function (done) {
+      it('Ensure checkpoint after deletion', function (done) {
       var db1name = dbs.name;
-      var adoc = { '_id': 'adoc' };
-      var newdoc = { '_id': 'newdoc' };
+      var adoc = { _id: 'adoc' };
+      var newdoc = { _id: 'newdoc' };
       var db1 = new PouchDB(dbs.name);
       var db2 = new PouchDB(dbs.remote);
       db1.post(adoc, function () {
@@ -2001,14 +2002,14 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('issue #1001 cb as 3rd argument', function (done) {
+      it('issue #1001 cb as 3rd argument', function (done) {
       PouchDB.replicate('http://example.com', dbs.name, function (err, result) {
         should.exist(err);
         done();
       });
     });
 
-    it('issue #1001 cb as 4th argument', function (done) {
+      it('issue #1001 cb as 4th argument', function (done) {
       var url = 'http://example.com';
       PouchDB.replicate(url, dbs.name, {}, function (err, result) {
         should.exist(err);
@@ -2016,7 +2017,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('issue #909 Filtered replication bails at paging limit',
+      it('issue #909 Filtered replication bails at paging limit',
       function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -2025,7 +2026,7 @@ adapters.forEach(function (adapters) {
       for (var i = 0; i < num; i++) {
         docs.push({
           _id: 'doc_' + i,
-          foo: 'bar_' + i
+          foo: 'bar_' + i,
         });
       }
       num = 100;
@@ -2033,22 +2034,22 @@ adapters.forEach(function (adapters) {
       for (i = 0; i < num; i += 5) {
         docList.push('doc_' + i);
       }
-      // uncomment this line to test only docs higher than paging limit
+      // Uncomment this line to test only docs higher than paging limit
       docList = [
         'doc_33',
         'doc_60',
-        'doc_90'
+        'doc_90',
       ];
       remote.bulkDocs({ docs: docs }, {}, function (err, results) {
         db.replicate.from(dbs.remote, {
           live: false,
-          doc_ids: docList
+          doc_ids: docList,
         }, function (err, result) {
           result.docs_written.should.equal(docList.length);
           db.info(function (err, info) {
             verifyInfo(info, {
               update_seq: 3,
-              doc_count: 3
+              doc_count: 3,
             });
             done();
           });
@@ -2056,7 +2057,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it.skip('(#1240) - get error', function (done) {
+      it.skip('(#1240) - get error', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       // 10 test documents
@@ -2065,7 +2066,7 @@ adapters.forEach(function (adapters) {
       for (var i = 0; i < num; i++) {
         docs.push({
           _id: 'doc_' + i,
-          foo: 'bar_' + i
+          foo: 'bar_' + i,
         });
       }
       // Initialize remote with test documents
@@ -2104,44 +2105,44 @@ adapters.forEach(function (adapters) {
             var docs = [
               [
                 'doc_0',
-                true
+                true,
               ],
               [
                 'doc_1',
-                true
+                true,
               ],
               [
                 'doc_2',
-                true
+                true,
               ],
               [
                 'doc_3',
-                false
+                false,
               ],
               [
                 'doc_4',
-                false
+                false,
               ],
               [
                 'doc_5',
-                false
+                false,
               ],
               [
                 'doc_6',
-                false
+                false,
               ],
               [
                 'doc_7',
-                false
+                false,
               ],
               [
                 'doc_8',
-                false
+                false,
               ],
               [
                 'doc_9',
-                false
-              ]
+                false,
+              ],
             ];
             check_docs(docs.shift());
           });
@@ -2159,7 +2160,7 @@ adapters.forEach(function (adapters) {
                 db.info(function (err, info) {
                   verifyInfo(info, {
                     update_seq: 6,
-                    doc_count: 6
+                    doc_count: 6,
                   });
                   done();
                 });
@@ -2177,44 +2178,44 @@ adapters.forEach(function (adapters) {
             var docs = [
               [
                 'doc_0',
-                true
+                true,
               ],
               [
                 'doc_1',
-                true
+                true,
               ],
               [
                 'doc_2',
-                true
+                true,
               ],
               [
                 'doc_3',
-                true
+                true,
               ],
               [
                 'doc_4',
-                true
+                true,
               ],
               [
                 'doc_5',
-                true
+                true,
               ],
               [
                 'doc_6',
-                true
+                true,
               ],
               [
                 'doc_7',
-                true
+                true,
               ],
               [
                 'doc_8',
-                true
+                true,
               ],
               [
                 'doc_9',
-                true
-              ]
+                true,
+              ],
             ];
             check_docs(docs.shift());
           });
@@ -2224,7 +2225,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it.skip('Get error 2', function (done) {
+      it.skip('Get error 2', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       // 10 test documents
@@ -2233,7 +2234,7 @@ adapters.forEach(function (adapters) {
       for (var i = 0; i < num; i++) {
         docs.push({
           _id: 'doc_' + i,
-          foo: 'bar_' + i
+          foo: 'bar_' + i,
         });
       }
       // Initialize remote with test documents
@@ -2248,8 +2249,8 @@ adapters.forEach(function (adapters) {
               arguments[2].apply(null, [{
                 status: 500,
                 error: 'mock error',
-                reason: 'mock get failure'
-              }]);
+                reason: 'mock get failure',
+              },]);
             } else {
               get.apply(this, arguments);
             }
@@ -2283,44 +2284,44 @@ adapters.forEach(function (adapters) {
             var docs = [
               [
                 'doc_0',
-                true
+                true,
               ],
               [
                 'doc_1',
-                true
+                true,
               ],
               [
                 'doc_2',
-                true
+                true,
               ],
               [
                 'doc_3',
-                false
+                false,
               ],
               [
                 'doc_4',
-                false
+                false,
               ],
               [
                 'doc_5',
-                false
+                false,
               ],
               [
                 'doc_6',
-                false
+                false,
               ],
               [
                 'doc_7',
-                false
+                false,
               ],
               [
                 'doc_8',
-                false
+                false,
               ],
               [
                 'doc_9',
-                false
-              ]
+                false,
+              ],
             ];
             check_docs(docs.shift());
           });
@@ -2338,7 +2339,7 @@ adapters.forEach(function (adapters) {
                 db.info(function (err, info) {
                   verifyInfo(info, {
                     update_seq: 6,
-                    doc_count: 6
+                    doc_count: 6,
                   });
                   done();
                 });
@@ -2356,44 +2357,44 @@ adapters.forEach(function (adapters) {
             var docs = [
               [
                 'doc_0',
-                true
+                true,
               ],
               [
                 'doc_1',
-                true
+                true,
               ],
               [
                 'doc_2',
-                true
+                true,
               ],
               [
                 'doc_3',
-                true
+                true,
               ],
               [
                 'doc_4',
-                true
+                true,
               ],
               [
                 'doc_5',
-                true
+                true,
               ],
               [
                 'doc_6',
-                true
+                true,
               ],
               [
                 'doc_7',
-                true
+                true,
               ],
               [
                 'doc_8',
-                true
+                true,
               ],
               [
                 'doc_9',
-                true
-              ]
+                true,
+              ],
             ];
             check_docs(docs.shift());
           });
@@ -2403,7 +2404,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it.skip("error updating checkpoint", function (done) {
+      it.skip('error updating checkpoint', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       remote.bulkDocs({docs: docs}, {}, function (err, results) {
@@ -2418,8 +2419,8 @@ adapters.forEach(function (adapters) {
               arguments[1].apply(null, [{
                 status: 500,
                 error: 'mock get error',
-                reason: 'simulate an error updating the checkpoint'
-              }]);
+                reason: 'simulate an error updating the checkpoint',
+              },]);
             } else {
               get.apply(this, arguments);
             }
@@ -2433,7 +2434,7 @@ adapters.forEach(function (adapters) {
           db.info(function (err, info) {
             verifyInfo(info, {
               update_seq: 2,
-              doc_count: 2
+              doc_count: 2,
             });
             done();
           });
@@ -2441,53 +2442,53 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    // Should not start replication over if last_seq mismatches in checkpoints
-    // and it can be resolved some other way
-    it('#3999-1 should not start over if last_seq mismatches', function () {
+      // Should not start replication over if last_seq mismatches in checkpoints
+      // and it can be resolved some other way
+      it('#3999-1 should not start over if last_seq mismatches', function () {
 
-      var source = new PouchDB(dbs.remote);
-      var mismatch = false;
-      var failWrite = false;
-      var checkpoint;
-      var checkpointCount = 0;
+        var source = new PouchDB(dbs.remote);
+        var mismatch = false;
+        var failWrite = false;
+        var checkpoint;
+        var checkpointCount = 0;
 
-      // 1. This is where we fake the mismatch:
-      var putte = source.put;
+        // 1. This is where we fake the mismatch:
+        var putte = source.put;
 
-      source.put = function (doc) {
+        source.put = function (doc) {
 
-        // We need the checkpoint id so we can inspect it later
-        if (/local/.test(doc._id)) {
-          checkpointCount++;
-          checkpoint = doc._id;
-        }
+          // We need the checkpoint id so we can inspect it later
+          if (/local/.test(doc._id)) {
+            checkpointCount++;
+            checkpoint = doc._id;
+          }
 
-        if (failWrite && checkpointCount > 1) {
-          return PouchDB.utils.Promise.reject({
+          if (failWrite && checkpointCount > 1) {
+            return PouchDB.utils.Promise.reject({
             status: 0,
-            message: 'Database encountered an unknown error'
+            message: 'Database encountered an unknown error',
           });
-        }
+          }
 
-        return putte.apply(this, arguments);
-      };
+          return putte.apply(this, arguments);
+        };
 
-      // 2. We measure that the replication starts in the expected
-      // place in the 'changes' function
-      var changes = source.changes;
-      source.changes = function (opts) {
+        // 2. We measure that the replication starts in the expected
+        // place in the 'changes' function
+        var changes = source.changes;
+        source.changes = function (opts) {
 
-        if (mismatch) {
-          opts.since.should.not.equal(0);
-        }
-        return changes.apply(source, arguments);
-      };
+          if (mismatch) {
+            opts.since.should.not.equal(0);
+          }
+          return changes.apply(source, arguments);
+        };
 
 
-      var doc = { _id: '3', count: 0 };
-      var put;
+        var doc = { _id: '3', count: 0 };
+        var put;
 
-      return source.put({ _id: '4', count: 1 }, {}).then(function() {
+        return source.put({ _id: '4', count: 1 }, {}).then(function() {
         return source.put(doc, {});
       }).then(function(_put) {
         put = _put;
@@ -2503,7 +2504,7 @@ adapters.forEach(function (adapters) {
         var target = new PouchDB(dbs.name);
         return PouchDB.utils.Promise.all([
           target.get(checkpoint),
-          source.get(checkpoint)
+          source.get(checkpoint),
         ]);
       }).then(function(res) {
         res[0].session_id.should.equal(res[1].session_id);
@@ -2517,41 +2518,42 @@ adapters.forEach(function (adapters) {
         mismatch = true;
         return source.replicate.to(dbs.name);
       });
-    });
+      });
 
-    it('#3999-2 should start over if no common session is found', function () {
+      it('#3999-2 should start over if no common session is found',
+         function () {
 
-      var source = new PouchDB(dbs.remote);
-      var mismatch = false;
-      var writeStrange = false;
-      var checkpoint;
-      var checkpointCount = 0;
+           var source = new PouchDB(dbs.remote);
+           var mismatch = false;
+           var writeStrange = false;
+           var checkpoint;
+           var checkpointCount = 0;
 
-      // 1. This is where we fake the mismatch:
-      var putte = source.put;
-      source.put = function (doc) {
+           // 1. This is where we fake the mismatch:
+           var putte = source.put;
+           source.put = function (doc) {
 
-        // We need the checkpoint id so we can inspect it later
-        if (/local/.test(doc._id)) {
-          checkpointCount++;
-          checkpoint = doc._id;
-        }
+             // We need the checkpoint id so we can inspect it later
+             if (/local/.test(doc._id)) {
+               checkpointCount++;
+               checkpoint = doc._id;
+             }
 
-        if (!writeStrange || checkpointCount < 1) {
-          return putte.apply(this, arguments);
-        }
+             if (!writeStrange || checkpointCount < 1) {
+               return putte.apply(this, arguments);
+             }
 
-        // Change session id of source checkpoint to mismatch
-        doc.session_id = "aaabbbbb";
-        doc.history[0].session_id = "aaabbbbb";
-        return putte.apply(this, arguments);
-      };
+             // Change session id of source checkpoint to mismatch
+             doc.session_id = 'aaabbbbb';
+             doc.history[0].session_id = 'aaabbbbb';
+             return putte.apply(this, arguments);
+           };
 
-      // 2. We measure that the replication starts in the expected
-      // place in the 'changes' function
-      var changes = source.changes;
-      source.changes = function (opts) {
-        if(mismatch) {
+           // 2. We measure that the replication starts in the expected
+           // place in the 'changes' function
+           var changes = source.changes;
+           source.changes = function (opts) {
+        if (mismatch) {
           // We expect this replication to start over,
           // so the correct value of since is 0
           // if it's higher, the replication read the checkpoint
@@ -2563,10 +2565,10 @@ adapters.forEach(function (adapters) {
         return changes.apply(source, arguments);
       };
 
-      var doc = { _id: '3', count: 0 };
-      var put;
+           var doc = { _id: '3', count: 0 };
+           var put;
 
-      return source.put(doc, {}).then(function (_put) {
+           return source.put(doc, {}).then(function (_put) {
         put = _put;
         writeStrange = true;
         // Do one replication, to not start from 0
@@ -2579,7 +2581,7 @@ adapters.forEach(function (adapters) {
         var target = new PouchDB(dbs.name);
         return PouchDB.utils.Promise.all([
           target.get(checkpoint),
-          source.get(checkpoint)
+          source.get(checkpoint),
         ]);
       }).then(function (res) {
         // [0] = target checkpoint, [1] = source checkpoint
@@ -2593,49 +2595,50 @@ adapters.forEach(function (adapters) {
         mismatch = true;
         return source.replicate.to(dbs.name);
       });
-    });
+         });
 
-    it('#3999-3 should not start over if common session is found', function () {
+      it('#3999-3 should not start over if common session is found',
+         function () {
 
-      var source = new PouchDB(dbs.remote);
-      var mismatch = false;
-      var writeStrange = false;
-      var checkpoint;
-      var checkpointCount = 0;
+           var source = new PouchDB(dbs.remote);
+           var mismatch = false;
+           var writeStrange = false;
+           var checkpoint;
+           var checkpointCount = 0;
 
-      // 1. This is where we fake the mismatch:
-      var putte = source.put;
-      source.put = function (doc) {
+           // 1. This is where we fake the mismatch:
+           var putte = source.put;
+           source.put = function (doc) {
 
-        // We need the checkpoint id so we can inspect it later
-        if (/local/.test(doc._id)) {
-          checkpointCount++;
-          checkpoint = doc._id;
-        }
+             // We need the checkpoint id so we can inspect it later
+             if (/local/.test(doc._id)) {
+               checkpointCount++;
+               checkpoint = doc._id;
+             }
 
-        if (!writeStrange || checkpointCount < 1) {
-          return putte.apply(this, arguments);
-        }
+             if (!writeStrange || checkpointCount < 1) {
+               return putte.apply(this, arguments);
+             }
 
-        // Change session id of source checkpoint to mismatch
-        var session = doc.session_id;
+             // Change session id of source checkpoint to mismatch
+             var session = doc.session_id;
 
-        doc.session_id = "aaabbbbb";
-        doc.history[0].session_id = "aaabbbbb";
-        // put a working session id in the history:
-        doc.history.push({
+             doc.session_id = 'aaabbbbb';
+             doc.history[0].session_id = 'aaabbbbb';
+             // Put a working session id in the history:
+             doc.history.push({
           session_id: session,
-          last_seq: doc.last_seq
+          last_seq: doc.last_seq,
         });
-        return putte.apply(this, arguments);
-      };
+             return putte.apply(this, arguments);
+           };
 
-      // 2. We measure that the replication starts in the expected
-      // place in the 'changes' function
-      var changes = source.changes;
+           // 2. We measure that the replication starts in the expected
+           // place in the 'changes' function
+           var changes = source.changes;
 
-      source.changes = function (opts) {
-        if(mismatch) {
+           source.changes = function (opts) {
+        if (mismatch) {
           // If we resolve to 0, the checkpoint resolver has not
           // been going through the sessions
           opts.since.should.not.equal(0);
@@ -2647,10 +2650,10 @@ adapters.forEach(function (adapters) {
       };
 
 
-      var doc = { _id: '3', count: 0 };
-      var put;
+           var doc = { _id: '3', count: 0 };
+           var put;
 
-      return source.put(doc, {}).then(function (_put) {
+           return source.put(doc, {}).then(function (_put) {
         put = _put;
         // Do one replication, to not start from 0
         writeStrange = true;
@@ -2662,7 +2665,7 @@ adapters.forEach(function (adapters) {
         var target = new PouchDB(dbs.name);
         return PouchDB.utils.Promise.all([
           target.get(checkpoint),
-          source.get(checkpoint)
+          source.get(checkpoint),
         ]);
       }).then(function (res) {
         // [0] = target checkpoint, [1] = source checkpoint
@@ -2676,53 +2679,53 @@ adapters.forEach(function (adapters) {
         mismatch = true;
         return source.replicate.to(dbs.name);
       });
-    });
+         });
 
-    it('#3999-4 should "upgrade" an old checkpoint', function() {
+      it('#3999-4 should "upgrade" an old checkpoint', function() {
 
-      var secondRound = false;
-      var writeStrange = false;
-      var checkpoint;
-      var checkpointCount = 0;
-      var source = new PouchDB(dbs.remote);
-      var target = new PouchDB(dbs.name);
+        var secondRound = false;
+        var writeStrange = false;
+        var checkpoint;
+        var checkpointCount = 0;
+        var source = new PouchDB(dbs.remote);
+        var target = new PouchDB(dbs.name);
 
-      // 1. This is where we fake the mismatch:
-      var putter = function (doc) {
+        // 1. This is where we fake the mismatch:
+        var putter = function (doc) {
 
-        // We need the checkpoint id so we can inspect it later
-        if (/local/.test(doc._id)) {
-          checkpointCount++;
-          checkpoint = doc._id;
-        }
+          // We need the checkpoint id so we can inspect it later
+          if (/local/.test(doc._id)) {
+            checkpointCount++;
+            checkpoint = doc._id;
+          }
 
-        var args = [].slice.call(arguments, 0);
+          var args = [].slice.call(arguments, 0);
 
-        // Write an old-style checkpoint on the first replication:
-        if (writeStrange && checkpointCount >= 1) {
-          var newDoc = {
+          // Write an old-style checkpoint on the first replication:
+          if (writeStrange && checkpointCount >= 1) {
+            var newDoc = {
             _id: doc._id,
-            last_seq: doc.last_seq
+            last_seq: doc.last_seq,
           };
 
-          args.shift();
-          args.unshift(newDoc);
-        }
+            args.shift();
+            args.unshift(newDoc);
+          }
 
-        if (this === source) {
-          return sourcePut.apply(this, args);
-        }
+          if (this === source) {
+            return sourcePut.apply(this, args);
+          }
 
-        return targetPut.apply(this, args);
-      };
+          return targetPut.apply(this, args);
+        };
 
-      var sourcePut = source.put;
-      source.put = putter;
-      var targetPut =  target.put;
-      target.put = putter;
+        var sourcePut = source.put;
+        source.put = putter;
+        var targetPut =  target.put;
+        target.put = putter;
 
-      var changes = source.changes;
-      source.changes = function (opts) {
+        var changes = source.changes;
+        source.changes = function (opts) {
         if (secondRound) {
           // Test 1: Check that we read the old style local doc
           // and didn't start from 0
@@ -2731,9 +2734,9 @@ adapters.forEach(function (adapters) {
         return changes.apply(source, arguments);
       };
 
-       var doc = { _id: '3', count: 0 };
+        var doc = { _id: '3', count: 0 };
 
-       return source.put({ _id: '4', count: 1 }, {}).then(function () {
+        return source.put({ _id: '4', count: 1 }, {}).then(function () {
          writeStrange = true;
          return source.replicate.to(target);
        }).then(function() {
@@ -2743,12 +2746,12 @@ adapters.forEach(function (adapters) {
          var target = new PouchDB(dbs.name);
          return PouchDB.utils.Promise.all([
            target.get(checkpoint),
-           source.get(checkpoint)
+           source.get(checkpoint),
          ]);
        }).then(function (res) {
-        // [0] = target checkpoint, [1] = source checkpoint
-        should.not.exist(res[0].session_id);
-        should.not.exist(res[1].session_id);
+         // [0] = target checkpoint, [1] = source checkpoint
+         should.not.exist(res[0].session_id);
+         should.not.exist(res[1].session_id);
 
          return source.put(doc, {});
        }).then(function () {
@@ -2765,9 +2768,9 @@ adapters.forEach(function (adapters) {
          res.version.should.equal(1);
          res.session_id.should.be.a('string');
        });
-    });
+      });
 
-    it('(#1307) - replicate empty database', function (done) {
+      it('(#1307) - replicate empty database', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       db.replicate.from(remote, function (err, result) {
@@ -2777,7 +2780,7 @@ adapters.forEach(function (adapters) {
         db.info(function (err, info) {
           verifyInfo(info, {
             update_seq: 0,
-            doc_count: 0
+            doc_count: 0,
           });
           done();
         });
@@ -2785,9 +2788,9 @@ adapters.forEach(function (adapters) {
     });
 
 
-    // This fails as it somehow triggers an xhr abort in the http adapter in
-    // node which doesnt have xhr....
-    it.skip('Syncing should stop if one replication fails (issue 838)',
+      // This fails as it somehow triggers an xhr abort in the http adapter in
+      // node which doesnt have xhr....
+      it.skip('Syncing should stop if one replication fails (issue 838)',
       function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -2795,7 +2798,7 @@ adapters.forEach(function (adapters) {
       var doc2 = {_id: 'anotherdoc', foo: 'baz'};
       var finished = false;
       var replications = db.replicate.sync(remote, {
-        live: true
+        live: true,
       }).on('complete',  function () {
         if (finished) {
           return;
@@ -2815,7 +2818,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it("Reporting write failures (#942)", function (done) {
+      it('Reporting write failures (#942)', function (done) {
       var docs = [{_id: 'a', _rev: '1-a'}, {_id: 'b', _rev: '1-b'}];
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -2834,7 +2837,7 @@ adapters.forEach(function (adapters) {
               };
             }
 
-            // mock a successful write for the first
+            // Mock a successful write for the first
             // document and a failed write for the second
             var doc = content.docs[0];
 
@@ -2850,8 +2853,8 @@ adapters.forEach(function (adapters) {
               callback(null, [{
                 id: doc._id,
                 error: 'internal server error',
-                reason: 'test document write error'
-              }]);
+                reason: 'test document write error',
+              },]);
             } else {
               bulkDocs.apply(remote, [content, opts, callback]);
             }
@@ -2868,7 +2871,7 @@ adapters.forEach(function (adapters) {
           remote.bulkDocs = bulkDocs;
           db.replicate.to(remote, {batch_size: 1, retry: false},
                           function (err, result) {
-            // checkpoint should not be moved past first doc
+            // Checkpoint should not be moved past first doc
             // should continue from this point and retry second doc
             result.docs_read.should.equal(1, 'second replication, docs_read');
             result.docs_written.should
@@ -2878,7 +2881,7 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               verifyInfo(info, {
                 update_seq: 2,
-                doc_count: 2
+                doc_count: 2,
               });
               done();
             });
@@ -2887,7 +2890,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it("Reporting write failures if whole saving fails (#942)",
+      it('Reporting write failures if whole saving fails (#942)',
       function (done) {
       var docs = [{_id: 'a', _rev: '1-a'}, {_id: 'b', _rev: '1-b'}];
       var db = new PouchDB(dbs.name);
@@ -2922,7 +2925,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test consecutive replications with different query_params',
+      it('Test consecutive replications with different query_params',
       function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -2931,7 +2934,7 @@ adapters.forEach(function (adapters) {
         {_id: '1', integer: 1, string: '1'},
         {_id: '2', integer: 2, string: '2'},
         {_id: '3', integer: 3, string: '3'},
-        {_id: '4', integer: 5, string: '5'}
+        {_id: '4', integer: 5, string: '5'},
       ];
       remote.bulkDocs({ docs: myDocs }, {}, function (err, results) {
         var filterFun = function (doc, req) {
@@ -2943,12 +2946,12 @@ adapters.forEach(function (adapters) {
         };
         db.replicate.from(dbs.remote, {
           filter: filterFun,
-          query_params: { 'even': true }
+          query_params: { even: true },
         }, function (err, result) {
           result.docs_written.should.equal(2);
           db.replicate.from(dbs.remote, {
             filter: filterFun,
-            query_params: { 'even': false }
+            query_params: { even: false },
           }, function (err, result) {
             result.docs_written.should.equal(3);
             done();
@@ -2957,7 +2960,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('Test consecutive replications with different query_params and promises',
+      it('Test consecutive repls with different query_params and promises',
       function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -2966,7 +2969,7 @@ adapters.forEach(function (adapters) {
         {_id: '1', integer: 1, string: '1'},
         {_id: '2', integer: 2, string: '2'},
         {_id: '3', integer: 3, string: '3'},
-        {_id: '4', integer: 5, string: '5'}
+        {_id: '4', integer: 5, string: '5'},
       ];
       var filterFun;
       remote.bulkDocs({ docs: myDocs }).then(function (results) {
@@ -2979,13 +2982,13 @@ adapters.forEach(function (adapters) {
         };
         return db.replicate.from(dbs.remote, {
           filter: filterFun,
-          query_params: { 'even': true }
+          query_params: { even: true },
         });
       }).then(function (result) {
         result.docs_written.should.equal(2);
         return db.replicate.from(dbs.remote, {
           filter: filterFun,
-          query_params: { 'even': false }
+          query_params: { even: false },
         });
       }).then(function (result) {
         result.docs_written.should.equal(3);
@@ -2993,7 +2996,8 @@ adapters.forEach(function (adapters) {
       }).catch(done);
     });
 
-    it('Test consecutive replications with different doc_ids', function (done) {
+      it('Test consecutive replications with different doc_ids',
+         function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var myDocs = [
@@ -3001,25 +3005,25 @@ adapters.forEach(function (adapters) {
         {_id: '1', integer: 1, string: '1'},
         {_id: '2', integer: 2, string: '2'},
         {_id: '3', integer: 3, string: '3'},
-        {_id: '4', integer: 5, string: '5'}
+        {_id: '4', integer: 5, string: '5'},
       ];
       remote.bulkDocs({ docs: myDocs }, {}, function (err, results) {
         db.replicate.from(dbs.remote, {
-          doc_ids: ['0', '4']
+          doc_ids: ['0', '4'],
         }, function (err, result) {
           result.docs_written.should.equal(2);
           db.replicate.from(dbs.remote, {
-            doc_ids: ['1', '2', '3']
+            doc_ids: ['1', '2', '3'],
           }, function (err, result) {
             result.docs_written.should.equal(3);
             db.replicate.from(dbs.remote, {
-              doc_ids: ['5']
+              doc_ids: ['5'],
             }, function (err, result) {
               result.docs_written.should.equal(0);
               db.info(function (err, info) {
                 verifyInfo(info, {
                   update_seq: 5,
-                  doc_count: 5
+                  doc_count: 5,
                 });
                 done();
               });
@@ -3029,11 +3033,11 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('doc count after multiple replications', function (done) {
+      it('doc count after multiple replications', function (done) {
 
-      var runs = 2;
-      // helper. remove each document in db and bulk load docs into same
-      function rebuildDocuments(db, docs, callback) {
+        var runs = 2;
+        // Helper. remove each document in db and bulk load docs into same
+        function rebuildDocuments(db, docs, callback) {
         db.allDocs({ include_docs: true }, function (err, response) {
           var count = 0;
           var limit = response.rows.length;
@@ -3051,8 +3055,8 @@ adapters.forEach(function (adapters) {
         });
       }
 
-      // helper.
-      function bulkLoad(db, docs, callback) {
+        // Helper.
+        function bulkLoad(db, docs, callback) {
         db.bulkDocs({ docs: docs }, function (err, results) {
           if (err) {
             console.error('Unable to bulk load docs.  Err: ' +
@@ -3063,11 +3067,11 @@ adapters.forEach(function (adapters) {
         });
       }
 
-      // The number of workflow cycles to perform. 2+ was always failing
-      // reason for this test.
-      var workflow = function (name, remote, x) {
-        // some documents.  note that the variable Date component,
-        //thisVaries, makes a difference.
+        // The number of workflow cycles to perform. 2+ was always failing
+        // reason for this test.
+        var workflow = function (name, remote, x) {
+        // Some documents.  note that the variable Date component,
+        // thisVaries, makes a difference.
         // when the document is otherwise static, couch gets the same hash
         // when calculating revision.
         // and the revisions get messed up in pouch
@@ -3076,38 +3080,38 @@ adapters.forEach(function (adapters) {
             _id: '0',
             integer: 0,
             thisVaries: new Date(),
-            common: true
+            common: true,
           },
           {
             _id: '1',
             integer: 1,
             thisVaries: new Date(),
-            common: true
+            common: true,
           },
           {
             _id: '2',
             integer: 2,
             thisVaries: new Date(),
-            common: true
+            common: true,
           },
           {
             _id: '3',
             integer: 3,
             thisVaries: new Date(),
-            common: true
+            common: true,
           },
           {
-            "_id": "_design/common",
+            _id: '_design/common',
             views: {
               common: {
                 map: function (doc) {
                   if (doc.common) {
                     emit(doc._id, doc._rev);
                   }
-                }.toString()
-              }
-            }
-          }
+                }.toString(),
+              },
+            },
+          },
         ];
         var dbr = new PouchDB(remote);
         rebuildDocuments(dbr, docs, function () {
@@ -3123,7 +3127,7 @@ adapters.forEach(function (adapters) {
                   db.info(function (err, info) {
                     verifyInfo(info, {
                       update_seq: 5,
-                      doc_count: 5
+                      doc_count: 5,
                     });
                     done();
                   });
@@ -3134,10 +3138,10 @@ adapters.forEach(function (adapters) {
         });
       };
 
-      workflow(dbs.name, dbs.remote, runs);
-    });
+        workflow(dbs.name, dbs.remote, runs);
+      });
 
-    it('issue #300 rev id unique per doc', function (done) {
+      it('issue #300 rev id unique per doc', function (done) {
       var remote = new PouchDB(dbs.remote);
       var db = new PouchDB(dbs.name);
       var docs = [{ _id: 'a' }, { _id: 'b' }];
@@ -3150,7 +3154,7 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               verifyInfo(info, {
                 update_seq: 2,
-                doc_count: 2
+                doc_count: 2,
               });
               done();
             });
@@ -3159,7 +3163,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('issue #585 Store checkpoint on target db.', function (done) {
+      it('issue #585 Store checkpoint on target db.', function (done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var docs = [{ _id: 'a' }, { _id: 'b' }];
@@ -3172,7 +3176,7 @@ adapters.forEach(function (adapters) {
               db.info(function (err, info) {
                 verifyInfo(info, {
                   update_seq: 2,
-                  doc_count: 2
+                  doc_count: 2,
                 });
                 done();
               });
@@ -3181,19 +3185,19 @@ adapters.forEach(function (adapters) {
         });
       });
     });
-    it('should work with a read only source', function (done) {
+      it('should work with a read only source', function (done) {
       var src = new PouchDB(dbs.name);
       var target = new PouchDB(dbs.remote);
       var err = {
-        "message": "_writer access is required for this request",
-        "name": "unauthorized",
-        "status": 401
+        message: '_writer access is required for this request',
+        name: 'unauthorized',
+        status: 401,
       };
       src.bulkDocs({docs: [
         {_id: '0', integer: 0, string: '0'},
         {_id: '1', integer: 1, string: '1'},
         {_id: '2', integer: 2, string: '2'},
-      ]}).then(function () {
+      ],}).then(function () {
         src.put = function () {
           if (typeof arguments[arguments.length - 1] === 'function') {
             arguments[arguments.length - 1](err);
@@ -3206,7 +3210,7 @@ adapters.forEach(function (adapters) {
         target.info(function (err, info) {
           verifyInfo(info, {
             update_seq: 3,
-            doc_count: 3
+            doc_count: 3,
           });
           done();
         });
@@ -3215,7 +3219,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('issue #2342 update_seq after replication', function (done) {
+      it('issue #2342 update_seq after replication', function (done) {
       var docs = [];
       for (var i = 0; i < 10; i++) {
         docs.push({_id: i.toString()});
@@ -3236,11 +3240,11 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               db.changes({
                 descending: true,
-                limit: 1
+                limit: 1,
               }).on('change', function (change) {
                 change.changes.should.have.length(1);
 
-                // not a valid assertion in CouchDB 2.0
+                // Not a valid assertion in CouchDB 2.0
                 if (!testUtils.isCouchMaster()) {
                   change.seq.should.equal(info.update_seq);
                 }
@@ -3252,20 +3256,21 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('issue #2393 update_seq after new_edits + replication', function (done) {
-      // the assertions below do not hold in a clustered CouchDB
+      it('issue #2393 update_seq after new_edits + replication',
+         function (done) {
+      // The assertions below do not hold in a clustered CouchDB
       if (testUtils.isCouchMaster()) {
         return done();
       }
 
       var docs = [{
-        '_id': 'foo',
-        '_rev': '1-x',
-        '_revisions': {
-          'start': 1,
-          'ids': ['x']
-        }
-      }];
+        _id: 'foo',
+        _rev: '1-x',
+        _revisions: {
+          start: 1,
+          ids: ['x'],
+        },
+      },];
 
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -3278,7 +3283,7 @@ adapters.forEach(function (adapters) {
             db.info(function (err, info) {
               var changes = db.changes({
                 descending: true,
-                limit: 1
+                limit: 1,
               }).on('change', function (change) {
                 change.changes.should.have.length(1);
                 change.seq.should.equal(info.update_seq);
@@ -3287,7 +3292,7 @@ adapters.forEach(function (adapters) {
                 remote.info(function (err, info) {
                   var rchanges = remote.changes({
                     descending: true,
-                    limit: 1
+                    limit: 1,
                   }).on('change', function (change) {
                     change.changes.should.have.length(1);
                     change.seq.should.equal(info.update_seq);
@@ -3303,7 +3308,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('should cancel for live replication', function (done) {
+      it('should cancel for live replication', function (done) {
       var remote = new PouchDB(dbs.remote);
       var db = new PouchDB(dbs.name);
       var rep = db.replicate.from(remote, {live: true});
@@ -3326,24 +3331,24 @@ adapters.forEach(function (adapters) {
       remote.put({}, 'hazaa');
     });
 
-    it('#2970 should replicate remote database w/ deleted conflicted revs',
+      it('#2970 should replicate remote database w/ deleted conflicted revs',
         function (done) {
       var local = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
-      var docid = "mydoc";
+      var docid = 'mydoc';
 
       function uuid() {
         return PouchDB.utils.uuid(32, 16).toLowerCase();
       }
 
-      // create a bunch of rando, good revisions
+      // Create a bunch of rando, good revisions
       var numRevs = 5;
       var uuids = [];
       for (var i = 0; i < numRevs - 1; i++) {
         uuids.push(uuid());
       }
 
-      // good branch
+      // Good branch
       // this branch is one revision ahead of the conflicted branch
       var a_conflict = uuid();
       var a_burner = uuid();
@@ -3354,11 +3359,11 @@ adapters.forEach(function (adapters) {
         _rev: a_rev_num + '-' + a_latest,
         _revisions: {
           start: a_rev_num,
-          ids: [ a_latest, a_burner, a_conflict ].concat(uuids)
-        }
+          ids: [ a_latest, a_burner, a_conflict ].concat(uuids),
+        },
       };
 
-      // conflicted deleted branch
+      // Conflicted deleted branch
       var b_conflict = uuid();
       var b_deleted = uuid();
       var b_rev_num = numRevs + 1;
@@ -3368,19 +3373,19 @@ adapters.forEach(function (adapters) {
         _deleted: true,
         _revisions: {
           start: b_rev_num,
-          ids: [ b_deleted, b_conflict ].concat(uuids)
-        }
+          ids: [ b_deleted, b_conflict ].concat(uuids),
+        },
       };
 
-      // push the conflicted documents
+      // Push the conflicted documents
       return remote.bulkDocs([ a_doc, b_doc ], {
-        new_edits: false
+        new_edits: false,
       }).then(function () {
         return remote.get(docid, { open_revs: 'all' }).then(function (revs) {
           revs.length.should.equal(2, 'correct number of open revisions');
           revs[0].ok._id.should.equal(docid, 'rev 1, correct document id');
           revs[1].ok._id.should.equal(docid, 'rev 2, correct document id');
-          // order of revisions is not specified
+          // Order of revisions is not specified
           ((
             revs[0].ok._rev === a_doc._rev &&
             revs[1].ok._rev === b_doc._rev) ||
@@ -3391,7 +3396,7 @@ adapters.forEach(function (adapters) {
         });
       })
 
-      // attempt to replicate
+      // Attempt to replicate
       .then(function () {
         return local.replicate.from(remote).then(function (result) {
           result.ok.should.equal(true, 'replication result was ok');
@@ -3406,23 +3411,23 @@ adapters.forEach(function (adapters) {
     });
 
 
-    // test validate_doc_update, which is a reasonable substitute
-    // for testing design doc replication of non-admin users, since we
-    // always test in admin party
-    it('#2268 dont stop replication if single forbidden', function (done) {
+      // Test validate_doc_update, which is a reasonable substitute
+      // for testing design doc replication of non-admin users, since we
+      // always test in admin party
+      it('#2268 dont stop replication if single forbidden', function (done) {
 
-      testUtils.isCouchDB(function (isCouchDB) {
+        testUtils.isCouchDB(function (isCouchDB) {
         if (adapters[1] !== 'http' || !isCouchDB) {
           return done();
         }
 
         var ddoc = {
-          "_id": "_design/validate",
-          "validate_doc_update": function (newDoc) {
+          _id: '_design/validate',
+          validate_doc_update: function (newDoc) {
             if (newDoc.foo === undefined) {
               throw {forbidden: 'Document must have a foo.'};
             }
-          }.toString()
+          }.toString(),
         };
 
         var remote = new PouchDB(dbs.remote);
@@ -3448,22 +3453,22 @@ adapters.forEach(function (adapters) {
           res.total_rows.should.equal(4); // 3 plus the invalid doc
         }).then(done);
       });
-    });
+      });
 
-    it('#2268 dont stop replication if single unauth', function (done) {
+      it('#2268 dont stop replication if single unauth', function (done) {
 
-      testUtils.isCouchDB(function (isCouchDB) {
+        testUtils.isCouchDB(function (isCouchDB) {
         if (adapters[1] !== 'http' || !isCouchDB) {
           return done();
         }
 
         var ddoc = {
-          "_id": "_design/validate",
-          "validate_doc_update": function (newDoc) {
+          _id: '_design/validate',
+          validate_doc_update: function (newDoc) {
             if (newDoc.foo === undefined) {
               throw {unauthorized: 'Document must have a foo.'};
             }
-          }.toString()
+          }.toString(),
         };
 
         var remote = new PouchDB(dbs.remote);
@@ -3489,22 +3494,22 @@ adapters.forEach(function (adapters) {
           res.total_rows.should.equal(4); // 3 plus the invalid doc
         }).then(done);
       });
-    });
+      });
 
-    it('#2268 dont stop replication if many unauth', function (done) {
+      it('#2268 dont stop replication if many unauth', function (done) {
 
-      testUtils.isCouchDB(function (isCouchDB) {
+        testUtils.isCouchDB(function (isCouchDB) {
         if (adapters[1] !== 'http' || !isCouchDB) {
           return done();
         }
 
         var ddoc = {
-          "_id": "_design/validate",
-          "validate_doc_update": function (newDoc) {
+          _id: '_design/validate',
+          validate_doc_update: function (newDoc) {
             if (newDoc.foo === undefined) {
               throw {unauthorized: 'Document must have a foo.'};
             }
-          }.toString()
+          }.toString(),
         };
 
         var remote = new PouchDB(dbs.remote);
@@ -3512,7 +3517,7 @@ adapters.forEach(function (adapters) {
 
         return remote.put(ddoc).then(function () {
           var docs = [{foo: 'bar'}, {foo: 'baz'}, {}, {foo: 'quux'}, {}, {},
-                      {foo: 'toto'}, {}];
+                      {foo: 'toto'}, {},];
           return db.bulkDocs({docs: docs});
         }).then(function () {
           return db.replicate.to(dbs.remote);
@@ -3531,11 +3536,11 @@ adapters.forEach(function (adapters) {
           res.total_rows.should.equal(8); // 4 valid and 4 invalid
         }).then(done);
       });
-    });
+      });
 
-    // Errors from validate_doc_update should have the message
-    // defined in PourchDB.Errors instead of the thrown value.
-    it('#3171 Forbidden validate_doc_update error message',
+      // Errors from validate_doc_update should have the message
+      // defined in PourchDB.Errors instead of the thrown value.
+      it('#3171 Forbidden validate_doc_update error message',
         function (done) {
       testUtils.isCouchDB(function (isCouchDB) {
         if (adapters[1] !== 'http' || !isCouchDB) {
@@ -3543,14 +3548,14 @@ adapters.forEach(function (adapters) {
         }
 
         var ddoc = {
-          "_id": "_design/validate",
-          "validate_doc_update": function (newDoc) {
+          _id: '_design/validate',
+          validate_doc_update: function (newDoc) {
             if (newDoc.foo === 'object') {
               throw { forbidden: { foo: 'is object' } };
             } else if (newDoc.foo === 'string') {
               throw { forbidden: 'Document foo is string' };
             }
-          }.toString()
+          }.toString(),
         };
 
         var remote = new PouchDB(dbs.remote);
@@ -3586,23 +3591,24 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it.skip('Test immediate replication canceling', function (done) {
-      //See  http://pouchdb.com/guides/replication.html : Cancelling replication
-      var db = new PouchDB(dbs.name);
-      var remote = new PouchDB(dbs.remote);
-      var replicationHandler = remote.replicate.to(db, {
-        live: true,
-        retry: true
+      it.skip('Test immediate replication canceling', function (done) {
+        // See  http://pouchdb.com/guides/replication.html
+        // : Cancelling replication
+        var db = new PouchDB(dbs.name);
+        var remote = new PouchDB(dbs.remote);
+        var replicationHandler = remote.replicate.to(db, {
+          live: true,
+          retry: true,
+        });
+
+        replicationHandler.on('complete', function () {
+          done();
+        }).on('error', done);
+
+        replicationHandler.cancel();
       });
 
-      replicationHandler.on('complete', function () {
-        done();
-      }).on('error', done);
-
-      replicationHandler.cancel();
-    });
-
-    it('#3171 Unauthorized validate_doc_update error message',
+      it('#3171 Unauthorized validate_doc_update error message',
         function (done) {
       testUtils.isCouchDB(function (isCouchDB) {
         if (adapters[1] !== 'http' || !isCouchDB) {
@@ -3610,14 +3616,14 @@ adapters.forEach(function (adapters) {
         }
 
         var ddoc = {
-          "_id": "_design/validate",
-          "validate_doc_update": function (newDoc) {
+          _id: '_design/validate',
+          validate_doc_update: function (newDoc) {
             if (newDoc.foo === 'object') {
               throw { unauthorized: { foo: 'is object' } };
             } else if (newDoc.foo === 'string') {
               throw { unauthorized: 'Document foo is string' };
             }
-          }.toString()
+          }.toString(),
         };
 
         var remote = new PouchDB(dbs.remote);
@@ -3653,7 +3659,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3070 Doc IDs with validate_doc_update errors',
+      it('#3070 Doc IDs with validate_doc_update errors',
         function (done) {
       testUtils.isCouchDB(function (isCouchDB) {
         if (adapters[1] !== 'http' || !isCouchDB) {
@@ -3661,12 +3667,12 @@ adapters.forEach(function (adapters) {
         }
 
         var ddoc = {
-          "_id": "_design/validate",
-          "validate_doc_update": function (newDoc) {
+          _id: '_design/validate',
+          validate_doc_update: function (newDoc) {
             if (newDoc.foo) {
               throw { unauthorized: 'go away, no picture' };
             }
-          }.toString()
+          }.toString(),
         };
 
         var remote = new PouchDB(dbs.remote);
@@ -3703,9 +3709,9 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3270 triggers "denied" events', function (done) {
+      it('#3270 triggers "denied" events', function (done) {
       testUtils.isCouchDB(function (isCouchDB) {
-        if (/*adapters[1] !== 'http' || */!isCouchDB) {
+        if (/*Adapters[1] !== 'http' || */!isCouchDB) {
           return done();
         }
         if (adapters[0] !== 'local' || adapters[1] !== 'http') {
@@ -3714,12 +3720,12 @@ adapters.forEach(function (adapters) {
 
         var deniedErrors = [];
         var ddoc = {
-          "_id": "_design/validate",
-          "validate_doc_update": function (newDoc) {
+          _id: '_design/validate',
+          validate_doc_update: function (newDoc) {
             if (newDoc.foo) {
               throw { unauthorized: 'go away, no picture' };
             }
-          }.toString()
+          }.toString(),
         };
 
         var remote = new PouchDB(dbs.remote);
@@ -3729,7 +3735,7 @@ adapters.forEach(function (adapters) {
           var docs = [
             {_id: 'foo1', foo: 'string'},
             {_id: 'nofoo'},
-            {_id: 'foo2', foo: 'object'}
+            {_id: 'foo2', foo: 'object'},
           ];
           return db.bulkDocs({docs: docs});
         }).then(function () {
@@ -3749,7 +3755,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3606 - live replication with filtered ddoc', function () {
+      it('#3606 - live replication with filtered ddoc', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var Promise = PouchDB.utils.Promise;
@@ -3759,17 +3765,17 @@ adapters.forEach(function (adapters) {
           filters: {
             myfilter: function (doc) {
               return doc.name === 'barbara';
-            }.toString()
-          }
+            }.toString(),
+          },
         },
         {_id: 'a', name: 'anna'},
         {_id: 'b', name: 'barbara'},
-        {_id: 'c', name: 'charlie'}
+        {_id: 'c', name: 'charlie'},
       ]).then(function () {
         return new Promise(function (resolve, reject) {
           var replicate = remote.replicate.to(db, {
             filter: 'myddoc/myfilter',
-            live: true
+            live: true,
           }).on('change', function () {
             replicate.cancel();
           }).on('complete', resolve)
@@ -3783,7 +3789,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3606 - live repl with filtered ddoc+query_params', function () {
+      it('#3606 - live repl with filtered ddoc+query_params', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var Promise = PouchDB.utils.Promise;
@@ -3793,18 +3799,18 @@ adapters.forEach(function (adapters) {
           filters: {
             myfilter: function (doc, req) {
               return doc.name === req.query.name;
-            }.toString()
-          }
+            }.toString(),
+          },
         },
         {_id: 'a', name: 'anna'},
         {_id: 'b', name: 'barbara'},
-        {_id: 'c', name: 'charlie'}
+        {_id: 'c', name: 'charlie'},
       ]).then(function () {
         return new Promise(function (resolve, reject) {
           var replicate = remote.replicate.to(db, {
             filter: 'myddoc/myfilter',
             query_params: {name: 'barbara'},
-            live: true
+            live: true,
           }).on('change', function () {
             replicate.cancel();
           }).on('complete', resolve)
@@ -3818,27 +3824,27 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3606 - live repl with doc_ids', function () {
+      it('#3606 - live repl with doc_ids', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var Promise = PouchDB.utils.Promise;
 
       return remote.bulkDocs([{
         _id: '_design/myddoc',
-          filters: {
+        filters: {
             myfilter: function (doc, req) {
               return doc.name === req.query.name;
-            }.toString()
-          }
-        },
-        {_id: 'a', name: 'anna'},
-        {_id: 'b', name: 'barbara'},
-        {_id: 'c', name: 'charlie'}
+            }.toString(),
+          },
+      },
+      {_id: 'a', name: 'anna'},
+      {_id: 'b', name: 'barbara'},
+      {_id: 'c', name: 'charlie'},
       ]).then(function () {
         return new Promise(function (resolve, reject) {
           var replicate = remote.replicate.to(db, {
             doc_ids: ['b'],
-            live: true
+            live: true,
           }).on('change', function () {
             replicate.cancel();
           }).on('complete', resolve)
@@ -3852,7 +3858,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3606 - live repl with view', function () {
+      it('#3606 - live repl with view', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var Promise = PouchDB.utils.Promise;
@@ -3865,19 +3871,19 @@ adapters.forEach(function (adapters) {
               if (doc.name === 'barbara') {
                 emit(doc._id, null);
               }
-            }.toString()
-          }
-        }
+            }.toString(),
+          },
+        },
       },
         {_id: 'a', name: 'anna'},
         {_id: 'b', name: 'barbara'},
-        {_id: 'c', name: 'charlie'}
+        {_id: 'c', name: 'charlie'},
       ]).then(function () {
         return new Promise(function (resolve, reject) {
           var replicate = remote.replicate.to(db, {
             filter: '_view',
             view: 'myddoc/mymap',
-            live: true
+            live: true,
           }).on('change', function () {
             replicate.cancel();
           }).on('complete', resolve)
@@ -3891,12 +3897,12 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3569 - 409 during replication', function () {
+      it('#3569 - 409 during replication', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var Promise = PouchDB.utils.Promise;
 
-      // we know we're easily going to go over that limit
+      // We know we're easily going to go over that limit
       // because of all the parallel replications we're doing
       db.setMaxListeners(100);
 
@@ -3923,7 +3929,7 @@ adapters.forEach(function (adapters) {
         }),
         timeoutPromise(2, function () {
           return db.replicate.to(remote);
-        })
+        }),
       ]).then(function () {
         return db.info();
       }).then(function (localInfo) {
@@ -3933,7 +3939,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it('#3270 triggers "change" events with .docs property', function(done) {
+      it('#3270 triggers "change" events with .docs property', function(done) {
       var replicatedDocs = [];
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs }, {})
@@ -3957,7 +3963,7 @@ adapters.forEach(function (adapters) {
       .catch(done);
     });
 
-    it('#3543 replication with a ddoc filter', function () {
+      it('#3543 replication with a ddoc filter', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
@@ -3966,12 +3972,12 @@ adapters.forEach(function (adapters) {
         filters: {
           myfilter: function (doc) {
             return doc._id === 'a';
-          }.toString()
-        }
+          }.toString(),
+        },
       },
         {_id: 'a'},
         {_id: 'b'},
-        {_id: 'c'}
+        {_id: 'c'},
       ]).then(function () {
         return remote.replicate.to(db, {filter: 'myddoc/myfilter'});
       }).then(function () {
@@ -3982,7 +3988,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it("#3578 replication with a ddoc filter w/ _deleted=true", function() {
+      it('#3578 replication with a ddoc filter w/ _deleted=true', function() {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
@@ -3991,12 +3997,12 @@ adapters.forEach(function (adapters) {
         filters: {
           myfilter: function (doc) {
             return doc._id === 'a' || doc._id === 'b';
-          }.toString()
-        }
+          }.toString(),
+        },
       },
         {_id: 'a'},
         {_id: 'b'},
-        {_id: 'c'}
+        {_id: 'c'},
       ]).then(function () {
         return remote.replicate.to(db, {filter: 'myddoc/myfilter'});
       }).then(function() {
@@ -4017,7 +4023,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it("#3578 replication with a ddoc filter w/ remove()", function() {
+      it('#3578 replication with a ddoc filter w/ remove()', function() {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
@@ -4026,19 +4032,19 @@ adapters.forEach(function (adapters) {
         filters: {
           myfilter: function (doc) {
             return doc._id === 'a' || doc._id === 'b';
-          }.toString()
-        }
+          }.toString(),
+        },
       },
         {_id: 'a'},
         {_id: 'b'},
-        {_id: 'c'}
+        {_id: 'c'},
       ]).then(function () {
         return remote.replicate.to(db, {filter: 'myddoc/myfilter'});
       }).then(function() {
         return db.allDocs();
       }).then(function (res) {
         res.rows.should.have.length(2);
-      }).then(function(){
+      }).then(function() {
         return remote.get('a');
       }).then(function(doc) {
         return remote.remove(doc);
@@ -4051,7 +4057,7 @@ adapters.forEach(function (adapters) {
       });
     });
 
-    it("#2454 info() call breaks taskqueue", function(done) {
+      it('#2454 info() call breaks taskqueue', function(done) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
@@ -4067,11 +4073,11 @@ adapters.forEach(function (adapters) {
     });
 
 
-    it('4094 cant fetch server uuid', function (done) {
+      it('4094 cant fetch server uuid', function (done) {
 
-      var ajax = PouchDB.utils.ajax;
+        var ajax = PouchDB.utils.ajax;
 
-      PouchDB.utils.ajax = function (opts, cb) {
+        PouchDB.utils.ajax = function (opts, cb) {
         var uri = PouchDB.utils.parseUri(opts.url);
         if (uri.path === '/') {
           cb(new Error('flunking you'));
@@ -4080,47 +4086,47 @@ adapters.forEach(function (adapters) {
         }
       };
 
-      var db = new PouchDB(dbs.name);
-      var remote = new PouchDB(dbs.remote);
+        var db = new PouchDB(dbs.name);
+        var remote = new PouchDB(dbs.remote);
 
-      var _complete = 0;
-      function complete() {
+        var _complete = 0;
+        function complete() {
         if (++_complete === 2) {
           PouchDB.utils.ajax = ajax;
           done();
         }
       }
 
-      var rep = db.replicate.from(remote, {live: true, retry: true})
-        .on('complete', complete);
+        var rep = db.replicate.from(remote, {live: true, retry: true})
+          .on('complete', complete);
 
-      var changes = db.changes({live: true}).on('change', function (change) {
+        var changes = db.changes({live: true}).on('change', function (change) {
         rep.cancel();
         changes.cancel();
       }).on('complete', complete);
 
-      remote.post({a: 'doc'});
-    });
+        remote.post({a: 'doc'});
+      });
 
-    it('#4293 Triggers extra replication events', function (done) {
+      it('#4293 Triggers extra replication events', function (done) {
 
-      var db = new PouchDB(dbs.name);
-      var remote = new PouchDB(dbs.remote);
+        var db = new PouchDB(dbs.name);
+        var remote = new PouchDB(dbs.remote);
 
-      var hasChange = false;
-      function change() {
+        var hasChange = false;
+        function change() {
         hasChange = true;
       }
 
-      var _complete = 0;
-      function complete() {
+        var _complete = 0;
+        function complete() {
         if (++_complete === 2) {
           hasChange.should.equal(false);
           done();
         }
       }
 
-      function paused() {
+        function paused() {
         // Because every setTimeout should be justified :)
         // We are testing a negative, that there are no extra events
         // triggered from our replication, cancelling the replication will
@@ -4134,109 +4140,109 @@ adapters.forEach(function (adapters) {
         }, 100);
       }
 
-      var push = remote.replicate.from(db, {live: true})
-        .on('paused', paused)
-        .on('complete', complete);
+        var push = remote.replicate.from(db, {live: true})
+          .on('paused', paused)
+          .on('complete', complete);
 
-      var pull = db.replicate.from(remote, {live: true})
-        .on('change', change)
-        .on('complete', complete);
+        var pull = db.replicate.from(remote, {live: true})
+          .on('change', change)
+          .on('complete', complete);
 
-      db.post({a: 'doc'});
-    });
+        db.post({a: 'doc'});
+      });
 
-    it('#4276 Triggers paused error', function (done) {
+      it('#4276 Triggers paused error', function (done) {
 
-      if (!(/http/.test(dbs.remote) && !/http/.test(dbs.name))) {
-        return done();
-      }
+        if (!(/http/.test(dbs.remote) && !/http/.test(dbs.name))) {
+          return done();
+        }
 
-      var err = {
-        "message": "_writer access is required for this request",
-        "name": "unauthorized",
-        "status": 401
+        var err = {
+        message: '_writer access is required for this request',
+        name: 'unauthorized',
+        status: 401,
       };
 
-      var ajax = PouchDB.utils.ajax;
-      PouchDB.utils.ajax = function (opts, cb) {
+        var ajax = PouchDB.utils.ajax;
+        PouchDB.utils.ajax = function (opts, cb) {
         cb(err);
       };
 
-      var db = new PouchDB(dbs.name);
-      var remote = new PouchDB(dbs.remote);
+        var db = new PouchDB(dbs.name);
+        var remote = new PouchDB(dbs.remote);
 
-      db.bulkDocs([{foo: 'bar'}]).then(function() {
+        db.bulkDocs([{foo: 'bar'}]).then(function() {
 
-        var repl = db.replicate.to(remote, {live: true, retry: true});
+          var repl = db.replicate.to(remote, {live: true, retry: true});
 
-        repl.on('paused', function(err) {
+          repl.on('paused', function(err) {
           if (err) {
             repl.cancel();
           }
         });
-        repl.on('complete', function(res) {
+          repl.on('complete', function(res) {
           PouchDB.utils.ajax = ajax;
           done();
         });
+        });
       });
-    });
 
-    it('Heartbeat gets passed', function (done) {
+      it('Heartbeat gets passed', function (done) {
 
-      if (!(/http/.test(dbs.remote) && !/http/.test(dbs.name))) {
-        return done();
-      }
+        if (!(/http/.test(dbs.remote) && !/http/.test(dbs.name))) {
+          return done();
+        }
 
-      var seenHeartBeat = false;
-      var ajax = PouchDB.utils.ajax;
-      PouchDB.utils.ajax = function (opts, cb) {
+        var seenHeartBeat = false;
+        var ajax = PouchDB.utils.ajax;
+        PouchDB.utils.ajax = function (opts, cb) {
         if (/heartbeat/.test(opts.url)) {
           seenHeartBeat = true;
         }
         ajax.apply(this, arguments);
       };
 
-      var db = new PouchDB(dbs.name);
-      var remote = new PouchDB(dbs.remote);
+        var db = new PouchDB(dbs.name);
+        var remote = new PouchDB(dbs.remote);
 
-      return remote.bulkDocs([{foo: 'bar'}]).then(function() {
+        return remote.bulkDocs([{foo: 'bar'}]).then(function() {
         return db.replicate.from(remote, {heartbeat: 10});
       }).then(function() {
         seenHeartBeat.should.equal(true);
         PouchDB.utils.ajax = ajax;
         done();
       });
-    });
+      });
 
-    it('Timeout gets passed', function (done) {
+      it('Timeout gets passed', function (done) {
 
-      if (!(/http/.test(dbs.remote) && !/http/.test(dbs.name))) {
-        return done();
-      }
+        if (!(/http/.test(dbs.remote) && !/http/.test(dbs.name))) {
+          return done();
+        }
 
-      var seenTimeout = false;
-      var ajax = PouchDB.utils.ajax;
-      PouchDB.utils.ajax = function (opts, cb) {
-        // the http adapter takes 5s off the provided timeout
+        var seenTimeout = false;
+        var ajax = PouchDB.utils.ajax;
+        PouchDB.utils.ajax = function (opts, cb) {
+        // The http adapter takes 5s off the provided timeout
         if (/timeout=15000/.test(opts.url)) {
           seenTimeout = true;
         }
         ajax.apply(this, arguments);
       };
 
-      var db = new PouchDB(dbs.name);
-      var remote = new PouchDB(dbs.remote);
+        var db = new PouchDB(dbs.name);
+        var remote = new PouchDB(dbs.remote);
 
-      return remote.bulkDocs([{foo: 'bar'}]).then(function() {
+        return remote.bulkDocs([{foo: 'bar'}]).then(function() {
         return db.replicate.from(remote, {timeout: 20000});
       }).then(function() {
         seenTimeout.should.equal(true);
         PouchDB.utils.ajax = ajax;
         done();
       });
-    });
+      });
 
-  });
+    });
 });
 
 // This test only needs to run for one configuration, and it slows stuff
@@ -4258,7 +4264,7 @@ downAdapters.map(function (adapter) {
 
     it('replicate from down server test', function (done) {
       var source = new PouchDB('http://infiniterequest.com', {
-        ajax: {timeout: 10}
+        ajax: {timeout: 10},
       });
       var target = new PouchDB(dbs.name);
       source.replicate.to(target, function (err, changes) {

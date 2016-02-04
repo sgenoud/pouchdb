@@ -11,8 +11,8 @@ require('chai').should();
 
 describe('test.gen-replication-id.js', function () {
   it('is different with different `doc_ids` option', function () {
-    var opts2 = {doc_ids: ["1"]};
-    var opts1 = {doc_ids: ["2"]};
+    var opts2 = {doc_ids: ['1']};
+    var opts1 = {doc_ids: ['2']};
 
     return genReplicationId(sourceDb, targetDb, opts1).then(
       function (replicationId1) {
@@ -27,8 +27,8 @@ describe('test.gen-replication-id.js', function () {
 
   it('ignores the order of array elements in the `doc_ids` option',
     function () {
-      var opts1 = {doc_ids: ["1", "2", "3"]};
-      var opts2 = {doc_ids: ["3", "2", "1"]};
+      var opts1 = {doc_ids: ['1', '2', '3']};
+      var opts2 = {doc_ids: ['3', '2', '1']};
 
       return genReplicationId(sourceDb, targetDb, opts1).then(
         function (replicationId1) {
@@ -95,11 +95,11 @@ describe('test.gen-replication-id.js', function () {
     function () {
       var opts1 = {
         filter: 'ddoc/filter',
-        query_params: {foo: 'bar', bar: 'baz'}
+        query_params: {foo: 'bar', bar: 'baz'},
       };
       var opts2 = {
         filter: 'ddoc/filter',
-        query_params: {bar: 'baz', foo: 'bar'}
+        query_params: {bar: 'baz', foo: 'bar'},
       };
 
       return genReplicationId(sourceDb, targetDb, opts1).then(

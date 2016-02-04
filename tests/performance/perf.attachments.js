@@ -23,7 +23,7 @@ function randomBuffer(size) {
 function randomBlob(size) {
   if (process.browser) {
     return randomBrowserBlob(size);
-  } else { // node
+  } else { // Node
     return randomBuffer(size);
   }
 }
@@ -49,8 +49,8 @@ module.exports = function (PouchDB, opts) {
           'application/octet-stream').then(function () {
           done();
         }, done);
-      }
-    }
+      },
+    },
   ];
 
   utils.runTests(PouchDB, 'views', testCases, opts);

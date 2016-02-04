@@ -10,12 +10,12 @@ function ajaxCore(options, callback) {
   options = clone(options);
 
   var defaultOptions = {
-    method : "GET",
+    method: 'GET',
     headers: {},
     json: true,
     processData: true,
     timeout: 10000,
-    cache: false
+    cache: false,
   };
 
   options = extend(defaultOptions, options);
@@ -55,7 +55,7 @@ function ajaxCore(options, callback) {
     /* istanbul ignore next */
     try {
       errParsed = JSON.parse(err.responseText);
-      //would prefer not to have a try/catch clause
+      // Would prefer not to have a try/catch clause
       errObj = generateErrorFromResponse(errParsed);
     } catch (e) {
       errObj = generateErrorFromResponse(err);

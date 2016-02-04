@@ -3,6 +3,6 @@
 var PouchDB = require('../../');
 
 var app = require('express-pouchdb')(PouchDB, {
-  mode: 'minimumForPouchDB'
+  mode: 'minimumForPouchDB',
 });
 app.listen(3000);

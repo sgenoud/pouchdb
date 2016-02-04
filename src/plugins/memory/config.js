@@ -3,5 +3,5 @@ export default {
   valid: function () {
     return true;
   },
-  use_prefix: false
+  use_prefix: false,
 };

@@ -2,7 +2,7 @@
 
 var http = require('http');
 var PouchDB = require('../../lib');
-var should = require("chai").should();
+var should = require('chai').should();
 
 describe('test.headers.js', function () {
 
@@ -41,7 +41,7 @@ describe('test.headers.js', function () {
 
   it('Test headers are sent correctly on GET request', function() {
     var db = new PouchDB('http://127.0.0.1:' + PORT);
-    var opts = { ajax: { headers: { ick: "slick" } } };
+    var opts = { ajax: { headers: { ick: 'slick' } } };
     return db.get('fake', opts).then(function() {
       should.equal(headers.ick, 'slick');
     });
@@ -49,15 +49,15 @@ describe('test.headers.js', function () {
 
   it('3491 Test headers are sent correctly on put', function() {
     var db = new PouchDB('http://127.0.0.1:' + PORT);
-    var opts = { ajax: { headers: { ick: "slick" } } };
-    return db.post({'fake': 'obj'}, opts).then(function() {
+    var opts = { ajax: { headers: { ick: 'slick' } } };
+    return db.post({fake: 'obj'}, opts).then(function() {
       should.equal(headers.ick, 'slick');
     });
   });
 
   it('3491 Test headers are sent correctly on changes', function() {
     var db = new PouchDB('http://127.0.0.1:' + PORT);
-    var opts = { ajax: { headers: { ick: "slick" } } };
+    var opts = { ajax: { headers: { ick: 'slick' } } };
     return db.changes(opts).then(function() {
       should.equal(headers.ick, 'slick');
     });
@@ -65,7 +65,7 @@ describe('test.headers.js', function () {
 
   it('3491 Test headers are sent correctly on destroy', function() {
     var db = new PouchDB('http://127.0.0.1:' + PORT);
-    var opts = { ajax: { headers: { ick: "slick" } } };
+    var opts = { ajax: { headers: { ick: 'slick' } } };
     return db.destroy(opts).then(function() {
       should.equal(headers.ick, 'slick');
     });
@@ -74,7 +74,7 @@ describe('test.headers.js', function () {
   it('Test that we combine local and global ajax options', function() {
     var opts = { ajax: { headers: { aheader: 'whyyes' } } };
     var db = new PouchDB('http://127.0.0.1:' + PORT, opts);
-    var getOpts = {ajax: { headers: { ick: "slick", aheader: "override!" } } };
+    var getOpts = {ajax: { headers: { ick: 'slick', aheader: 'override!' } } };
     return db.get('fake', getOpts).then(function() {
       should.equal(headers.ick, 'slick');
       should.equal(headers.aheader, 'override!');
@@ -89,9 +89,9 @@ describe('test.headers.js', function () {
       _attachments: {
         'att.txt': {
           content_type: 'text/plain',
-          data: new Buffer(['Is there life on Mars?'], {type: 'text/plain'})
-        }
-      }
+          data: new Buffer(['Is there life on Mars?'], {type: 'text/plain'}),
+        },
+      },
     }).then(function() {
       should.equal(headers.authorization, 'Basic Zm9vOmJhcg==');
     });

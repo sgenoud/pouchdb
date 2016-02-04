@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-// throw an error if any EventEmitter adds too many listeners
+// Throw an error if any EventEmitter adds too many listeners
 require('throw-max-listeners-error');
 
 var seedrandom = require('seedrandom');

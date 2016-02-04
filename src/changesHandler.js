@@ -10,19 +10,19 @@ inherits(Changes, EventEmitter);
 function attachBrowserEvents(self) {
   if (isChromeApp()) {
     chrome.storage.onChanged.addListener(function (e) {
-      // make sure it's event addressed to us
+      // Make sure it's event addressed to us
       if (e.db_name != null) {
-        //object only has oldValue, newValue members
+        // Object only has oldValue, newValue members
         self.emit(e.dbName.newValue);
       }
     });
   } else if (hasLocalStorage()) {
     if (typeof addEventListener !== 'undefined') {
-      addEventListener("storage", function (e) {
+      addEventListener('storage', function (e) {
         self.emit(e.key);
       });
-    } else { // old IE
-      window.attachEvent("storage", function (e) {
+    } else { // Old IE
+      window.attachEvent('storage', function (e) {
         self.emit(e.key);
       });
     }
@@ -54,7 +54,7 @@ Changes.prototype.addListener = function (dbName, id, db, opts) {
     inprogress = true;
     var changesOpts = pick(opts, [
       'style', 'include_docs', 'attachments', 'conflicts', 'filter',
-      'doc_ids', 'view', 'since', 'query_params', 'binary'
+      'doc_ids', 'view', 'since', 'query_params', 'binary',
     ]);
 
     /* istanbul ignore next */
@@ -69,7 +69,7 @@ Changes.prototype.addListener = function (dbName, id, db, opts) {
       }
     }).on('complete', function () {
       if (inprogress === 'waiting') {
-        setTimeout(function(){
+        setTimeout(function() {
           eventFunction();
         },0);
       }
@@ -92,12 +92,12 @@ Changes.prototype.removeListener = function (dbName, id) {
 
 /* istanbul ignore next */
 Changes.prototype.notifyLocalWindows = function (dbName) {
-  //do a useless change on a storage thing
-  //in order to get other windows's listeners to activate
+  // Do a useless change on a storage thing
+  // in order to get other windows's listeners to activate
   if (isChromeApp()) {
     chrome.storage.local.set({dbName: dbName});
   } else if (hasLocalStorage()) {
-    localStorage[dbName] = (localStorage[dbName] === "a") ? "b" : "a";
+    localStorage[dbName] = (localStorage[dbName] === 'a') ? 'b' : 'a';
   }
 };
 

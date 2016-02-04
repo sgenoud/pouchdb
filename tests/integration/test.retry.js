@@ -4,7 +4,7 @@ var adapters = [
   ['local', 'http'],
   ['http', 'http'],
   ['http', 'local'],
-  ['local', 'local']
+  ['local', 'local'],
 ];
 
 if ('saucelabs' in testUtils.params()) {
@@ -48,7 +48,7 @@ adapters.forEach(function (adapters) {
       var rep = db.replicate.from(remote, {
         live: true,
         retry: true,
-        back_off_function: function () { return 0; }
+        back_off_function: function () { return 0; },
       });
 
       var paused = 0;
@@ -100,7 +100,7 @@ adapters.forEach(function (adapters) {
       var rep = db.replicate.from(remote, {
         live: true,
         retry: true,
-        back_off_function: function () { return 0; }
+        back_off_function: function () { return 0; },
       });
 
       var paused = 0;
@@ -167,7 +167,7 @@ adapters.forEach(function (adapters) {
       var rep = db.replicate.from(remote, {
         live: true,
         retry: true,
-        back_off_function: function () { return 0; }
+        back_off_function: function () { return 0; },
       });
 
       var numDocsToWrite = 10;
@@ -239,7 +239,7 @@ adapters.forEach(function (adapters) {
       var rep = db.replicate.from(remote, {
         live: true,
         retry: true,
-        back_off_function: function () { return 0; }
+        back_off_function: function () { return 0; },
       });
 
       var numDocsToWrite = 10;
@@ -281,7 +281,7 @@ adapters.forEach(function (adapters) {
               if (typeof originalNumListeners !== 'number') {
                 originalNumListeners = numListeners;
               } else {
-                // special case for "destroy" - because there are
+                // Special case for "destroy" - because there are
                 // two Changes() objects for local databases,
                 // there can briefly be one extra listener or one
                 // fewer listener. The point of this test is to ensure
@@ -301,7 +301,7 @@ adapters.forEach(function (adapters) {
 
     [
       'complete', 'error', 'paused', 'active',
-      'change', 'cancel'
+      'change', 'cancel',
     ].forEach(function (event) {
       it('returnValue doesn\'t leak "' + event + '" event', function () {
 
@@ -322,7 +322,7 @@ adapters.forEach(function (adapters) {
         var rep = db.replicate.from(remote, {
           live: true,
           retry: true,
-          back_off_function: function () { return 0; }
+          back_off_function: function () { return 0; },
         });
 
         var numDocsToWrite = 10;
@@ -395,7 +395,7 @@ adapters.forEach(function (adapters) {
       var rep = db.replicate.from(remote, {
         live: true,
         retry: true,
-        back_off_function: function () { return 0; }
+        back_off_function: function () { return 0; },
       }).on('change', function () {});
 
       var numDocsToWrite = 10;
@@ -469,7 +469,7 @@ adapters.forEach(function (adapters) {
       var rep = db.replicate.from(remote, {
         live: true,
         retry: true,
-        back_off_function: function () { return 0; }
+        back_off_function: function () { return 0; },
       });
 
       var active = 0;
@@ -497,7 +497,7 @@ adapters.forEach(function (adapters) {
           }
           function getTotalListeners() {
             var events = ['complete', 'error', 'paused', 'active',
-              'change', 'cancel'];
+              'change', 'cancel',];
             return events.map(function (event) {
               return rep.listeners(event).length;
             }).reduce(function (a, b) {return a + b; }, 0);

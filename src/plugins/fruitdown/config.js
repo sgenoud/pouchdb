@@ -3,5 +3,5 @@ export default {
   valid: function () {
     return !!global.indexedDB;
   },
-  use_prefix: true
+  use_prefix: true,
 };

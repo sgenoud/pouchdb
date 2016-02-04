@@ -1,9 +1,9 @@
 import arrayBufferToBinaryString from './arrayBufferToBinaryString';
 
-// shim for browsers that don't support it
+// Shim for browsers that don't support it
 function readAsBinaryString(blob, callback) {
   if (typeof FileReader === 'undefined') {
-    // fix for Firefox in a web worker
+    // Fix for Firefox in a web worker
     // https://bugzilla.mozilla.org/show_bug.cgi?id=901097
     return callback(arrayBufferToBinaryString(
       new FileReaderSync().readAsArrayBuffer(blob)));

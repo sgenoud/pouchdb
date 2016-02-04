@@ -1,7 +1,7 @@
-// simplified API. universal browser support is assumed
+// Simplified API. universal browser support is assumed
 function readAsArrayBuffer(blob, callback) {
   if (typeof FileReader === 'undefined') {
-    // fix for Firefox in a web worker:
+    // Fix for Firefox in a web worker:
     // https://bugzilla.mozilla.org/show_bug.cgi?id=901097
     return callback(new FileReaderSync().readAsArrayBuffer(blob));
   }

@@ -44,7 +44,7 @@ testUtils.params = function () {
 
 testUtils.couchHost = function () {
   if (typeof window !== 'undefined' && window.cordova) {
-    // magic route to localhost on android emulator
+    // Magic route to localhost on android emulator
     return 'http://10.0.2.2:5984';
   }
 
@@ -75,7 +75,7 @@ function createBlob(parts, properties) {
   try {
     return new Blob(parts, properties);
   } catch (e) {
-    if (e.name !== "TypeError") {
+    if (e.name !== 'TypeError') {
       throw e;
     }
     var Builder = typeof BlobBuilder !== 'undefined' ? BlobBuilder :
@@ -95,7 +95,7 @@ testUtils.makeBlob = function (data, type) {
     return new Buffer(data, 'binary');
   } else {
     return createBlob([data], {
-      type: (type || 'text/plain')
+      type: (type || 'text/plain'),
     });
   }
 };
@@ -118,15 +118,15 @@ testUtils.readBlob = function (blob, callback) {
   } else {
     var reader = new FileReader();
     reader.onloadend = function (e) {
-      
-      var binary = "";
+
+      var binary = '';
       var bytes = new Uint8Array(this.result || '');
       var length = bytes.byteLength;
-      
+
       for (var i = 0; i < length; i++) {
         binary += String.fromCharCode(bytes[i]);
       }
-      
+
       callback(binary);
     };
     reader.readAsArrayBuffer(blob);
@@ -186,13 +186,13 @@ testUtils.putAfter = function (db, doc, prevRev, callback) {
     start: +newDoc._rev.split('-')[0],
     ids: [
       newDoc._rev.split('-')[1],
-      prevRev.split('-')[1]
-    ]
+      prevRev.split('-')[1],
+    ],
   };
   db.put(newDoc, { new_edits: false }, callback);
 };
 
-// docs will be inserted one after another
+// Docs will be inserted one after another
 // starting from root
 testUtils.putBranch = function (db, docs, callback) {
   function insert(i) {
@@ -254,7 +254,11 @@ testUtils.writeDocs = function (db, docs, callback, res) {
 
 // Borrowed from: http://stackoverflow.com/a/840849
 testUtils.eliminateDuplicates = function (arr) {
-  var i, element, len = arr.length, out = [], obj = {};
+  var i;
+  var element;
+  var len = arr.length;
+  var out = [];
+  var obj = {};
   for (i = 0; i < len; i++) {
     obj[arr[i]] = 0;
   }

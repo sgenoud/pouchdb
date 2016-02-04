@@ -1,4 +1,4 @@
-// similar to an idb or websql transaction object
+// Similar to an idb or websql transaction object
 // designed to be passed around. basically just caches
 // things in-memory and then does a big batch() operation
 // when you're done
@@ -28,7 +28,7 @@ LevelTransaction.prototype.get = function (store, key, callback) {
     return process.nextTick(function () {
       callback(null, exists);
     });
-  } else if (exists === null) { // deleted marker
+  } else if (exists === null) { // Deleted marker
     /* istanbul ignore next */
     return process.nextTick(function () {
       callback({name: 'NotFoundError'});
@@ -67,7 +67,7 @@ LevelTransaction.prototype.execute = function (db, callback) {
   var keys = new collections.Set();
   var uniqBatches = [];
 
-  // remove duplicates; last one wins
+  // Remove duplicates; last one wins
   for (var i = this._batch.length - 1; i >= 0; i--) {
     var operation = this._batch[i];
     var lookupKey = operation.prefix.prefix()[0] + '\xff' + operation.key;

@@ -36,7 +36,7 @@ function checkBlobSupport(txn) {
         parseInt(matchedChrome[1], 10) >= 43);
     };
   }).catch(function () {
-    return false; // error, so assume unsupported
+    return false; // Error, so assume unsupported
   });
 }
 

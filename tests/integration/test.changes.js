@@ -9,7 +9,7 @@ adapters.forEach(function (adapter) {
 
     var dbs = {};
 
-    // if it exists, return the single element
+    // If it exists, return the single element
     // which has the specific id. Else retun null.
     // useful for finding elements within a _changes feed
     function findById(array, id) {
@@ -101,7 +101,7 @@ adapters.forEach(function (adapter) {
         {_id: '8', integer: 9},
         {_id: '9', integer: 9},
         {_id: '10', integer: 10},
-        {_id: '11', integer: 11}
+        {_id: '11', integer: 11},
       ];
       var db = new PouchDB(dbs.name);
 
@@ -111,12 +111,12 @@ adapters.forEach(function (adapter) {
 
           var docs2 = [
             {_id: '12', integer: 12},
-            {_id: '13', integer: 13}
+            {_id: '13', integer: 13},
           ];
 
           db.bulkDocs({ docs: docs2 }, function (err, info) {
             var promise = db.changes({
-              since: update_seq
+              since: update_seq,
             }).on('complete', function (results) {
               results.results.length.should.be.at.least(2);
               done();
@@ -132,7 +132,7 @@ adapters.forEach(function (adapter) {
       var docs1 = [
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
-        {_id: '2', integer: 2}
+        {_id: '2', integer: 2},
       ];
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs1 }, function (err, info) {
@@ -141,13 +141,13 @@ adapters.forEach(function (adapter) {
 
           var docs2 = [
             {_id: '3', integer: 3},
-            {_id: '4', integer: 4}
+            {_id: '4', integer: 4},
           ];
 
           db.bulkDocs({ docs: docs2 }, function (err, info) {
             db.changes({
               since: update_seq,
-              limit: 1
+              limit: 1,
             }).on('complete', function (results) {
               results.results.length.should.equal(1);
               done();
@@ -161,7 +161,7 @@ adapters.forEach(function (adapter) {
       var docs1 = [
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
-        {_id: '2', integer: 2}
+        {_id: '2', integer: 2},
       ];
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs1 }, function (err, info) {
@@ -170,13 +170,13 @@ adapters.forEach(function (adapter) {
 
           var docs2 = [
             {_id: '3', integer: 3},
-            {_id: '4', integer: 4}
+            {_id: '4', integer: 4},
           ];
 
           db.bulkDocs({ docs: docs2 }, function (err, info) {
             db.changes({
               since: update_seq,
-              limit: 0
+              limit: 0,
             }).on('complete', function (results) {
               results.results.length.should.equal(1);
               done();
@@ -191,14 +191,14 @@ adapters.forEach(function (adapter) {
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
         {_id: '2', integer: 2},
-        {_id: '3', integer: 3}
+        {_id: '3', integer: 3},
       ];
       var docs2 = [
         {_id: '2', integer: 11},
         {_id: '3', integer: 12},
       ];
       var db = new PouchDB(dbs.name);
-      // we use writeDocs since bulkDocs looks to have undefined
+      // We use writeDocs since bulkDocs looks to have undefined
       // order of doing insertions
       testUtils.writeDocs(db, docs1, function (err, info) {
         docs2[0]._rev = info[2].rev;
@@ -214,12 +214,12 @@ adapters.forEach(function (adapter) {
               db.changes({
                 limit: 2,
                 since: update_seq,
-                include_docs: true
+                include_docs: true,
               }).on('complete', function (results) {
                 results = results.results;
                 results.length.should.equal(2);
 
-                // order is not guaranteed
+                // Order is not guaranteed
                 var first = results[0];
                 var second = results[1];
                 if (first.id === '3') {
@@ -246,21 +246,21 @@ adapters.forEach(function (adapter) {
         {_id: '1', integer: 1},
         { _id: '_design/foo',
           integer: 4,
-          filters: { even: 'function (doc) { return doc.integer % 2 === 1; }' }
-        }
+          filters: { even: 'function (doc) { return doc.integer % 2 === 1; }' },
+        },
       ];
       var db = new PouchDB(dbs.name);
       testUtils.writeDocs(db, docs, function (err, info) {
         db.changes({
           filter: 'foo/odd',
           limit: 2,
-          include_docs: true
+          include_docs: true,
         }).on('error', function (err) {
           err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
                                   'correct error status returned');
           err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
                                'correct error message returned');
-          // todo: does not work in pouchdb-server.
+          // Todo: does not work in pouchdb-server.
           // err.reason.should.equal('missing json key: odd');
           done();
         });
@@ -277,23 +277,23 @@ adapters.forEach(function (adapter) {
           views: {
             even: {
               map: 'function (doc) { if (doc.integer % 2 === 1)' +
-               ' { emit(doc._id, null) }; }'
-            }
-          }
-        }
+               ' { emit(doc._id, null) }; }',
+            },
+          },
+        },
       ];
       var db = new PouchDB(dbs.name);
       testUtils.writeDocs(db, docs, function (err, info) {
         db.changes({
           filter: 'foo/even',
           limit: 2,
-          include_docs: true
+          include_docs: true,
         }).on('error', function (err) {
           err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
                                   'correct error status returned');
           err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
                                'correct error message returned');
-          // todo: does not work in pouchdb-server.
+          // Todo: does not work in pouchdb-server.
           // err.reason.should.equal('missing json key: filters');
           done();
         });
@@ -304,7 +304,7 @@ adapters.forEach(function (adapter) {
       var docs1 = [
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
-        {_id: '2', integer: 2}
+        {_id: '2', integer: 2},
       ];
       var db = new PouchDB(dbs.name);
 
@@ -315,8 +315,8 @@ adapters.forEach(function (adapter) {
         {
           _id: '_design/foo',
           integer: 4,
-          filters: { even: 'function (doc) { return doc.integer % 2 === 1; }' }
-        }
+          filters: { even: 'function (doc) { return doc.integer % 2 === 1; }' },
+        },
       ];
 
       db.bulkDocs({ docs: docs1 }, function (err, info) {
@@ -328,7 +328,7 @@ adapters.forEach(function (adapter) {
               filter: 'foo/even',
               limit: 2,
               since: update_seq,
-              include_docs: true
+              include_docs: true,
             }).on('complete', function (results) {
               results.results.length.should.equal(2);
               var three = findById(results.results, '3');
@@ -352,15 +352,15 @@ adapters.forEach(function (adapter) {
         {
           _id: '_design/even',
           integer: 3,
-          filters: { even: 'function (doc) { return doc.integer % 2 === 0; }' }
-        }
+          filters: { even: 'function (doc) { return doc.integer % 2 === 0; }' },
+        },
       ];
       var db = new PouchDB(dbs.name);
 
       db.bulkDocs({ docs: docs }, function (err, info) {
         var promise = db.changes({
           filter: 'even',
-          include_docs: true
+          include_docs: true,
         }).on('complete', function (results) {
           results.results.length.should.equal(2);
           var zero = findById(results.results, '0');
@@ -382,7 +382,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       testUtils.writeDocs(db, docs, function (err, info) {
         db.changes({
-          filter: 'foobar/odd'
+          filter: 'foobar/odd',
         }).on('error', function (err) {
           err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
                                   'correct error status returned');
@@ -403,20 +403,20 @@ adapters.forEach(function (adapter) {
           views:
             { even:
               { map: 'function (doc) { if (doc.integer % 2 === 1) { ' +
-                     'emit(doc._id, null) }; }' } }
-        }
+                     'emit(doc._id, null) }; }', }, },
+        },
       ];
       var db = new PouchDB(dbs.name);
       testUtils.writeDocs(db, docs, function (err, info) {
         db.changes({
           filter: '_view',
-          view: 'foo/odd'
+          view: 'foo/odd',
         }).on('error', function (err) {
           err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
                                   'correct error status returned');
           err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
                                'correct error message returned');
-          // todo: does not work in pouchdb-server.
+          // Todo: does not work in pouchdb-server.
           // err.reason.should.equal('missing json key: odd');
           done();
         });
@@ -429,20 +429,20 @@ adapters.forEach(function (adapter) {
         {
           _id: '_design/foo',
           integer: 4,
-          filters: { even: 'function (doc) { return doc.integer % 2 === 1; }' }
-        }
+          filters: { even: 'function (doc) { return doc.integer % 2 === 1; }' },
+        },
       ];
       var db = new PouchDB(dbs.name);
       testUtils.writeDocs(db, docs, function (err, info) {
         db.changes({
           filter: '_view',
-          view: 'foo/even'
+          view: 'foo/even',
         }).on('error', function (err) {
           err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
                                   'correct error status returned');
           err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
                                'correct error message returned');
-          // todo: does not work in pouchdb-server.
+          // Todo: does not work in pouchdb-server.
           // err.reason.should.equal('missing json key: views',
           //                         'correct error reason returned');
           done();
@@ -455,8 +455,8 @@ adapters.forEach(function (adapter) {
         {_id: '1', integer: 1},
         {
           _id: '_design/foo',
-          filters: { even: 'function (doc) { return doc.integer % 2 === 1; }' }
-        }
+          filters: { even: 'function (doc) { return doc.integer % 2 === 1; }' },
+        },
       ];
       var db = new PouchDB(dbs.name);
       db.bulkDocs(docs).then(function() {
@@ -471,12 +471,12 @@ adapters.forEach(function (adapter) {
     it('3356 throw inside a filter', function (done) {
       var db = new PouchDB(dbs.name);
       db.put({
-        _id: "_design/test",
+        _id: '_design/test',
         filters: {
           test: function (doc, req) {
-            throw new Error(); // syntaxerrors can't be caught either.
-          }.toString()
-        }
+            throw new Error(); // Syntaxerrors can't be caught either.
+          }.toString(),
+        },
       }).then(function() {
         db.changes({filter: 'test/test'}).then(function() {
           done('should have thrown');
@@ -494,19 +494,19 @@ adapters.forEach(function (adapter) {
           _id: '_design/foo',
           integer: 4,
           views: { even: { map: 'function (doc) { if (doc.integer % 2 === 1) ' +
-                           '{ emit(doc._id, null) }; }' } }
-        }
+                           '{ emit(doc._id, null) }; }', }, },
+        },
       ];
       var db = new PouchDB(dbs.name);
       testUtils.writeDocs(db, docs, function (err, info) {
         db.changes({
-          filter: '_view'
+          filter: '_view',
         }).on('error', function (err) {
           err.status.should.equal(PouchDB.Errors.BAD_REQUEST.status,
                                   'correct error status returned');
           err.message.should.equal(PouchDB.Errors.BAD_REQUEST.message,
                                'correct error message returned');
-          // todo: does not work in pouchdb-server.
+          // Todo: does not work in pouchdb-server.
           // err.reason.should
           //   .equal('`view` filter parameter is not provided.',
           //          'correct error reason returned');
@@ -519,7 +519,7 @@ adapters.forEach(function (adapter) {
       var docs1 = [
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
-        {_id: '2', integer: 2}
+        {_id: '2', integer: 2},
       ];
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs1 }, function (err, info) {
@@ -535,10 +535,10 @@ adapters.forEach(function (adapter) {
               integer: 4,
               views: { even: { map: 'function (doc) ' +
                 '{ if (doc.integer % 2 === 1) ' +
-                '{ emit(doc._id, null) }; }'
-                }
-              }
-            }
+                '{ emit(doc._id, null) }; }',
+                },
+              },
+            },
           ];
 
           db.bulkDocs({ docs: docs2 }, function (err, info) {
@@ -548,7 +548,7 @@ adapters.forEach(function (adapter) {
               view: 'foo/even',
               limit: 2,
               since: update_seq,
-              include_docs: true
+              include_docs: true,
             }).on('complete', function (results) {
               var changes = results.results;
               changes.length.should.equal(2);
@@ -567,7 +567,7 @@ adapters.forEach(function (adapter) {
     });
 
     it('Changes last_seq', function (done) {
-      // this test doesn't really make sense for clustered
+      // This test doesn't really make sense for clustered
       // CouchDB because changes is unordered and last_seq might
       // not equal the last seq in the _changes feed (although it
       // should evaluate to the same thing on the server).
@@ -583,8 +583,8 @@ adapters.forEach(function (adapter) {
         {
           _id: '_design/foo',
           integer: 4,
-          filters: { even: 'function (doc) { return doc.integer % 2 === 1; }' }
-        }
+          filters: { even: 'function (doc) { return doc.integer % 2 === 1; }' },
+        },
       ];
       var db = new PouchDB(dbs.name);
       db.changes().on('complete', function (results) {
@@ -593,7 +593,7 @@ adapters.forEach(function (adapter) {
           db.changes().on('complete', function (results) {
             results.last_seq.should.equal(5);
             db.changes({
-              filter: 'foo/even'
+              filter: 'foo/even',
             }).on('complete', function (results) {
               results.last_seq.should.equal(5);
               results.results.length.should.equal(2);
@@ -605,7 +605,7 @@ adapters.forEach(function (adapter) {
     });
 
     it('Immediately cancel changes', function () {
-      // fixes code coverage by ensuring the changes() listener
+      // Fixes code coverage by ensuring the changes() listener
       // emits 'complete' even if the db's task queue isn't
       // ready yet
       return new PouchDB.utils.Promise(function (resolve, reject) {
@@ -656,15 +656,15 @@ adapters.forEach(function (adapter) {
           _id: '_design/name',
           views: {
             name: {
-              empty: 'sad face'
-            }
-          }
+              empty: 'sad face',
+            },
+          },
         }).then(function () {
           return new PouchDB.utils.Promise(function (resolve, reject) {
             var changes = db.changes({
               live: true,
               filter: '_view',
-              view: 'name/name'
+              view: 'name/name',
             });
             changes.on('error', resolve);
             changes.on('change', reject);
@@ -685,14 +685,14 @@ adapters.forEach(function (adapter) {
         _id: '_design/name',
         views: {
           name: {
-            empty: 'sad face'
-          }
-        }
+            empty: 'sad face',
+          },
+        },
       }).then(function () {
         return new PouchDB.utils.Promise(function (resolve, reject) {
           var changes = db.changes({
             live: true,
-            filter: 'name/name'
+            filter: 'name/name',
           });
           changes.on('error', resolve);
           changes.on('change', reject);
@@ -701,7 +701,7 @@ adapters.forEach(function (adapter) {
     });
 
     it('Changes last_seq with view instead of filter', function (done) {
-      // this test doesn't really make sense for clustered
+      // This test doesn't really make sense for clustered
       // CouchDB because changes is unordered and last_seq might
       // not equal the last seq in the _changes feed (although it
       // should evaluate to the same thing on the server).
@@ -720,8 +720,8 @@ adapters.forEach(function (adapter) {
           views:
             { even:
               { map: 'function (doc) { if (doc.integer % 2 === 1) { ' +
-                     'emit(doc._id, null) }; }' } }
-        }
+                     'emit(doc._id, null) }; }', }, },
+        },
       ];
       var db = new PouchDB(dbs.name);
       db.changes().on('complete', function (results) {
@@ -731,7 +731,7 @@ adapters.forEach(function (adapter) {
             results.last_seq.should.equal(5);
             db.changes({
               filter: '_view',
-              view: 'foo/even'
+              view: 'foo/even',
             }).on('complete', function (results) {
               results.last_seq.should.equal(5);
               results.results.length.should.equal(2);
@@ -746,13 +746,13 @@ adapters.forEach(function (adapter) {
       var simpleTree = [
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
          {_id: 'foo', _rev: '2-b', value: 'foo b'},
-         {_id: 'foo', _rev: '3-c', value: 'foo c'}],
+         {_id: 'foo', _rev: '3-c', value: 'foo c'},],
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
          {_id: 'foo', _rev: '2-d', value: 'foo d'},
          {_id: 'foo', _rev: '3-e', value: 'foo e'},
-         {_id: 'foo', _rev: '4-f', value: 'foo f'}],
+         {_id: 'foo', _rev: '4-f', value: 'foo f'},],
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
-         {_id: 'foo', _rev: '2-g', value: 'foo g', _deleted: true}]
+         {_id: 'foo', _rev: '2-g', value: 'foo g', _deleted: true},],
       ];
       var db = new PouchDB(dbs.name);
       testUtils.putTree(db, simpleTree, function () {
@@ -760,7 +760,7 @@ adapters.forEach(function (adapter) {
           res.results[0].changes.length.should.equal(1);
           res.results[0].changes[0].rev.should.equal('4-f');
           db.changes({
-            style: 'all_docs'
+            style: 'all_docs',
           }).on('complete', function (res) {
             res.results[0].changes.length.should.equal(3);
             var changes = res.results[0].changes;
@@ -781,13 +781,13 @@ adapters.forEach(function (adapter) {
       var simpleTree = [
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
          {_id: 'foo', _rev: '2-b', value: 'foo b'},
-         {_id: 'foo', _rev: '3-c', value: 'foo c'}],
+         {_id: 'foo', _rev: '3-c', value: 'foo c'},],
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
          {_id: 'foo', _rev: '2-d', value: 'foo d'},
          {_id: 'foo', _rev: '3-e', value: 'foo e'},
-         {_id: 'foo', _rev: '4-f', value: 'foo f'}],
+         {_id: 'foo', _rev: '4-f', value: 'foo f'},],
         [{_id: 'foo', _rev: '1-a', value: 'foo a'},
-         {_id: 'foo', _rev: '2-g', value: 'foo g', _deleted: true}]
+         {_id: 'foo', _rev: '2-g', value: 'foo g', _deleted: true},],
       ];
       var db = new PouchDB(dbs.name);
       testUtils.putTree(db, simpleTree, function () {
@@ -795,7 +795,7 @@ adapters.forEach(function (adapter) {
           res.results[0].changes.length.should.equal(1);
           res.results[0].changes[0].rev.should.equal('4-f');
           db.changes({
-            style: 'all_docs'
+            style: 'all_docs',
           }, function (err, res) {
             should.not.exist(err);
             res.results[0].changes.length.should.equal(3);
@@ -822,7 +822,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs }, function (err, info) {
         db.changes({
-          limit: 0
+          limit: 0,
         }).on('complete', function (results) {
           results.results.length.should.equal(1);
           done();
@@ -844,7 +844,7 @@ adapters.forEach(function (adapter) {
           db.post({_id: '2', test: 'ing'}, function (err, res) {
             db.changes({
               descending: true,
-              since: 1
+              since: 1,
             }).on('complete', function (results) {
               results.results.length.should.equal(3);
               var ids = ['2', '1', '0'];
@@ -862,7 +862,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       db.post({ test: 'somestuff' }, function (err, info) {
         db.changes({
-          include_docs: true
+          include_docs: true,
         }).on('change', function (change) {
           change.doc._id.should.equal(change.id);
           change.doc._rev.should
@@ -881,7 +881,7 @@ adapters.forEach(function (adapter) {
       for (var i = 0; i < num; i++) {
         docs.push({
           _id: 'doc_' + i,
-          foo: 'bar_' + i
+          foo: 'bar_' + i,
         });
       }
       var changes = 0;
@@ -890,7 +890,7 @@ adapters.forEach(function (adapter) {
           return done(err);
         }
         db.changes({
-          descending: true
+          descending: true,
         }).on('change', function (change) {
           changes++;
         }).on('complete', function (results) {
@@ -906,7 +906,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var count = 0;
       var changes = db.changes({
-        live: true
+        live: true,
       }).on('complete', function () {
         count.should.equal(1);
         done();
@@ -931,7 +931,7 @@ adapters.forEach(function (adapter) {
         }
       }
       var changes1 = db.changes({
-        live: true
+        live: true,
       }).on('complete', function () {
         changes1Complete = true;
         checkCount();
@@ -941,7 +941,7 @@ adapters.forEach(function (adapter) {
         changes1 = null;
       }).on('error', done);
       var changes2 = db.changes({
-        live: true
+        live: true,
       }).on('complete', function () {
         changes2Complete = true;
         checkCount();
@@ -957,7 +957,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var changes = db.changes({
         live: true,
-        include_docs: true
+        include_docs: true,
       }).on('complete', function (result) {
         result.status.should.equal('cancelled');
         done();
@@ -990,7 +990,7 @@ adapters.forEach(function (adapter) {
       }
 
       var changes = db.changes({
-        live: true
+        live: true,
       }).on('complete', function (result) {
         result.status.should.equal('cancelled');
         // This setTimeout ensures that once we cancel a change we dont recieve
@@ -1012,14 +1012,14 @@ adapters.forEach(function (adapter) {
     });
 
 
-    it("#3579 changes firing 1 too many times", function () {
+    it('#3579 changes firing 1 too many times', function () {
       var db = new PouchDB(dbs.name);
       var Promise = PouchDB.utils.Promise;
       return db.bulkDocs([{}, {}, {}]).then(function () {
         var changes = db.changes({
           since: 'now',
           live: true,
-          include_docs: true
+          include_docs: true,
         });
         return Promise.all([
           new Promise(function (resolve, reject) {
@@ -1033,7 +1033,7 @@ adapters.forEach(function (adapter) {
             setTimeout(resolve, 50);
           }).then(function () {
               return db.put({_id: 'foobar'});
-            })
+            }),
         ]);
       }).then(function (result) {
         var change = result[0];
@@ -1080,12 +1080,12 @@ adapters.forEach(function (adapter) {
     it('#4191 revs_diff causes endless loop', function () {
       var db = new PouchDB(dbs.name, {auto_compaction: false});
       return db.bulkDocs({
-        "new_edits": false,
-        "docs": [{"_id": "799","_rev":"1-d22"}
-        ]}).then(function () {
+        new_edits: false,
+        docs: [{_id: '799',_rev: '1-d22'},
+        ],}).then(function () {
         return db.bulkDocs({
-          "new_edits": false,
-          "docs": [{"_id": "3E1", "_rev": "1-ab5"}]
+          new_edits: false,
+          docs: [{_id: '3E1', _rev: '1-ab5'}],
         });
       }).then(function () {
         return db.bulkDocs(
@@ -1094,7 +1094,7 @@ adapters.forEach(function (adapter) {
               [ { _id: 'FB3', _rev: '1-363' },
                 { _id: '27C', _rev: '1-4c3' },
                 { _id: 'BD6', _rev: '1-de0' },
-                { _id: '1E9', _rev: '1-451' } ] }
+                { _id: '1E9', _rev: '1-451' }, ], }
         );
       }).then(function () {
         return db.changes({style: 'all_docs', limit: 100});
@@ -1123,7 +1123,7 @@ adapters.forEach(function (adapter) {
       return chain.then(function () {
         return db.changes({
           style: 'all_docs',
-          include_docs: true
+          include_docs: true,
         });
       }).then(function (res) {
         var ids = res.results.map(function (x) {
@@ -1146,45 +1146,45 @@ adapters.forEach(function (adapter) {
           _rev: '1-a',
           _revisions: {
             start: 1,
-            ids: ['a']
-          }
+            ids: ['a'],
+          },
         }, {
           _id: 'beta',
           _rev: '1-b',
           _revisions: {
             start: 1,
-            ids: ['b']
-          }
+            ids: ['b'],
+          },
         }, {
           _id: 'gamma',
           _rev: '1-b',
           _revisions: {
             start: 1,
-            ids: ['b']
-          }
+            ids: ['b'],
+          },
         }, {
           _id: 'alpha',
           _rev: '2-d',
           _revisions: {
             start: 2,
-            ids: ['d', 'a']
-          }
+            ids: ['d', 'a'],
+          },
         }, {
           _id: 'beta',
           _rev: '2-e',
           _revisions: {
             start: 2,
-            ids: ['e', 'b']
-          }
+            ids: ['e', 'b'],
+          },
         }, {
           _id: 'beta',
           _rev: '3-f',
           _deleted: true,
           _revisions: {
             start: 3,
-            ids: ['f', 'e', 'b']
-          }
-        }
+            ids: ['f', 'e', 'b'],
+          },
+        },
       ];
 
       var chain = PouchDB.utils.Promise.resolve();
@@ -1201,7 +1201,7 @@ adapters.forEach(function (adapter) {
       });
 
       function normalizeResult(result) {
-        // order of changes doesn't matter
+        // Order of changes doesn't matter
         result.results.forEach(function (ch) {
           ch.changes = ch.changes.sort(function (a, b) {
             return a.rev < b.rev ? -1 : 1;
@@ -1214,85 +1214,85 @@ adapters.forEach(function (adapter) {
       }).then(function (result) {
         normalizeResult(result);
         result.should.deep.equal({
-          "results": [
+          results: [
             {
-              "seq": seqs[2],
-              "id": "gamma",
-              "changes": [{ "rev": "1-b"}
-              ]
+              seq: seqs[2],
+              id: 'gamma',
+              changes: [{ rev: '1-b'},
+              ],
             },
             {
-              "seq": seqs[3],
-              "id": "alpha",
-              "changes": [{ "rev": "2-d"}
-              ]
+              seq: seqs[3],
+              id: 'alpha',
+              changes: [{ rev: '2-d'},
+              ],
             },
             {
-              "seq": seqs[5],
-              "id": "beta",
-              "deleted": true,
-              "changes": [{ "rev": "3-f"}
-              ]
-            }
+              seq: seqs[5],
+              id: 'beta',
+              deleted: true,
+              changes: [{ rev: '3-f'},
+              ],
+            },
           ],
-          "last_seq": seqs[5]
+          last_seq: seqs[5],
         });
         return db.changes({limit: 0});
       }).then(function (result) {
         normalizeResult(result);
         result.should.deep.equal({
-          "results": [{
-            "seq": seqs[2],
-            "id": "gamma",
-            "changes": [{"rev": "1-b"}]
-          }],
-          "last_seq": seqs[2]
+          results: [{
+            seq: seqs[2],
+            id: 'gamma',
+            changes: [{rev: '1-b'}],
+          },],
+          last_seq: seqs[2],
         }, '1:' + JSON.stringify(result));
         return db.changes({limit: 1});
       }).then(function (result) {
         normalizeResult(result);
         result.should.deep.equal({
-          "results": [{
-            "seq": seqs[2],
-            "id": "gamma",
-            "changes": [{"rev": "1-b"}]
-          }],
-          "last_seq": seqs[2]
+          results: [{
+            seq: seqs[2],
+            id: 'gamma',
+            changes: [{rev: '1-b'}],
+          },],
+          last_seq: seqs[2],
         }, '2:' + JSON.stringify(result));
         return db.changes({limit: 2});
       }).then(function (result) {
         normalizeResult(result);
         result.should.deep.equal({
-          "results": [{
-            "seq": seqs[2],
-            "id": "gamma",
-            "changes": [{"rev": "1-b"}]
-          }, {"seq": seqs[3], "id": "alpha", "changes": [{"rev": "2-d"}]}],
-          "last_seq": seqs[3]
+          results: [{
+            seq: seqs[2],
+            id: 'gamma',
+            changes: [{rev: '1-b'}],
+          }, {seq: seqs[3], id: 'alpha', changes: [{rev: '2-d'}]},],
+          last_seq: seqs[3],
         }, '3:' + JSON.stringify(result));
         return db.changes({limit: 1, descending: true});
       }).then(function (result) {
         normalizeResult(result);
         result.should.deep.equal({
-          "results": [{
-            "seq": seqs[5],
-            "id": "beta",
-            "changes": [{"rev": "3-f"}],
-            "deleted": true
-          }],
-          "last_seq": seqs[5]
+          results: [{
+            seq: seqs[5],
+            id: 'beta',
+            changes: [{rev: '3-f'}],
+            deleted: true,
+          },],
+          last_seq: seqs[5],
         }, '4:' + JSON.stringify(result));
         return db.changes({limit: 2, descending: true});
       }).then(function (result) {
         normalizeResult(result);
         var expected = {
-          "results": [{
-            "seq": seqs[5],
-            "id": "beta",
-            "changes": [{"rev": "3-f"}],
-            "deleted": true
-          }, {"seq": seqs[3], "id": "alpha", "changes": [{"rev": "2-d"}]}],
-          "last_seq": seqs[3]
+          results: [{
+            seq: seqs[5],
+            id: 'beta',
+            changes: [{rev: '3-f'}],
+            deleted: true,
+          }, {seq: seqs[3], id: 'alpha', changes: [{rev: '2-d'}]},],
+          last_seq: seqs[3],
         };
         result.should.deep.equal(expected, '5:' + JSON.stringify(result) +
         ', shoulda got: ' + JSON.stringify(expected));
@@ -1300,17 +1300,17 @@ adapters.forEach(function (adapter) {
       }).then(function (result) {
         normalizeResult(result);
         var expected = {
-          "results": [{
-            "seq": seqs[5],
-            "id": "beta",
-            "changes": [{"rev": "3-f"}],
-            "deleted": true
-          }, {"seq": seqs[3], "id": "alpha", "changes": [{"rev": "2-d"}]}, {
-            "seq": seqs[2],
-            "id": "gamma",
-            "changes": [{"rev": "1-b"}]
-          }],
-          "last_seq": seqs[2]
+          results: [{
+            seq: seqs[5],
+            id: 'beta',
+            changes: [{rev: '3-f'}],
+            deleted: true,
+          }, {seq: seqs[3], id: 'alpha', changes: [{rev: '2-d'}]}, {
+            seq: seqs[2],
+            id: 'gamma',
+            changes: [{rev: '1-b'}],
+          },],
+          last_seq: seqs[2],
         };
         result.should.deep.equal(expected, '6:' + JSON.stringify(result) +
         ', shoulda got: ' + JSON.stringify(expected));
@@ -1328,37 +1328,37 @@ adapters.forEach(function (adapter) {
           {
             _id: 'foo',
             _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}
+            _revisions: {start: 1, ids: ['a']},
           },
           {
             _id: 'foo',
             _rev: '2-e',
             _deleted: true,
-            _revisions: {start: 2, ids: ['e', 'a']}
+            _revisions: {start: 2, ids: ['e', 'a']},
           },
           {
             _id: 'foo',
             _rev: '3-g',
-            _revisions: {start: 3, ids: ['g', 'e', 'a']}
-          }
+            _revisions: {start: 3, ids: ['g', 'e', 'a']},
+          },
         ],
         [
           {
             _id: 'foo',
             _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}
+            _revisions: {start: 1, ids: ['a']},
           },
           {
             _id: 'foo',
             _rev: '2-b',
-            _revisions: {start: 2, ids: ['b', 'a']}
+            _revisions: {start: 2, ids: ['b', 'a']},
           },
           {
             _id: 'foo',
             _rev: '3-c',
-            _revisions: {start: 3, ids: ['c', 'b', 'a']}
-          }
-        ]
+            _revisions: {start: 3, ids: ['c', 'b', 'a']},
+          },
+        ],
       ];
 
       var chain = PouchDB.utils.Promise.resolve();
@@ -1367,31 +1367,31 @@ adapters.forEach(function (adapter) {
       function getExpected(i) {
         var expecteds = [
           {
-            "results": [
+            results: [
               {
-                "seq": seqs[1],
-                "id": "foo",
-                "changes": [{"rev": "3-g"}]
-              }
+                seq: seqs[1],
+                id: 'foo',
+                changes: [{rev: '3-g'}],
+              },
             ],
-            "last_seq" : seqs[1]
+            last_seq: seqs[1],
           },
           {
-            "results": [
+            results: [
               {
-                "seq": seqs[2],
-                "id": "foo",
-                "changes": [{"rev": "3-g"}]
-              }
+                seq: seqs[2],
+                id: 'foo',
+                changes: [{rev: '3-g'}],
+              },
             ],
-            "last_seq" : seqs[2]
-          }
+            last_seq: seqs[2],
+          },
         ];
         return expecteds[i];
       }
 
       function normalizeResult(result) {
-        // order of changes doesn't matter
+        // Order of changes doesn't matter
         result.results.forEach(function (ch) {
           ch.changes = ch.changes.sort(function (a, b) {
             return a.rev < b.rev ? -1 : 1;
@@ -1403,7 +1403,7 @@ adapters.forEach(function (adapter) {
         chain = chain.then(function () {
           return db.bulkDocs(docs, {new_edits: false}).then(function () {
             return db.changes({
-              descending: true
+              descending: true,
             });
           }).then(function (result) {
             seqs.push(result.last_seq);
@@ -1429,59 +1429,59 @@ adapters.forEach(function (adapter) {
           {
             _id: 'foo',
             _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}
+            _revisions: {start: 1, ids: ['a']},
           },
           {
             _id: 'foo',
             _rev: '2-e',
             _deleted: true,
-            _revisions: {start: 2, ids: ['e', 'a']}
+            _revisions: {start: 2, ids: ['e', 'a']},
           },
           {
             _id: 'foo',
             _rev: '3-g',
-            _revisions: {start: 3, ids: ['g', 'e', 'a']}
-          }
+            _revisions: {start: 3, ids: ['g', 'e', 'a']},
+          },
         ],
         [
           {
             _id: 'foo',
             _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}
+            _revisions: {start: 1, ids: ['a']},
           },
           {
             _id: 'foo',
             _rev: '2-b',
-            _revisions: {start: 2, ids: ['b', 'a']}
+            _revisions: {start: 2, ids: ['b', 'a']},
           },
           {
             _id: 'foo',
             _rev: '3-c',
-            _revisions: {start: 3, ids: ['c', 'b', 'a']}
-          }
+            _revisions: {start: 3, ids: ['c', 'b', 'a']},
+          },
         ],
         [
           {
             _id: 'foo',
             _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}
+            _revisions: {start: 1, ids: ['a']},
           },
           {
             _id: 'foo',
             _rev: '2-d',
-            _revisions: {start: 2, ids: ['d', 'a']}
+            _revisions: {start: 2, ids: ['d', 'a']},
           },
           {
             _id: 'foo',
             _rev: '3-h',
-            _revisions: {start: 3, ids: ['h', 'd', 'a']}
+            _revisions: {start: 3, ids: ['h', 'd', 'a']},
           },
           {
             _id: 'foo',
             _rev: '4-f',
-            _revisions: {start: 4, ids: ['f', 'h', 'd', 'a']}
-          }
-        ]
+            _revisions: {start: 4, ids: ['f', 'h', 'd', 'a']},
+          },
+        ],
       ];
 
       var chain = PouchDB.utils.Promise.resolve();
@@ -1490,44 +1490,44 @@ adapters.forEach(function (adapter) {
       function getExpected(i) {
         var expecteds = [
           {
-            "results": [
+            results: [
               {
-                "seq": seqs[1],
-                "id": "foo",
-                "changes": [{"rev": "3-g"}],
-                "doc": {"_id": "foo", "_rev": "3-g"}
-              }
+                seq: seqs[1],
+                id: 'foo',
+                changes: [{rev: '3-g'}],
+                doc: {_id: 'foo', _rev: '3-g'},
+              },
             ],
-            "last_seq" : seqs[1]
+            last_seq: seqs[1],
           },
           {
-            "results": [
+            results: [
               {
-                "seq": seqs[2],
-                "id": "foo",
-                "changes": [{"rev": "3-c"}, {"rev": "3-g"}],
-                "doc": {"_id": "foo", "_rev": "3-g"}
-              }
+                seq: seqs[2],
+                id: 'foo',
+                changes: [{rev: '3-c'}, {rev: '3-g'}],
+                doc: {_id: 'foo', _rev: '3-g'},
+              },
             ],
-            "last_seq" : seqs[2]
+            last_seq: seqs[2],
           },
           {
-            "results": [
+            results: [
               {
-                "seq": seqs[3],
-                "id": "foo",
-                "changes": [{"rev": "3-c"}, {"rev": "3-g"}, {"rev": "4-f"}],
-                "doc": {"_id": "foo", "_rev": "4-f"}
-              }
+                seq: seqs[3],
+                id: 'foo',
+                changes: [{rev: '3-c'}, {rev: '3-g'}, {rev: '4-f'}],
+                doc: {_id: 'foo', _rev: '4-f'},
+              },
             ],
-            "last_seq" : seqs[3]
-          }
+            last_seq: seqs[3],
+          },
         ];
         return expecteds[i];
       }
 
       function normalizeResult(result) {
-        // order of changes doesn't matter
+        // Order of changes doesn't matter
         result.results.forEach(function (ch) {
           ch.changes = ch.changes.sort(function (a, b) {
             return a.rev < b.rev ? -1 : 1;
@@ -1541,7 +1541,7 @@ adapters.forEach(function (adapter) {
             return db.changes({
               style: 'all_docs',
               since: seqs[seqs.length - 1],
-              include_docs: true
+              include_docs: true,
             });
           }).then(function (result) {
             seqs.push(result.last_seq);
@@ -1567,42 +1567,42 @@ adapters.forEach(function (adapter) {
           {
             _id: 'foo',
             _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}
+            _revisions: {start: 1, ids: ['a']},
           },
           {
             _id: 'foo',
             _rev: '2-e',
             _deleted: true,
-            _revisions: {start: 2, ids: ['e', 'a']}
+            _revisions: {start: 2, ids: ['e', 'a']},
           },
           {
             _id: 'foo',
             _rev: '3-g',
-            _revisions: {start: 3, ids: ['g', 'e', 'a']}
-          }
+            _revisions: {start: 3, ids: ['g', 'e', 'a']},
+          },
         ], [
           {
             _id: 'foo',
             _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}
+            _revisions: {start: 1, ids: ['a']},
           },
           {
             _id: 'foo',
             _rev: '2-b',
-            _revisions: {start: 2, ids: ['b', 'a']}
+            _revisions: {start: 2, ids: ['b', 'a']},
           },
           {
             _id: 'foo',
             _rev: '3-c',
-            _revisions: {start: 3, ids: ['c', 'b', 'a']}
+            _revisions: {start: 3, ids: ['c', 'b', 'a']},
           },
         ], [
           {
             _id: 'bar',
             _rev: '1-z',
-            _revisions: {start: 1, ids: ['z']}
-          }
-        ]
+            _revisions: {start: 1, ids: ['z']},
+          },
+        ],
       ];
 
       var chain = PouchDB.utils.Promise.resolve();
@@ -1622,33 +1622,33 @@ adapters.forEach(function (adapter) {
 
         var expecteds = [
           {
-            "results": [{
-              "seq": seqs[2],
-              "id": "foo",
-              "changes": [{"rev": "3-c"}, {"rev": "3-g"}]
-            }, {"seq": seqs[3], "id": "bar", "changes": [{"rev": "1-z"}]}],
-            "last_seq": seqs[3]
+            results: [{
+              seq: seqs[2],
+              id: 'foo',
+              changes: [{rev: '3-c'}, {rev: '3-g'}],
+            }, {seq: seqs[3], id: 'bar', changes: [{rev: '1-z'}]},],
+            last_seq: seqs[3],
           },
           {
-            "results": [{
-              "seq": seqs[2],
-              "id": "foo",
-              "changes": [{"rev": "3-c"}, {"rev": "3-g"}]
-            }, {"seq": seqs[3], "id": "bar", "changes": [{"rev": "1-z"}]}],
-            "last_seq": seqs[3]
+            results: [{
+              seq: seqs[2],
+              id: 'foo',
+              changes: [{rev: '3-c'}, {rev: '3-g'}],
+            }, {seq: seqs[3], id: 'bar', changes: [{rev: '1-z'}]},],
+            last_seq: seqs[3],
           },
           {
-            "results": [{"seq": seqs[3], "id": "bar",
-              "changes": [{"rev": "1-z"}]}],
-            "last_seq": seqs[3]
+            results: [{seq: seqs[3], id: 'bar',
+              changes: [{rev: '1-z'}],},],
+            last_seq: seqs[3],
           },
-          {"results": [], "last_seq": seqs[3]}
+          {results: [], last_seq: seqs[3]},
         ];
 
         var chain2 = PouchDB.utils.Promise.resolve();
 
         function normalizeResult(result) {
-          // order of changes doesn't matter
+          // Order of changes doesn't matter
           result.results.forEach(function (ch) {
             ch.changes = ch.changes.sort(function (a, b) {
               return a.rev < b.rev ? -1 : 1;
@@ -1660,7 +1660,7 @@ adapters.forEach(function (adapter) {
           chain2 = chain2.then(function () {
             return db.changes({
               since: seq,
-              style: 'all_docs'
+              style: 'all_docs',
             }).then(function (res) {
               normalizeResult(res);
               res.should.deep.equal(expecteds[i], 'since=' + seq +
@@ -1686,28 +1686,28 @@ adapters.forEach(function (adapter) {
           {
             _id: 'foo',
             _rev: '1-a',
-            _revisions: {start: 1, ids: ['a']}
-          }
+            _revisions: {start: 1, ids: ['a']},
+          },
         ], [
           {
             _id: 'foo',
             _rev: '2-b',
-            _revisions: {start: 2, ids: ['b', 'a']}
-          }
+            _revisions: {start: 2, ids: ['b', 'a']},
+          },
         ], [
           {
             _id: 'bar',
             _rev: '1-x',
-            _revisions: {start: 1, ids: ['x']}
-          }
+            _revisions: {start: 1, ids: ['x']},
+          },
         ], [
           {
             _id: 'foo',
             _rev: '2-c',
             _deleted: true,
-            _revisions: {start: 2, ids: ['c', 'a']}
+            _revisions: {start: 2, ids: ['c', 'a']},
           },
-        ]
+        ],
       ];
 
       var chain = PouchDB.utils.Promise.resolve();
@@ -1726,48 +1726,48 @@ adapters.forEach(function (adapter) {
       return chain.then(function () {
 
         var expecteds = [{
-          "results": [{
-            "seq": seqs[3],
-            "id": "bar",
-            "changes": [{"rev": "1-x"}],
-            "doc": {"_id": "bar", "_rev": "1-x"}
-          }],
-          "last_seq": seqs[3]
+          results: [{
+            seq: seqs[3],
+            id: 'bar',
+            changes: [{rev: '1-x'}],
+            doc: {_id: 'bar', _rev: '1-x'},
+          },],
+          last_seq: seqs[3],
         },
           {
-            "results": [{
-              "seq": seqs[3],
-              "id": "bar",
-              "changes": [{"rev": "1-x"}],
-              "doc": {"_id": "bar", "_rev": "1-x"}
-            }],
-            "last_seq": seqs[3]
+            results: [{
+              seq: seqs[3],
+              id: 'bar',
+              changes: [{rev: '1-x'}],
+              doc: {_id: 'bar', _rev: '1-x'},
+            },],
+            last_seq: seqs[3],
           },
           {
-            "results": [{
-              "seq": seqs[3],
-              "id": "bar",
-              "changes": [{"rev": "1-x"}],
-              "doc": {"_id": "bar", "_rev": "1-x"}
-            }],
-            "last_seq": seqs[3]
+            results: [{
+              seq: seqs[3],
+              id: 'bar',
+              changes: [{rev: '1-x'}],
+              doc: {_id: 'bar', _rev: '1-x'},
+            },],
+            last_seq: seqs[3],
           },
           {
-            "results": [{
-              "seq": seqs[4],
-              "id": "foo",
-              "changes": [{"rev": "2-b"}, {"rev": "2-c"}],
-              "doc": {"_id": "foo", "_rev": "2-b"}
-            }],
-            "last_seq": seqs[4]
+            results: [{
+              seq: seqs[4],
+              id: 'foo',
+              changes: [{rev: '2-b'}, {rev: '2-c'}],
+              doc: {_id: 'foo', _rev: '2-b'},
+            },],
+            last_seq: seqs[4],
           },
-          {"results": [], "last_seq": seqs[4]}
+          {results: [], last_seq: seqs[4]},
         ];
 
         var chain2 = PouchDB.utils.Promise.resolve();
 
         function normalizeResult(result) {
-          // order of changes doesn't matter
+          // Order of changes doesn't matter
           result.results.forEach(function (ch) {
             ch.changes = ch.changes.sort(function (a, b) {
               return a.rev < b.rev ? -1 : 1;
@@ -1781,7 +1781,7 @@ adapters.forEach(function (adapter) {
               style: 'all_docs',
               since: seq,
               limit: 1,
-              include_docs: true
+              include_docs: true,
             });
           }).then(function (result) {
             normalizeResult(result);
@@ -1814,7 +1814,7 @@ adapters.forEach(function (adapter) {
           filter: function (doc) {
             return doc.integer % 2 === 0;
           },
-          live: true
+          live: true,
         }).on('complete', function (result) {
           result.status.should.equal('cancelled');
           done();
@@ -1841,7 +1841,7 @@ adapters.forEach(function (adapter) {
         {_id: '6', integer: 6},
         {_id: '7', integer: 7},
       ];
-      var params = { 'abc': true };
+      var params = { abc: true };
       var db = new PouchDB(dbs.name);
       var count = 0;
       db.bulkDocs({ docs: docs1 }, function (err, info) {
@@ -1852,7 +1852,7 @@ adapters.forEach(function (adapter) {
             }
           },
           query_params: params,
-          live: true
+          live: true,
         }).on('complete', function (result) {
           result.status.should.equal('cancelled');
           done();
@@ -1879,7 +1879,7 @@ adapters.forEach(function (adapter) {
           db.changes({
             filter: function (doc) {
               return doc.integer % 2 === 0;
-            }
+            },
           }).on('complete', function (filteredChanges) {
             // Should get docs 0 and 2 if the filter
             // has been applied correctly.
@@ -1901,13 +1901,13 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs1 }, function (err, info) {
         db.changes({
-          descending: true
+          descending: true,
         }).on('complete', function (allChanges) {
           db.changes({
             descending: true,
             filter: function (doc) {
               return doc.integer > 2;
-            }
+            },
           }).on('complete', function (filteredChanges) {
             // Should get docs 2 and 3 if the filter
             // has been applied correctly.
@@ -1924,12 +1924,12 @@ adapters.forEach(function (adapter) {
         {_id: '0'},
         {_id: '1'},
         {_id: '2'},
-        {_id: '3'}
+        {_id: '3'},
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs(docs).then(function () {
         return db.changes({
-          doc_ids: ['1', '3']
+          doc_ids: ['1', '3'],
         });
       }).then(function (changes) {
         var ids = changes.results.map(function (x) {
@@ -1944,7 +1944,7 @@ adapters.forEach(function (adapter) {
       for (var i = 0; i < 5; i++) {
         var id = '';
         for (var j = 0; j < 50; j++) {
-          // make a huge id
+          // Make a huge id
           id += PouchDB.utils.btoa(Math.random().toString());
         }
         docs.push({_id: id});
@@ -1952,7 +1952,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       return db.bulkDocs(docs).then(function () {
         return db.changes({
-          doc_ids: [docs[1]._id, docs[3]._id]
+          doc_ids: [docs[1]._id, docs[3]._id],
         });
       }).then(function (changes) {
         var ids = changes.results.map(function (x) {
@@ -1968,7 +1968,7 @@ adapters.forEach(function (adapter) {
         {_id: '0'},
         {_id: '1'},
         {_id: '2'},
-        {_id: '3'}
+        {_id: '3'},
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs(docs).then(function () {
@@ -1976,7 +1976,7 @@ adapters.forEach(function (adapter) {
           var retChanges = [];
           var changes = db.changes({
             doc_ids: ['1', '3'],
-            live: true
+            live: true,
           }).on('change', function (change) {
             retChanges.push(change);
             if (retChanges.length === 2) {
@@ -1999,7 +1999,7 @@ adapters.forEach(function (adapter) {
       for (var i = 0; i < 5; i++) {
         var id = '';
         for (var j = 0; j < 50; j++) {
-          // make a huge id
+          // Make a huge id
           id += PouchDB.utils.btoa(Math.random().toString());
         }
         docs.push({_id: id});
@@ -2010,7 +2010,7 @@ adapters.forEach(function (adapter) {
           var retChanges = [];
           var changes = db.changes({
             doc_ids: [docs[1]._id, docs[3]._id],
-            live: true
+            live: true,
           }).on('change', function (change) {
             retChanges.push(change);
             if (retChanges.length === 2) {
@@ -2033,13 +2033,13 @@ adapters.forEach(function (adapter) {
         {_id: '0'},
         {_id: '1'},
         {_id: '2'},
-        {_id: '3'}
+        {_id: '3'},
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs(docs).then(function () {
         return db.changes({
           filter: '_doc_ids',
-          doc_ids: ['1', '3']
+          doc_ids: ['1', '3'],
         });
       }).then(function (changes) {
         var ids = changes.results.map(function (x) {
@@ -2054,13 +2054,13 @@ adapters.forEach(function (adapter) {
         {_id: '0'},
         {_id: '1'},
         {_id: '2'},
-        {_id: '3'}
+        {_id: '3'},
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs(docs).then(function () {
         return db.changes({
           filter: '_doc_ids',
-          doc_ids: ['1', '3']
+          doc_ids: ['1', '3'],
         });
       }).then(function (changes) {
         var ids = changes.results.map(function (x) {
@@ -2088,7 +2088,7 @@ adapters.forEach(function (adapter) {
         db.put(docs2[0], function (err, info) {
           db.put(docs2[1], function (err, info) {
             db.changes({
-              include_docs: true
+              include_docs: true,
             }).on('complete', function (changes) {
               changes.results.length.should.equal(4);
 
@@ -2122,25 +2122,25 @@ adapters.forEach(function (adapter) {
             return localdb.put(docs2[1]).then(function (info) {
               var rev2 = info.rev;
               return PouchDB.replicate(localdb, remotedb).then(function (done) {
-                // update remote once, local twice, then replicate from
+                // Update remote once, local twice, then replicate from
                 // remote to local so the remote losing conflict is later in
                 // the tree
                 return localdb.put({
                   _id: '3',
                   _rev: rev2,
-                  integer: 20
+                  integer: 20,
                 }).then(function (resp) {
                   var rev3Doc = {
                     _id: '3',
                     _rev: resp.rev,
-                    integer: 30
+                    integer: 30,
                   };
                   return localdb.put(rev3Doc).then(function (resp) {
                     var rev4local = resp.rev;
                     var rev4Doc = {
                       _id: '3',
                       _rev: rev2,
-                      integer: 100
+                      integer: 100,
                     };
                     return remotedb.put(rev4Doc).then(function (resp) {
                       var remoterev = resp.rev;
@@ -2149,7 +2149,7 @@ adapters.forEach(function (adapter) {
                         return localdb.changes({
                           include_docs: true,
                           style: 'all_docs',
-                          conflicts: true
+                          conflicts: true,
                         }).on('error', testDone)
                         .then(function (changes) {
                             changes.results.length.should.equal(4);
@@ -2159,7 +2159,7 @@ adapters.forEach(function (adapter) {
                             ch.doc._rev.should.equal(rev4local);
                             ch.changes.should.deep.equal([
                               { rev: rev4local },
-                              { rev: remoterev }
+                              { rev: remoterev },
                             ]);
 
                             ch.doc.should.have.property('_conflicts');
@@ -2184,21 +2184,21 @@ adapters.forEach(function (adapter) {
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
         {_id: '2', integer: 2},
-        {_id: '3', integer: 3}
+        {_id: '3', integer: 3},
       ];
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs1 }, function (err, info) {
         var rev = info[3].rev;
         db.remove({
           _id: '3',
-          _rev: rev
+          _rev: rev,
         }, function (err, info) {
           db.changes({
-            include_docs: true
+            include_docs: true,
           }).on('complete', function (changes) {
             changes.results.length.should.equal(4);
             var ch = findById(changes.results, '3');
-            // sequence numbers are not incremental in CouchDB 2.0
+            // Sequence numbers are not incremental in CouchDB 2.0
             if (!testUtils.isCouchMaster()) {
               ch.seq.should.equal(5);
             }
@@ -2215,7 +2215,7 @@ adapters.forEach(function (adapter) {
       for (var i = 0; i < num; i++) {
         docs.push({
           _id: 'doc_' + i,
-          foo: 'bar_' + i
+          foo: 'bar_' + i,
         });
       }
       var db = new PouchDB(dbs.name);
@@ -2232,9 +2232,9 @@ adapters.forEach(function (adapter) {
       db.bulkDocs({ docs: [{ foo: 'bar' }] }, function (err, data) {
         db.info(function (err, info) {
           var api = db.changes({
-            since: 'now'
+            since: 'now',
           }).on('complete', function (res) {
-            // last_seq and update_seq might be encoded differently
+            // Last_seq and update_seq might be encoded differently
             // in clustered CouchDB - they cannot be reliably compared.
             if (!testUtils.isCouchMaster()) {
               res.last_seq.should.equal(info.update_seq);
@@ -2247,15 +2247,15 @@ adapters.forEach(function (adapter) {
       });
     });
 
-    //Duplicate to make sure both api options work.
+    // Duplicate to make sure both api options work.
     it('Calling db.changes({since: \'latest\'})', function (done) {
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: [{ foo: 'bar' }] }, function (err, data) {
         db.info(function (err, info) {
           var api = db.changes({
-            since: 'latest'
+            since: 'latest',
           }).on('complete', function (res) {
-            // last_seq and update_seq might be encoded differently
+            // Last_seq and update_seq might be encoded differently
             // in clustered CouchDB - they cannot be reliably compared.
             if (!testUtils.isCouchMaster()) {
               res.last_seq.should.equal(info.update_seq);
@@ -2280,7 +2280,7 @@ adapters.forEach(function (adapter) {
       }
       db.bulkDocs({ docs: [{ foo: 'bar' }] }, function (err, data) {
         var changes = db.changes({
-          live: true
+          live: true,
         }).on('complete', function (result) {
           result.status.should.equal('cancelled');
           checkDone();
@@ -2299,7 +2299,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var cancelled = false;
       var changes = db.changes({
-        live: true
+        live: true,
       }).on('complete', function (result) {
         cancelled.should.equal(true);
         should.exist(result);
@@ -2320,7 +2320,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var called = 0;
       var changes = db.changes({
-        live: true
+        live: true,
       }).on('change', function () {
         called++;
         if (called === 1) {
@@ -2349,7 +2349,7 @@ adapters.forEach(function (adapter) {
         }
         db.changes({
           descending: true,
-          return_docs: false
+          return_docs: false,
         }).on('change', function (change) {
           changes++;
         }).on('complete', function (results) {
@@ -2377,7 +2377,7 @@ adapters.forEach(function (adapter) {
         }
         db.changes({
           descending: true,
-          returnDocs: false
+          returnDocs: false,
         }).on('change', function (change) {
           changes++;
         }).on('complete', function (results) {
@@ -2396,13 +2396,13 @@ adapters.forEach(function (adapter) {
         {_id: 'a', integer: 0},
         {_id: 'b', integer: 1},
         {_id: 'c', integer: 2},
-        {_id: 'd', integer: 3}
+        {_id: 'd', integer: 3},
       ];
       var called = 0;
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs1 }, function (err, info) {
         db.changes({
-          limit: 1
+          limit: 1,
         }).on('change', function (ch) {
           (called++).should.equal(0);
         }).on('complete', function () {
@@ -2419,7 +2419,7 @@ adapters.forEach(function (adapter) {
         {_id: 'a', integer: 0},
         {_id: 'b', integer: 1},
         {_id: 'c', integer: 2},
-        {_id: 'd', integer: 3}
+        {_id: 'd', integer: 3},
       ];
       var called = 0;
       var doneCalled = 0;
@@ -2432,7 +2432,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       db.changes({
         limit: 1,
-        live: true
+        live: true,
       }).on('change', function (ch) {
         ch.id.should.equal('a');
         (called++).should.equal(0);
@@ -2509,7 +2509,7 @@ adapters.forEach(function (adapter) {
       var count = 0;
       db.bulkDocs({ docs: docs1 }, function (err, info) {
         var changes = db.changes({
-          live: true
+          live: true,
         }).on('complete', function (result) {
           result.status.should.equal('cancelled');
           done();
@@ -2531,7 +2531,7 @@ describe('changes-standalone', function () {
     this.timeout(2000);
     var db = new PouchDB('http://infiniterequest.com', { skipSetup: true });
     db.changes({
-      timeout: 1000
+      timeout: 1000,
     }).on('error', function (err) {
       should.exist(err);
       done();

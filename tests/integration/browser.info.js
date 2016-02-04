@@ -20,18 +20,21 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       return db.info().then(function (info) {
         switch (db.adapter) {
-          case 'websql':
+          case 'websql': {
             info.sqlite_plugin.should.be.a('boolean');
             info.websql_encoding.should.be.a('string');
             info.adapter.should.equal('websql');
             break;
-          case 'idb':
+          }
+          case 'idb': {
             info.idb_attachment_format.should.be.a('string');
             info.adapter.should.equal('idb');
             break;
-          default:
-            should.exist(info); // can't make any guarantees
+          }
+          default: {
+            should.exist(info); // Can't make any guarantees
             break;
+          }
         }
       });
     });

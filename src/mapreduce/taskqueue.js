@@ -10,7 +10,7 @@ function TaskQueue() {
 }
 TaskQueue.prototype.add = function (promiseFactory) {
   this.promise = this.promise.catch(function () {
-    // just recover
+    // Just recover
   }).then(function () {
     return promiseFactory();
   });

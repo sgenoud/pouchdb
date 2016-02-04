@@ -4,7 +4,7 @@ import pouchCollate from 'pouchdb-collate';
 var collate = pouchCollate.collate;
 
 var CHECKPOINT_VERSION = 1;
-var REPLICATOR = "pouchdb";
+var REPLICATOR = 'pouchdb';
 // This is an arbitrary number to limit the
 // amount of replication history we save in the checkpoint.
 // If we save too much, the checkpoing docs will become very big,
@@ -28,7 +28,7 @@ function updateCheckpoint(db, id, checkpoint, session, returnValue) {
         _id: id,
         history: [],
         replicator: REPLICATOR,
-        version: CHECKPOINT_VERSION
+        version: CHECKPOINT_VERSION,
       };
     }
     throw err;
@@ -44,7 +44,7 @@ function updateCheckpoint(db, id, checkpoint, session, returnValue) {
     // Add the latest checkpoint to history
     doc.history.unshift({
       last_seq: checkpoint,
-      session_id: session
+      session_id: session,
     });
 
     // Just take the last pieces in history, to
@@ -60,7 +60,7 @@ function updateCheckpoint(db, id, checkpoint, session, returnValue) {
 
     return db.put(doc).catch(function (err) {
       if (err.status === 409) {
-        // retry; someone is trying to write a checkpoint simultaneously
+        // Retry; someone is trying to write a checkpoint simultaneously
         return updateCheckpoint(db, id, checkpoint, session, returnValue);
       }
       throw err;
@@ -104,7 +104,7 @@ Checkpointer.prototype.updateSource = function (checkpoint, session) {
 };
 
 var comparisons = {
-  "undefined": function(targetDoc, sourceDoc) {
+  undefined: function(targetDoc, sourceDoc) {
     // This is the previous comparison function
     if (collate(targetDoc.last_seq, sourceDoc.last_seq) === 0) {
       return sourceDoc.last_seq;
@@ -112,10 +112,10 @@ var comparisons = {
     /* istanbul ignore next */
     return 0;
   },
-  "1": function(targetDoc, sourceDoc) {
+  1: function(targetDoc, sourceDoc) {
     // This is the comparison function ported from CouchDB
     return compareReplicationLogs(sourceDoc, targetDoc).last_seq;
-  }
+  },
 };
 
 Checkpointer.prototype.getCheckpoint = function () {
@@ -137,7 +137,7 @@ Checkpointer.prototype.getCheckpoint = function () {
       if (targetDoc.version) {
         version = targetDoc.version.toString();
       } else {
-        version = "undefined";
+        version = 'undefined';
       }
 
       if (version in comparisons) {
@@ -149,7 +149,7 @@ Checkpointer.prototype.getCheckpoint = function () {
       if (err.status === 404 && targetDoc.last_seq) {
         return self.src.put({
           _id: self.id,
-          last_seq: LOWEST_SEQ
+          last_seq: LOWEST_SEQ,
         }).then(function () {
           return LOWEST_SEQ;
         }, function (err) {
@@ -172,13 +172,15 @@ Checkpointer.prototype.getCheckpoint = function () {
 };
 // This checkpoint comparison is ported from CouchDBs source
 // they come from here:
+// jscs:disable maximumLineLength
 // https://github.com/apache/couchdb-couch-replicator/blob/master/src/couch_replicator.erl#L863-L906
+// jscs:enable maximumLineLength
 
 function compareReplicationLogs (srcDoc, tgtDoc) {
   if (srcDoc.session_id === tgtDoc.session_id) {
     return {
       last_seq: srcDoc.last_seq,
-      history: srcDoc.history || []
+      history: srcDoc.history || [],
     };
   }
 
@@ -188,7 +190,7 @@ function compareReplicationLogs (srcDoc, tgtDoc) {
 }
 
 function compareReplicationHistory (sourceHistory, targetHistory) {
-  // the erlang loop via function arguments is not so easy to repeat in JS
+  // The erlang loop via function arguments is not so easy to repeat in JS
   // therefore, doing this as recursion
   var S = sourceHistory[0];
   var sourceRest = sourceHistory.slice(1);
@@ -198,7 +200,7 @@ function compareReplicationHistory (sourceHistory, targetHistory) {
   if (!S || targetHistory.length === 0) {
     return {
       last_seq: LOWEST_SEQ,
-      history: []
+      history: [],
     };
   }
 
@@ -207,7 +209,7 @@ function compareReplicationHistory (sourceHistory, targetHistory) {
   if (hasSessionId(sourceId, targetHistory)) {
     return {
       last_seq: S.last_seq,
-      history: sourceHistory
+      history: sourceHistory,
     };
   }
 
@@ -215,7 +217,7 @@ function compareReplicationHistory (sourceHistory, targetHistory) {
   if (hasSessionId(targetId, sourceRest)) {
     return {
       last_seq: T.last_seq,
-      history: targetRest
+      history: targetRest,
     };
   }
 

@@ -25,7 +25,7 @@ if (process.env.COUCH_HOST) {
 var rebuildPromise = Promise.resolve();
 
 function rebuild() {
-  // only run one build at a time
+  // Only run one build at a time
   rebuildPromise = rebuildPromise.then(function () {
     return new Promise(function (resolve) {
       var child = spawn('npm', ['run', 'build']);
@@ -47,7 +47,7 @@ var filesWritten = false;
 
 Promise.resolve().then(function () {
   if (require.main !== module) {
-    return; // don't bother rebuilding if we're in `npm run dev`
+    return; // Don't bother rebuilding if we're in `npm run dev`
   }
   return rebuild();
 }).then(function () {
@@ -57,8 +57,8 @@ Promise.resolve().then(function () {
 
 var HTTP_PORT = 8000;
 
-// if SERVER=sync-gateway we also have 
-// tests/misc/sync-gateway-config-server.js 
+// If SERVER=sync-gateway we also have
+// tests/misc/sync-gateway-config-server.js
 // listening on port 8001
 
 var serversStarted;

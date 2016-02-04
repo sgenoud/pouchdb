@@ -9,7 +9,7 @@ describe('constructor errors', function () {
     });
   });
   it('should error on an undefined adapter', function (done) {
-    new PouchDB('foo', {adapter : 'myFakeAdapter'}, function (err, db) {
+    new PouchDB('foo', {adapter: 'myFakeAdapter'}, function (err, db) {
       should.exist(err);
       err.message.should
         .equal('Adapter is missing',
@@ -30,7 +30,7 @@ describe('constructor errors', function () {
   describe('it should always return methods', function () {
     it('put', function (done) {
       new PouchDB().put({
-        _id: 'lala'
+        _id: 'lala',
       }, function (err, resp) {
         should.exist(err);
         err.message.should
@@ -41,7 +41,7 @@ describe('constructor errors', function () {
     });
     it('post', function (done) {
       new PouchDB().post({
-        something: 'lala'
+        something: 'lala',
       }).then(done, function (err) {
         should.exist(err);
         done();

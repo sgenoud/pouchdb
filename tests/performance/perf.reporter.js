@@ -25,7 +25,7 @@ exports.start = function (testCase) {
   log('Starting test: ' + key + ' with ' + testCase.assertions +
     ' assertions and ' + testCase.iterations + ' iterations... ');
   global.results[key] = {
-    start: Date.now()
+    start: Date.now(),
   };
 };
 
@@ -47,8 +47,8 @@ exports.complete = function (suiteName) {
       device: ua.getDevice(),
       engine: ua.getEngine(),
       cpu: ua.getCPU(),
-      os : ua.getOS(),
-      userAgent: navigator.userAgent
+      os: ua.getOS(),
+      userAgent: navigator.userAgent,
     };
   }
   console.log(global.results);

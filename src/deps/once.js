@@ -5,7 +5,7 @@ function once(fun) {
   return getArguments(function (args) {
     /* istanbul ignore if */
     if (called) {
-      // this is a smoke test and should never actually happen
+      // This is a smoke test and should never actually happen
       throw new Error('once called more than once');
     } else {
       called = true;

@@ -1,4 +1,4 @@
-// in the browser, LevelAlt doesn't need the
+// In the browser, LevelAlt doesn't need the
 // pre-2.2.0 LevelDB-specific migrations
 var toSublevel = function (name, db, callback) {
   process.nextTick(function () {
@@ -14,5 +14,5 @@ var localAndMetaStores = function (db, stores, callback) {
 
 export default {
   toSublevel: toSublevel,
-  localAndMetaStores: localAndMetaStores
+  localAndMetaStores: localAndMetaStores,
 };

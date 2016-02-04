@@ -29,7 +29,7 @@ adapters.forEach(function (adapter) {
     it('local docs - put then get w/ revisions', function () {
       var db = new PouchDB(dbs.name);
       var doc = {
-        _id: '_local/foo'
+        _id: '_local/foo',
       };
       return db.put(doc).then(function (res) {
         res.id.should.equal('_local/foo');
@@ -81,7 +81,7 @@ adapters.forEach(function (adapter) {
     });
 
     it('local docs - put after remove, check return vals', function () {
-      // as long as it starts with 0-, couch
+      // As long as it starts with 0-, couch
       // treats it as a new local doc
       var db = new PouchDB(dbs.name);
       var doc = {_id: '_local/quux'};
@@ -105,7 +105,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       return db.remove({
         _id: '_local/foo',
-        _rev: '1-fake'
+        _rev: '1-fake',
       }).then(function () {
         throw new Error('should not be here');
       }, function (err) {

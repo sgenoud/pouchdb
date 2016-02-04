@@ -28,20 +28,20 @@ adapters.forEach(function (adapters) {
           { foo: 'bar' },
           {
             _id: 'volatile',
-            foo: 'baz'
-          }
-        ]
+            foo: 'baz',
+          },
+        ],
       }, {}, function () {
         var queryFun = {
           map: function (doc) {
             emit(doc.foo, doc);
-          }
+          },
         };
         db.get('volatile', function (_, doc) {
           db.remove(doc, function (_, resp) {
             db.query(queryFun, {
               include_docs: true,
-              reduce: false
+              reduce: false,
             }, function (_, res) {
               res.rows.should.have.length(1, 'Dont include deleted documents');
               res.total_rows.should.equal(1, 'Include total_rows property.');
@@ -65,9 +65,9 @@ adapters.forEach(function (adapters) {
           { foo: 'bar' },
           {
             _id: 'volatile',
-            foo: 'baz'
-          }
-        ]
+            foo: 'baz',
+          },
+        ],
       }, {}, function () {
         var queryFun = function (doc) {
           emit(doc.foo, doc);
@@ -76,7 +76,7 @@ adapters.forEach(function (adapters) {
           db.remove(doc, function (_, resp) {
             db.query(queryFun, {
               include_docs: true,
-              reduce: false
+              reduce: false,
             }, function (_, res) {
               res.rows.should.have.length(1, 'Dont include deleted documents');
               res.rows.forEach(function (x, i) {
@@ -100,34 +100,34 @@ adapters.forEach(function (adapters) {
           { key: 'key2' },
           { key: 'key3' },
           { key: 'key4' },
-          { key: 'key5' }
-        ]
+          { key: 'key5' },
+        ],
       }, {}, function () {
         var queryFun = {
           map: function (doc) {
             emit(doc.key, doc);
-          }
+          },
         };
         db.query(queryFun, {
           reduce: false,
-          startkey: 'key2'
+          startkey: 'key2',
         }, function (_, res) {
           res.rows.should.have.length(4, 'Startkey is inclusive');
           db.query(queryFun, {
             reduce: false,
-            endkey: 'key3'
+            endkey: 'key3',
           }, function (_, res) {
             res.rows.should.have.length(3, 'Endkey is inclusive');
             db.query(queryFun, {
               reduce: false,
               startkey: 'key2',
-              endkey: 'key3'
+              endkey: 'key3',
             }, function (_, res) {
               res.rows.should.have.length(2, 'Startkey and endkey together');
               db.query(queryFun, {
                 reduce: false,
                 startkey: 'key4',
-                endkey: 'key4'
+                endkey: 'key4',
               }, function (_, res) {
                 res.rows.should.have.length(1, 'Startkey=endkey');
                 done();
@@ -145,22 +145,22 @@ adapters.forEach(function (adapters) {
           { key: 'key1' },
           { key: 'key2' },
           { key: 'key3' },
-          { key: 'key3' }
-        ]
+          { key: 'key3' },
+        ],
       }, {}, function () {
         var queryFun = {
           map: function (doc) {
             emit(doc.key, doc);
-          }
+          },
         };
         db.query(queryFun, {
           reduce: false,
-          key: 'key2'
+          key: 'key2',
         }, function (_, res) {
           res.rows.should.have.length(1, 'Doc with key');
           db.query(queryFun, {
             reduce: false,
-            key: 'key3'
+            key: 'key3',
           }, function (_, res) {
             res.rows.should.have.length(2, 'Multiple docs with key');
             done();
@@ -171,48 +171,48 @@ adapters.forEach(function (adapters) {
 
     it.skip('Test basic view collation', function (done) {
       var values = [];
-      // special values sort before all other types
+      // Special values sort before all other types
       values.push(null);
       values.push(false);
       values.push(true);
-      // then numbers
+      // Then numbers
       values.push(1);
       values.push(2);
       values.push(3);
       values.push(4);
-      // then text, case sensitive
-      // currently chrome uses ascii ordering and so wont handle 
+      // Then text, case sensitive
+      // currently chrome uses ascii ordering and so wont handle
       // capitals properly
       values.push('a');
-      //values.push("A");
+      // Values.push("A");
       values.push('aa');
       values.push('b');
-      //values.push("B");
+      // Values.push("B");
       values.push('ba');
       values.push('bb');
-      // then arrays. compared element by element until different.
+      // Then arrays. compared element by element until different.
       // Longer arrays sort after their prefixes
       values.push(['a']);
       values.push(['b']);
       values.push([
         'b',
-        'c'
+        'c',
       ]);
       values.push([
         'b',
         'c',
-        'a'
-      ]);
-      values.push([
-        'b',
-        'd'
+        'a',
       ]);
       values.push([
         'b',
         'd',
-        'e'
       ]);
-      // then object, compares each key value in the list until different.
+      values.push([
+        'b',
+        'd',
+        'e',
+      ]);
+      // Then object, compares each key value in the list until different.
       // larger objects sort after their subset objects.
       values.push({ a: 1 });
       values.push({ a: 2 });
@@ -220,7 +220,7 @@ adapters.forEach(function (adapters) {
       values.push({ b: 2 });
       values.push({
         b: 2,
-        a: 1
+        a: 1,
       });
       // Member order does matter for collation.
       // CouchDB preserves member order
@@ -229,20 +229,20 @@ adapters.forEach(function (adapters) {
       // that doesn't preserve order)
       values.push({
         b: 2,
-        c: 2
+        c: 2,
       });
       var db = new PouchDB(dbs.name);
       var docs = values.map(function (x, i) {
         return {
           _id: i.toString(),
-          foo: x
+          foo: x,
         };
       });
       db.bulkDocs({ docs: docs }, {}, function (err) {
         var queryFun = {
           map: function (doc) {
             emit(doc.foo, null);
-          }
+          },
         };
         if (err) {
           done(err);
@@ -256,7 +256,7 @@ adapters.forEach(function (adapters) {
           });
           db.query(queryFun, {
             descending: true,
-            reduce: false
+            reduce: false,
           }, function (err, res) {
             if (err) {
               done(err);
@@ -278,21 +278,21 @@ adapters.forEach(function (adapters) {
         docs: [
           {
             _id: 'mydoc',
-            foo: 'bar'
+            foo: 'bar',
           },
-          { doc_id: 'mydoc' }
-        ]
+          { doc_id: 'mydoc' },
+        ],
       }, {}, function () {
         var queryFun = {
           map: function (doc) {
             if (doc.doc_id) {
               emit(doc._id, { _id: doc.doc_id });
             }
-          }
+          },
         };
         db.query(queryFun, {
           include_docs: true,
-          reduce: false
+          reduce: false,
         }, function (_, res) {
           should.exist(res.rows[0].doc);
           res.rows[0].doc._id.should.equal('mydoc', 'mydoc included');
@@ -307,7 +307,7 @@ adapters.forEach(function (adapters) {
         var queryFun = {
           map: function (doc) {
             emit('key', 'val');
-          }
+          },
         };
         db.query(queryFun, function (err, res) {
           done();
@@ -321,18 +321,18 @@ adapters.forEach(function (adapters) {
         docs: [
           { val: 'bar' },
           { val: 'bar' },
-          { val: 'baz' }
-        ]
+          { val: 'baz' },
+        ],
       }, null, function () {
         var queryFun = {
           map: function (doc) {
             emit(doc.val, 1);
           },
-          reduce: '_sum'
+          reduce: '_sum',
         };
         db.query(queryFun, {
           reduce: true,
-          group_level: 999
+          group_level: 999,
         }, function (err, res) {
           res.rows.should.have.length(2);
           res.rows[0].value.should.equal(2);
@@ -348,18 +348,18 @@ adapters.forEach(function (adapters) {
         docs: [
           { val: 'bar' },
           { val: 'bar' },
-          { val: 'baz' }
-        ]
+          { val: 'baz' },
+        ],
       }, null, function () {
         var queryFun = {
           map: function (doc) {
             emit(doc.val, doc.val);
           },
-          reduce: '_count'
+          reduce: '_count',
         };
         db.query(queryFun, {
           reduce: true,
-          group_level: 999
+          group_level: 999,
         }, function (err, res) {
           res.rows.should.have.length(2);
           res.rows[0].value.should.equal(2);
@@ -375,18 +375,18 @@ adapters.forEach(function (adapters) {
         docs: [
           { val: 'bar' },
           { val: 'bar' },
-          { val: 'baz' }
-        ]
+          { val: 'baz' },
+        ],
       }, null, function () {
         var queryFun = {
           map: function (doc) {
             emit(doc.val, 1);
           },
-          reduce: '_stats'
+          reduce: '_stats',
         };
         db.query(queryFun, {
           reduce: true,
-          group_level: 999
+          group_level: 999,
         }, function (err, res) {
           var stats = res.rows[0].value;
           stats.sum.should.equal(2);
@@ -414,11 +414,11 @@ adapters.forEach(function (adapters) {
     it('Views should include _conflicts', function (done) {
       var doc1 = {
         _id: '1',
-        foo: 'bar'
+        foo: 'bar',
       };
       var doc2 = {
         _id: '1',
-        foo: 'baz'
+        foo: 'baz',
       };
       var queryFun = function (doc) {
         emit(doc._id, !!doc._conflicts);
@@ -444,16 +444,16 @@ adapters.forEach(function (adapters) {
       var docs1 = [
         {
           _id: '1',
-          foo: 'bar'
+          foo: 'bar',
         },
         {
           _id: '2',
-          name: 'two'
-        }
+          name: 'two',
+        },
       ];
       var doc2 = {
         _id: '1',
-        foo: 'baz'
+        foo: 'baz',
       };
       var queryFun = function (doc) {
         if (doc._conflicts) {
@@ -491,8 +491,8 @@ adapters.forEach(function (adapters) {
         docs: [
           { foo: 'bar' },
           { foo: 'bar' },
-          { foo: 'baz' }
-        ]
+          { foo: 'baz' },
+        ],
       }, null, function () {
         db.query(function (doc) {
           if (doc.foo === 'bar') {
@@ -513,7 +513,7 @@ adapters.forEach(function (adapters) {
         views:
           { scores:
             { map: 'function (doc) { if (doc.score) ' +
-                   '{ emit(null, doc.score); } }' } }
+                   '{ emit(null, doc.score); } }', }, },
       };
       db.post(doc, function (err, info) {
         db.query('barbar/dontExist', { key: 'bar' }, function (err, res) {
@@ -551,7 +551,7 @@ adapters.forEach(function (adapters) {
           },
           reduce: function (key, values, rereduce) {
             return 0;
-          }
+          },
         }, function (err, data) {
           should.not.equal(data.rows[0].value, null, 'value is null');
           done();
@@ -565,8 +565,8 @@ adapters.forEach(function (adapters) {
         docs: [
           { foo: 'bar' },
           { foo: 'baz' },
-          { foo: 'baf' }
-        ]
+          { foo: 'baf' },
+        ],
       }, null, function () {
         db.query(function (doc) {
           emit(doc.foo, null);
@@ -584,8 +584,8 @@ adapters.forEach(function (adapters) {
         docs: [
           { foo: 'bar' },
           { foo: 'baz' },
-          { foo: 'baf' }
-        ]
+          { foo: 'baf' },
+        ],
       }, null, function () {
         db.allDocs({ skip: 1 }, function (err, data) {
           should.not.exist(err);
@@ -601,8 +601,8 @@ adapters.forEach(function (adapters) {
         _id: '_design/index',
         views: {
           index:
-          { map: 'function (doc) { emit(doc._id); }' }
-        }
+          { map: 'function (doc) { emit(doc._id); }' },
+        },
       };
       return db.put(doc).then(function () {
         return db.query('index');
@@ -616,21 +616,21 @@ adapters.forEach(function (adapters) {
       var docs = [
         {
           _id: 'doc0',
-          num: 0
+          num: 0,
         },
         {
           _id: 'doc1',
-          num: 1
+          num: 1,
         },
         { _id: 'doc2' },
         {
           _id: 'doc3',
-          num: null
+          num: null,
         },
         {
           _id: 'doc4',
-          num: ''
-        }
+          num: '',
+        },
       ];
       db.bulkDocs({ docs: docs }, function (err) {
         var mapFunction = function (doc) {
@@ -638,14 +638,14 @@ adapters.forEach(function (adapters) {
         };
         db.query(mapFunction, {
           key: 0,
-          include_docs: true
+          include_docs: true,
         }, function (err, data) {
           data.rows.should.have.length(1);
           data.rows[0].doc._id.should.equal('doc0');
         });
         db.query(mapFunction, {
           key: null,
-          include_docs: true
+          include_docs: true,
         }, function (err, data) {
           data.rows.should.have.length(2);
           data.rows[0].doc._id.should.equal('doc2');
@@ -653,24 +653,24 @@ adapters.forEach(function (adapters) {
         });
         db.query(mapFunction, {
           key: '',
-          include_docs: true
+          include_docs: true,
         }, function (err, data) {
           data.rows.should.have.length(1);
           data.rows[0].doc._id.should.equal('doc4');
         });
         db.query(mapFunction, {
           key: undefined,
-          include_docs: true
+          include_docs: true,
         }, function (err, data) {
           data.rows.should.have.length(5);
-          // everything
+          // Everything
           done();
         });
       });
     });
     if (typeof window === 'undefined' && !process.browser) {
       var fs = require('fs');
-      it("destroy using prototype", function () {
+      it('destroy using prototype', function () {
         return new PouchDB(dbs.name + 1).then(function (db) {
           var doc = {
             _id: '_design/barbar',
@@ -681,9 +681,9 @@ adapters.forEach(function (adapters) {
                     emit(null, doc.score);
                   }
                 }.toString(),
-                reduce: '_sum'
+                reduce: '_sum',
               },
-            }
+            },
           };
           return db.bulkDocs([doc, {score: 3}, {score: 5}]).then(function () {
             return db.query('barbar/scores');

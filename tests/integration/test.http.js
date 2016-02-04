@@ -58,7 +58,7 @@ describe('test.http.js', function () {
     for (var i = 0; i < num; i++) {
       docs.push({
         _id: 'doc_' + i,
-        foo: 'bar_' + i
+        foo: 'bar_' + i,
       });
     }
     var db = new PouchDB(dbs.name);
@@ -75,7 +75,7 @@ describe('test.http.js', function () {
           ajax.apply(this, arguments);
         };
         db.changes({
-          since: update_seq
+          since: update_seq,
         }).on('change', function (change) {
         }).on('complete', function (result) {
           callCount.should.equal(1, 'One _changes call to complete changes');
@@ -88,7 +88,7 @@ describe('test.http.js', function () {
 
   it('handle ddocs with slashes', function (done) {
     var ddoc = {
-      _id: '_design/foo/bar'
+      _id: '_design/foo/bar',
     };
     var db = new PouchDB(dbs.name);
     db.bulkDocs({ docs: [ddoc] }, function (err, result) {
@@ -125,8 +125,8 @@ describe('test.http.js', function () {
     var db = new PouchDB(dbs.name, {
       skipSetup: true,
       ajax: {
-        timeout: timeout
-      }
+        timeout: timeout,
+      },
     });
 
     var ajax = PouchDB.utils.ajax;
@@ -153,8 +153,8 @@ describe('test.http.js', function () {
   it('Test custom header', function () {
     var db = new PouchDB(dbs.name, {
       headers: {
-        'X-Custom': 'some-custom-header'
-      }
+        'X-Custom': 'some-custom-header',
+      },
     });
     return db.info();
   });
@@ -174,13 +174,13 @@ describe('test.http.js', function () {
     var numDocs = 75;
     for (var i = 0; i < numDocs; i++) {
       docs.push({
-        _id: 'fairly_long_doc_name_' + i
+        _id: 'fairly_long_doc_name_' + i,
       });
     }
     var db = new PouchDB(dbs.name);
     return db.bulkDocs(docs).then(function () {
       return db.allDocs({
-        keys: docs.map(function (x) { return x._id; })
+        keys: docs.map(function (x) { return x._id; }),
       });
     }).then(function (res) {
       res.rows.should.have.length(numDocs);

@@ -4,7 +4,7 @@ var adapters = [
   ['local', 'http'],
   ['http', 'http'],
   ['http', 'local'],
-  ['local', 'local']
+  ['local', 'local'],
 ];
 
 adapters.forEach(function (adapters) {
@@ -35,10 +35,10 @@ adapters.forEach(function (adapters) {
             all: {
               map: function (doc) {
                 emit(doc._id);
-              }.toString()
-            }
-          }
-        }
+              }.toString(),
+            },
+          },
+        },
       ]).then(function () {
         return db.allDocs({key: 'constructor'});
       }).then(function (res) {

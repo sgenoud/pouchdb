@@ -20,7 +20,7 @@ import { parseDoc as parseDoc } from '../../deps/docs/parseDoc';
 import processDocs from '../../deps/docs/processDocs';
 import md5 from '../../deps/md5';
 import migrate from '../../deps/migrate';
-import Deque from "double-ended-queue";
+import Deque from 'double-ended-queue';
 import { atob as atob } from '../../deps/binary/base64';
 import functionName from '../../deps/functionName';
 import readAsBluffer from './readAsBlobOrBuffer';
@@ -46,11 +46,11 @@ var BINARY_STORE = 'attach-binary-store';
 var LOCAL_STORE = 'local-store';
 var META_STORE = 'meta-store';
 
-// leveldb barks if we try to open a db multiple times
+// Leveldb barks if we try to open a db multiple times
 // so we cache opened connections here for initstore()
 var dbStores = new collections.Map();
 
-// store the value of update_seq in the by-sequence store the key name will
+// Store the value of update_seq in the by-sequence store the key name will
 // never conflict, since the keys in the by-sequence store are integers
 var UPDATE_SEQ_KEY = '_local_last_update_seq';
 var DOC_COUNT_KEY = '_local_doc_count';
@@ -62,10 +62,10 @@ var safeJsonEncoding = {
   encode: safeJsonStringify,
   decode: safeJsonParse,
   buffer: false,
-  type: 'cheap-json'
+  type: 'cheap-json',
 };
 
-// require leveldown. provide verbose output on error as it is the default
+// Require leveldown. provide verbose output on error as it is the default
 // nodejs adapter, which we do not provide for the user
 /* istanbul ignore next */
 var requireLeveldown = function () {
@@ -75,26 +75,26 @@ var requireLeveldown = function () {
     /*jshint -W022 */
     err = err || 'leveldown import error';
     if (err.code === 'MODULE_NOT_FOUND') {
-      // handle leveldown not installed case
+      // Handle leveldown not installed case
       return new Error([
         'the \'leveldown\' package is not available. install it, or,',
-        'specify another storage backend using the \'db\' option'
+        'specify another storage backend using the \'db\' option',
       ].join(' '));
     } else if (err.message && err.message.match('Module version mismatch')) {
-      // handle common user enviornment error
+      // Handle common user enviornment error
       return new Error([
         err.message,
         'This generally implies that leveldown was built with a different',
         'version of node than that which is running now.  You may try',
-        'fully removing and reinstalling PouchDB or leveldown to resolve.'
+        'fully removing and reinstalling PouchDB or leveldown to resolve.',
       ].join(' '));
     }
-    // handle general internal nodejs require error
+    // Handle general internal nodejs require error
     return new Error(err.toString() + ': unable to import leveldown');
   }
 };
 
-// winningRev and deleted are performance-killers, but
+// WinningRev and deleted are performance-killers, but
 // in newer versions of PouchDB, they are cached on the metadata
 function getWinningRev(metadata) {
   return 'winningRev' in metadata ?
@@ -116,14 +116,14 @@ function fetchAttachment(att, stores, opts) {
         if (err.name !== 'NotFoundError') {
           return reject(err);
         } else {
-          // empty
+          // Empty
           if (!opts.binary) {
             data = '';
           } else {
             data = binStringToBluffer('', type);
           }
         }
-      } else { // non-empty
+      } else { // Non-empty
         if (opts.binary) {
           data = readAsBluffer(buffer, type);
         } else {
@@ -242,7 +242,7 @@ function LevelPouch(opts, callback) {
     if (db.isClosed()) {
       return callback(new Error('database is closed'));
     }
-    return callback(null, db._docCount); // use cached value
+    return callback(null, db._docCount); // Use cached value
   }
 
   api.type = function () {
@@ -257,7 +257,7 @@ function LevelPouch(opts, callback) {
     var res = {
       doc_count: db._docCount,
       update_seq: db._updateSeq,
-      backend_adapter: functionName(leveldown)
+      backend_adapter: functionName(leveldown),
     };
     return process.nextTick(function () {
       callback(null, res);
@@ -277,13 +277,13 @@ function LevelPouch(opts, callback) {
 
     if (firstTask.type === 'read') {
       runReadOperation(firstTask);
-    } else { // write, only do one at a time
+    } else { // Write, only do one at a time
       runWriteOperation(firstTask);
     }
   }
 
   function runReadOperation(firstTask) {
-    // do multiple reads at once simultaneously, because it's safe
+    // Do multiple reads at once simultaneously, because it's safe
 
     var readTasks = [firstTask];
     var i = 1;
@@ -303,7 +303,7 @@ function LevelPouch(opts, callback) {
         callback.apply(null, cbArgs);
         if (++numDone === readTasks.length) {
           process.nextTick(function () {
-            // all read tasks have finished
+            // All read tasks have finished
             readTasks.forEach(function () {
               db._queue.shift();
             });
@@ -332,7 +332,7 @@ function LevelPouch(opts, callback) {
     tryCode(firstTask.fun, args);
   }
 
-  // all read/write operations to the database are done in a queue,
+  // All read/write operations to the database are done in a queue,
   // similar to how websql/idb works. this avoids problems such
   // as e.g. compaction needing to have a lock on the database while
   // it updates stuff. in the future we can revisit this.
@@ -341,7 +341,7 @@ function LevelPouch(opts, callback) {
       db._queue.push({
         fun: fun,
         args: args,
-        type: 'write'
+        type: 'write',
       });
 
       if (db._queue.length === 1) {
@@ -350,13 +350,13 @@ function LevelPouch(opts, callback) {
     });
   }
 
-  // same as the writelock, but multiple can run at once
+  // Same as the writelock, but multiple can run at once
   function readLock(fun) {
     return getArguments(function (args) {
       db._queue.push({
         fun: fun,
         args: args,
-        type: 'read'
+        type: 'read',
       });
 
       if (db._queue.length === 1) {
@@ -385,7 +385,7 @@ function LevelPouch(opts, callback) {
       var rev = getWinningRev(metadata);
       var deleted = getIsDeleted(metadata, rev);
       if (deleted && !opts.rev) {
-        return callback(createError(MISSING_DOC, "deleted"));
+        return callback(createError(MISSING_DOC, 'deleted'));
       }
 
       rev = opts.rev ? opts.rev : rev;
@@ -398,18 +398,18 @@ function LevelPouch(opts, callback) {
         }
         /* istanbul ignore if */
         if ('_id' in doc && doc._id !== metadata.id) {
-          // this failing implies something very wrong
+          // This failing implies something very wrong
           return callback(new Error('wrong doc returned'));
         }
         doc._id = metadata.id;
         if ('_rev' in doc) {
           /* istanbul ignore if */
           if (doc._rev !== rev) {
-            // this failing implies something very wrong
+            // This failing implies something very wrong
             return callback(new Error('wrong doc returned'));
           }
         } else {
-          // we didn't always store this
+          // We didn't always store this
           doc._rev = rev;
         }
         return callback(null, {doc: doc, metadata: metadata});
@@ -417,7 +417,7 @@ function LevelPouch(opts, callback) {
     });
   });
 
-  // not technically part of the spec, but if putAttachment has its own
+  // Not technically part of the spec, but if putAttachment has its own
   // method...
   api._getAttachment = function (attachment, opts, callback) {
     var digest = attachment.digest;
@@ -449,7 +449,7 @@ function LevelPouch(opts, callback) {
     var docCountDelta = 0;
     var newUpdateSeq = db._updateSeq;
 
-    // parse the docs and give each a sequence number
+    // Parse the docs and give each a sequence number
     var userDocs = req.docs;
     var docInfos = userDocs.map(function (doc, i) {
       if (doc._id && isLocalId(doc._id)) {
@@ -471,7 +471,7 @@ function LevelPouch(opts, callback) {
       return callback(infoErrors[0]);
     }
 
-    // verify any stub attachments as a precondition test
+    // Verify any stub attachments as a precondition test
 
     function verifyAttachment(digest, callback) {
       txn.get(stores.attachmentStore, digest, function (levelErr) {
@@ -528,7 +528,7 @@ function LevelPouch(opts, callback) {
 
       userDocs.forEach(function (doc) {
         if (doc._id && isLocalId(doc._id)) {
-          // skip local docs
+          // Skip local docs
           return checkDone();
         }
         txn.get(stores.docStore, doc._id, function (err, info) {
@@ -631,7 +631,7 @@ function LevelPouch(opts, callback) {
         var att = docInfo.data._attachments[key];
 
         if (att.stub) {
-          // still need to update the refs mapping
+          // Still need to update the refs mapping
           var id = docInfo.data._id;
           var rev = docInfo.data._rev;
           saveAttachmentRefs(id, rev, att.digest, attachmentSaved);
@@ -639,7 +639,7 @@ function LevelPouch(opts, callback) {
         }
         var data;
         if (typeof att.data === 'string') {
-          // input is assumed to be a base64 string
+          // Input is assumed to be a base64 string
           try {
             data = atob(att.data);
           } catch (e) {
@@ -658,7 +658,7 @@ function LevelPouch(opts, callback) {
         var seq = docInfo.metadata.rev_map[docInfo.metadata.rev];
         /* istanbul ignore if */
         if (seq) {
-          // check that there aren't any existing revisions with the same
+          // Check that there aren't any existing revisions with the same
           // revision id, else we shouldn't do anything
           return callback2();
         }
@@ -670,18 +670,18 @@ function LevelPouch(opts, callback) {
           key: seqKey,
           value: docInfo.data,
           prefix: stores.bySeqStore,
-          type: 'put'
+          type: 'put',
         }, {
           key: docInfo.metadata.id,
           value: docInfo.metadata,
           prefix: stores.docStore,
-          type: 'put'
-        }];
+          type: 'put',
+        },];
         txn.batch(batch);
         results[resultsIdx] = {
           ok: true,
           id: docInfo.metadata.id,
-          rev: winningRev
+          rev: winningRev,
         };
         fetchedDocs.set(docInfo.metadata.id, docInfo.metadata);
         callback2();
@@ -692,7 +692,7 @@ function LevelPouch(opts, callback) {
       }
     }
 
-    // attachments are queued per-digest, otherwise the refs could be
+    // Attachments are queued per-digest, otherwise the refs could be
     // overwritten by concurrent writes in the same bulkDocs session
     var attachmentQueues = {};
 
@@ -716,7 +716,7 @@ function LevelPouch(opts, callback) {
 
         if (oldAtt) {
           if (oldAtt.refs) {
-            // only update references if this attachment already has them
+            // Only update references if this attachment already has them
             // since we cannot migrate old style attachments here without
             // doing a full db scan for references
             newAtt.refs = oldAtt.refs;
@@ -732,13 +732,13 @@ function LevelPouch(opts, callback) {
             type: 'put',
             prefix: stores.attachmentStore,
             key: digest,
-            value: newAtt
-          }]);
+            value: newAtt,
+          },]);
           resolve(!oldAtt);
         });
       }
 
-      // put attachments in a per-digest queue, to avoid two docs with the same
+      // Put attachments in a per-digest queue, to avoid two docs with the same
       // attachment overwriting each other
       var queue = attachmentQueues[digest] || Promise.resolve();
       attachmentQueues[digest] = queue.then(function () {
@@ -761,20 +761,20 @@ function LevelPouch(opts, callback) {
         if (err) {
           return callback(err);
         }
-        // do not try to store empty attachments
+        // Do not try to store empty attachments
         if (data.length === 0) {
           return callback(err);
         }
         if (!isNewAttachment) {
-          // small optimization - don't bother writing it again
+          // Small optimization - don't bother writing it again
           return callback(err);
         }
         txn.batch([{
           type: 'put',
           prefix: stores.binaryStore,
           key: digest,
-          value: new Buffer(data, 'binary')
-        }]);
+          value: new Buffer(data, 'binary'),
+        },]);
         callback();
       });
     }
@@ -791,14 +791,14 @@ function LevelPouch(opts, callback) {
           prefix: stores.metaStore,
           type: 'put',
           key: UPDATE_SEQ_KEY,
-          value: newUpdateSeq
+          value: newUpdateSeq,
         },
         {
           prefix: stores.metaStore,
           type: 'put',
           key: DOC_COUNT_KEY,
-          value: db._docCount + docCountDelta
-        }
+          value: db._docCount + docCountDelta,
+        },
       ]);
       txn.execute(db, function (err) {
         /* istanbul ignore if */
@@ -852,7 +852,7 @@ function LevelPouch(opts, callback) {
       }
       if (opts.descending) {
         readstreamOpts.reverse = true;
-        // switch start and ends
+        // Switch start and ends
         var tmp = readstreamOpts.lte;
         readstreamOpts.lte = readstreamOpts.gte;
         readstreamOpts.gte = tmp;
@@ -864,13 +864,13 @@ function LevelPouch(opts, callback) {
       if (limit === 0 ||
           ('start' in readstreamOpts && 'end' in readstreamOpts &&
           readstreamOpts.start > readstreamOpts.end)) {
-        // should return 0 results when start is greater than end.
+        // Should return 0 results when start is greater than end.
         // normally level would "fix" this for us by reversing the order,
         // so short-circuit instead
         return callback(null, {
           total_rows: docCount,
           offset: opts.skip,
-          rows: []
+          rows: [],
         });
       }
       var results = [];
@@ -878,7 +878,7 @@ function LevelPouch(opts, callback) {
 
       var throughStream = through(function (entry, _, next) {
         var metadata = entry.value;
-        // winningRev and deleted are performance-killers, but
+        // WinningRev and deleted are performance-killers, but
         // in newer versions of PouchDB, they are cached on the metadata
         var winningRev = getWinningRev(metadata);
         var deleted = getIsDeleted(metadata, winningRev);
@@ -901,8 +901,8 @@ function LevelPouch(opts, callback) {
             id: metadata.id,
             key: metadata.id,
             value: {
-              rev: winningRev
-            }
+              rev: winningRev,
+            },
           };
           if (opts.include_docs) {
             doc.doc = data;
@@ -935,20 +935,19 @@ function LevelPouch(opts, callback) {
           stores.bySeqStore.get(formatSeq(seq), function (err, data) {
             allDocsInner(data);
           });
-        }
-        else {
+        } else {
           allDocsInner();
         }
       }, function (next) {
         Promise.resolve().then(function () {
-          if (opts.include_docs && opts.attachments){
+          if (opts.include_docs && opts.attachments) {
             return fetchAttachments(results, stores, opts);
           }
         }).then(function () {
           callback(null, {
             total_rows: docCount,
             offset: opts.skip,
-            rows: results
+            rows: results,
           });
         }, callback);
         next();
@@ -972,7 +971,7 @@ function LevelPouch(opts, callback) {
       return {
         cancel: function () {
           LevelPouch.Changes.removeListener(name, id);
-        }
+        },
       };
     }
 
@@ -981,7 +980,7 @@ function LevelPouch(opts, callback) {
     var lastSeq = opts.since || 0;
     var called = 0;
     var streamOpts = {
-      reverse: descending
+      reverse: descending,
     };
     var limit;
     if ('limit' in opts && opts.limit > 0) {
@@ -1039,7 +1038,7 @@ function LevelPouch(opts, callback) {
       var doc = data.value;
 
       if (seq === opts.since && !descending) {
-        // couchdb ignores `since` if descending=true
+        // Couchdb ignores `since` if descending=true
         return next();
       }
 
@@ -1066,7 +1065,7 @@ function LevelPouch(opts, callback) {
             called++;
 
             if (opts.attachments && opts.include_docs) {
-              // fetch attachment immediately for the benefit
+              // Fetch attachment immediately for the benefit
               // of live listeners
               fetchAttachments([change], stores, opts).then(function () {
                 opts.onChange(change);
@@ -1083,7 +1082,7 @@ function LevelPouch(opts, callback) {
         }
 
         if (metadata.seq !== seq) {
-          // some other seq is later
+          // Some other seq is later
           return next();
         }
 
@@ -1093,7 +1092,7 @@ function LevelPouch(opts, callback) {
           return onGetWinningDoc(doc);
         }
 
-        // fetch the winner
+        // Fetch the winner
 
         var winningSeq = metadata.rev_map[winningRev];
 
@@ -1103,10 +1102,10 @@ function LevelPouch(opts, callback) {
       }
 
       metadata = docIdsToMetadata.get(doc._id);
-      if (metadata) { // cached
+      if (metadata) { // Cached
         return onGetMetadata(metadata);
       }
-      // metadata not cached, have to go fetch it
+      // Metadata not cached, have to go fetch it
       stores.docStore.get(doc._id, function (err, metadata) {
         /* istanbul ignore if */
         if (opts.cancelled || opts.done || db.isClosed() ||
@@ -1137,7 +1136,7 @@ function LevelPouch(opts, callback) {
       cancel: function () {
         opts.cancelled = true;
         complete();
-      }
+      },
     };
   };
 
@@ -1171,7 +1170,7 @@ function LevelPouch(opts, callback) {
     api._doCompactionNoLock(docId, revs, opts, callback);
   });
 
-  // the NoLock version is for use by bulkDocs
+  // The NoLock version is for use by bulkDocs
   api._doCompactionNoLock = function (docId, revs, opts, callback) {
     if (typeof opts === 'function') {
       callback = opts;
@@ -1188,7 +1187,7 @@ function LevelPouch(opts, callback) {
       if (err) {
         return callback(err);
       }
-      var seqs = metadata.rev_map; // map from rev to seq
+      var seqs = metadata.rev_map; // Map from rev to seq
       traverseRevTree(metadata.rev_tree, function (isLeaf, pos,
                                                          revHash, ctx, opts) {
         var rev = pos + '-' + revHash;
@@ -1201,7 +1200,7 @@ function LevelPouch(opts, callback) {
         key: metadata.id,
         value: metadata,
         type: 'put',
-        prefix: stores.docStore
+        prefix: stores.docStore,
       });
 
       var digestMap = {};
@@ -1212,7 +1211,7 @@ function LevelPouch(opts, callback) {
         if (err) {
           overallErr = err;
         }
-        if (++numDone === revs.length) { // done
+        if (++numDone === revs.length) { // Done
           /* istanbul ignore if */
           if (overallErr) {
             return callback(overallErr);
@@ -1228,7 +1227,7 @@ function LevelPouch(opts, callback) {
         }
         txn.batch(batch);
         if (opts.ctx) {
-          // don't execute immediately
+          // Don't execute immediately
           return callback();
         }
         txn.execute(db, callback);
@@ -1271,23 +1270,23 @@ function LevelPouch(opts, callback) {
             refs.forEach(function (ref) {
               newRefs[ref] = true;
             });
-            if (refs.length) { // not orphaned
+            if (refs.length) { // Not orphaned
               batch.push({
                 key: digest,
                 type: 'put',
                 value: {refs: newRefs},
-                prefix: stores.attachmentStore
+                prefix: stores.attachmentStore,
               });
-            } else { // orphaned, can safely delete
+            } else { // Orphaned, can safely delete
               batch = batch.concat([{
                 key: digest,
                 type: 'del',
-                prefix: stores.attachmentStore
+                prefix: stores.attachmentStore,
               }, {
                 key: digest,
                 type: 'del',
-                prefix: stores.binaryStore
-              }]);
+                prefix: stores.binaryStore,
+              },]);
             }
             checkDone();
           });
@@ -1299,7 +1298,7 @@ function LevelPouch(opts, callback) {
         batch.push({
           key: formatSeq(seq),
           type: 'del',
-          prefix: stores.bySeqStore
+          prefix: stores.bySeqStore,
         });
         txn.get(stores.bySeqStore, formatSeq(seq), function (err, doc) {
           /* istanbul ignore if */
@@ -1347,9 +1346,9 @@ function LevelPouch(opts, callback) {
     api._putLocalNoLock(doc, opts, callback);
   });
 
-  // the NoLock version is for use by bulkDocs
+  // The NoLock version is for use by bulkDocs
   api._putLocalNoLock = function (doc, opts, callback) {
-    delete doc._revisions; // ignore this, trust the rev
+    delete doc._revisions; // Ignore this, trust the rev
     var oldRev = doc._rev;
     var id = doc._id;
 
@@ -1369,15 +1368,15 @@ function LevelPouch(opts, callback) {
           type: 'put',
           prefix: stores.localStore,
           key: id,
-          value: doc
-        }
+          value: doc,
+        },
       ];
 
       txn.batch(batch);
       var ret = {ok: true, id: doc._id, rev: doc._rev};
 
       if (opts.ctx) {
-        // don't execute immediately
+        // Don't execute immediately
         return callback(null, ret);
       }
       txn.execute(db, function (err) {
@@ -1406,7 +1405,7 @@ function LevelPouch(opts, callback) {
     api._removeLocalNoLock(doc, opts, callback);
   });
 
-  // the NoLock version is for use by bulkDocs
+  // The NoLock version is for use by bulkDocs
   api._removeLocalNoLock = function (doc, opts, callback) {
     var txn = opts.ctx || new LevelTransaction();
     txn.get(stores.localStore, doc._id, function (err, resp) {
@@ -1424,11 +1423,11 @@ function LevelPouch(opts, callback) {
       txn.batch([{
         prefix: stores.localStore,
         type: 'del',
-        key: doc._id
-      }]);
+        key: doc._id,
+      },]);
       var ret = {ok: true, id: doc._id, rev: '0-0'};
       if (opts.ctx) {
-        // don't execute immediately
+        // Don't execute immediately
         return callback(null, ret);
       }
       txn.execute(db, function (err) {
@@ -1441,7 +1440,7 @@ function LevelPouch(opts, callback) {
     });
   };
 
-  // close and delete open leveldb stores
+  // Close and delete open leveldb stores
   api._destroy = function (opts, callback) {
     var dbStore;
     var leveldownName = functionName(leveldown);
@@ -1475,7 +1474,7 @@ function LevelPouch(opts, callback) {
 }
 
 LevelPouch.valid = function () {
-  // this gets overriden by the *down-based browser adapters
+  // This gets overriden by the *down-based browser adapters
   return true;
 };
 

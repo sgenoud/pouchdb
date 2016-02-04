@@ -10,7 +10,7 @@ var scenarios = [
   'PouchDB v3.0.6',
   'PouchDB v3.2.0',
   'PouchDB v3.6.0',
-  'websql'
+  'websql',
 ];
 
 describe('migration', function () {
@@ -33,19 +33,19 @@ describe('migration', function () {
             'PouchDB v2.2.0',
             'PouchDB v3.0.6',
             'PouchDB v3.2.0',
-            'PouchDB v3.6.0'
+            'PouchDB v3.6.0',
           ].indexOf(scenario) !== -1;
       var post306 = [
             'PouchDB v3.0.6',
             'PouchDB v3.2.0',
-            'PouchDB v3.6.0'
+            'PouchDB v3.6.0',
           ].indexOf(scenario) !== -1;
       var post320 = [
             'PouchDB v3.2.0',
-            'PouchDB v3.6.0'
+            'PouchDB v3.6.0',
           ].indexOf(scenario) !== -1;
       var post360 = [
-            'PouchDB v3.6.0'
+            'PouchDB v3.6.0',
           ].indexOf(scenario) !== -1;
 
       beforeEach(function (done) {
@@ -70,30 +70,30 @@ describe('migration', function () {
           'PouchDB v3.0.6': PouchDBVersion306,
           'PouchDB v3.2.0': PouchDBVersion320,
           'PouchDB v3.6.0': PouchDBVersion360,
-          PouchDB: PouchDB
+          PouchDB: PouchDB,
         };
 
-        // need actual unique db names for these tests
+        // Need actual unique db names for these tests
         var localName = testUtils.adapterUrl('local', 'test_migration_local');
         var remoteName = testUtils.adapterUrl('http', 'test_migration_remote');
 
         dbs.first = {
-          pouch : constructors[scenario] || PouchDB,
-          local : localName,
-          remote : remoteName,
-          localOpts : {}
+          pouch: constructors[scenario] || PouchDB,
+          local: localName,
+          remote: remoteName,
+          localOpts: {},
         };
 
         dbs.second = {
-          pouch : PouchDB,
-          local : localName,
-          remote : remoteName
+          pouch: PouchDB,
+          local: localName,
+          remote: remoteName,
         };
 
         if (scenario in PouchDB.adapters) {
           dbs.first.localOpts.adapter = scenario;
         }
-        // else scenario might not make sense for this browser, so just use 
+        // Else scenario might not make sense for this browser, so just use
         // same adapter for both
 
         testUtils.cleanup([dbs.first.local, dbs.second.local], done);
@@ -112,7 +112,7 @@ describe('migration', function () {
         {_id: '0', a: 1, b: 1},
         {_id: '3', a: 4, b: 16},
         {_id: '1', a: 2, b: 4},
-        {_id: '2', a: 3, b: 9}
+        {_id: '2', a: 3, b: 9},
       ];
 
       it('Testing basic migration integrity', function (done) {
@@ -150,14 +150,14 @@ describe('migration', function () {
         });
       });
 
-      it("Test basic replication with migration", function (done) {
+      it('Test basic replication with migration', function (done) {
         if (skip) { return done(); }
         var docs = [
-          {_id: "0", integer: 0, string: '0'},
-          {_id: "1", integer: 1, string: '1'},
-          {_id: "2", integer: 2, string: '2'},
-          {_id: "3", integer: 3, string: '3', _deleted : true},
-          {_id: "4", integer: 4, string: '4', _deleted : true}
+          {_id: '0', integer: 0, string: '0'},
+          {_id: '1', integer: 1, string: '1'},
+          {_id: '2', integer: 2, string: '2'},
+          {_id: '3', integer: 3, string: '3', _deleted: true},
+          {_id: '4', integer: 4, string: '4', _deleted: true},
         ];
 
         new dbs.first.pouch(dbs.first.remote, function (err, oldPouch) {
@@ -218,14 +218,14 @@ describe('migration', function () {
         });
       });
 
-      it("Test basic replication with migration + changes()", function (done) {
+      it('Test basic replication with migration + changes()', function (done) {
         if (skip) { return done(); }
         var docs = [
-          {_id: "0", integer: 0, string: '0'},
-          {_id: "1", integer: 1, string: '1'},
-          {_id: "2", integer: 2, string: '2'},
-          {_id: "3", integer: 3, string: '3', _deleted : true},
-          {_id: "4", integer: 4, string: '4', _deleted : true}
+          {_id: '0', integer: 0, string: '0'},
+          {_id: '1', integer: 1, string: '1'},
+          {_id: '2', integer: 2, string: '2'},
+          {_id: '3', integer: 3, string: '3', _deleted: true},
+          {_id: '4', integer: 4, string: '4', _deleted: true},
         ];
 
         new dbs.first.pouch(dbs.first.remote, function (err, oldPouch) {
@@ -285,7 +285,7 @@ describe('migration', function () {
       });
 
       if (post220) {
-        it("Test persistent views don't require update", function (done) {
+        it('Test persistent views don\'t require update', function (done) {
           if (skip) { return done(); }
           var oldPouch =
             new dbs.first.pouch(dbs.first.local, dbs.first.localOpts,
@@ -301,15 +301,15 @@ describe('migration', function () {
               myview: {
                 map: function (doc) {
                   emit(doc.a);
-                }.toString()
-              }
-            }
-          }]);
+                }.toString(),
+              },
+            },
+          },]);
           var expectedRows = [
             { key: 1, id: '0', value: null },
             { key: 2, id: '1', value: null },
             { key: 3, id: '2', value: null },
-            { key: 4, id: '3', value: null }
+            { key: 4, id: '3', value: null },
           ];
           oldPouch.bulkDocs({docs: docs}, function (err, res) {
             should.not.exist(err, 'bulkDocs');
@@ -333,7 +333,7 @@ describe('migration', function () {
           });
         });
 
-        it("Test persistent views don't require update, with a value",
+        it('Test persistent views don\'t require update, with a value',
             function (done) {
           if (skip) { return done(); }
           var oldPouch =
@@ -350,15 +350,15 @@ describe('migration', function () {
               myview: {
                 map: function (doc) {
                   emit(doc.a, doc.b);
-                }.toString()
-              }
-            }
-          }]);
+                }.toString(),
+              },
+            },
+          },]);
           var expectedRows = [
             { key: 1, id: '0', value: 1 },
             { key: 2, id: '1', value: 4 },
             { key: 3, id: '2', value: 9 },
-            { key: 4, id: '3', value: 16 }
+            { key: 4, id: '3', value: 16 },
           ];
           oldPouch.bulkDocs({docs: docs}, function (err, res) {
             should.not.exist(err, 'bulkDocs');
@@ -398,21 +398,21 @@ describe('migration', function () {
               myview: {
                 map: function (doc) {
                   emit(doc.firstName);
-                }.toString()
-              }
-            }
+                }.toString(),
+              },
+            },
           };
           var doc = {
             _id: 'foo',
             firstName: 'Foobar',
-            lastName: 'Bazman'
+            lastName: 'Bazman',
           };
           oldPouch.bulkDocs({docs: [ddoc, doc]}).then(function (info) {
             ddoc._rev = info[0].rev;
             return oldPouch.query('myview');
           }).then(function (res) {
             res.rows.should.deep.equal([
-              {id: 'foo', key: 'Foobar', value: null}
+              {id: 'foo', key: 'Foobar', value: null},
             ]);
             ddoc.views.myview.map = function (doc) {
               emit(doc.lastName);
@@ -422,7 +422,7 @@ describe('migration', function () {
             return oldPouch.query('myview');
           }).then(function (res) {
             res.rows.should.deep.equal([
-              {id: 'foo', key: 'Bazman', value: null}
+              {id: 'foo', key: 'Bazman', value: null},
             ]);
             return oldPouch.close();
           }).then(function () {
@@ -444,7 +444,7 @@ describe('migration', function () {
               });
           var docs = [
             { _id: '_local/foo' },
-            { _id: '_local/bar' }
+            { _id: '_local/bar' },
           ];
           oldPouch.bulkDocs({docs: docs}).then(function () {
             return oldPouch.close();
@@ -463,7 +463,7 @@ describe('migration', function () {
 
           var origDocs = [
             {_id: 'foo::bar::baz'},
-            {_id: '\u0000foo\u0000'}
+            {_id: '\u0000foo\u0000'},
           ];
 
           var oldPouch =
@@ -494,7 +494,7 @@ describe('migration', function () {
       }
 
       if (post306) {
-        // attachments didn't really work until this release
+        // Attachments didn't really work until this release
         it('#2818 Testing attachments with compaction of dups', function () {
           if (skip) { return; }
 
@@ -504,19 +504,19 @@ describe('migration', function () {
               _attachments: {
                 'att.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
-                }
-              }
+                  content_type: 'text/plain',
+                },
+              },
             },
             {
               _id: 'doc2',
               _attachments: {
                 'att.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
-                }
-              }
-            }
+                  content_type: 'text/plain',
+                },
+              },
+            },
           ];
 
           var oldPouch = new dbs.first.pouch(
@@ -547,10 +547,10 @@ describe('migration', function () {
               _attachments: {
                 'att.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
-                }
-              }
-            }
+                  content_type: 'text/plain',
+                },
+              },
+            },
           ];
 
           var oldPouch = new dbs.first.pouch(
@@ -565,9 +565,9 @@ describe('migration', function () {
               _attachments: {
                 'att.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
-                }
-              }
+                  content_type: 'text/plain',
+                },
+              },
             }).then(function () {
               return newPouch.get('doc2');
             }).then(function (doc2) {
@@ -591,23 +591,23 @@ describe('migration', function () {
               _attachments: {
                 'att.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
-                }
-              }
+                  content_type: 'text/plain',
+                },
+              },
             },
             {
               _id: 'doc_deleted',
-              _deleted: true
+              _deleted: true,
             },
             {
-              _id: 'doc_no_attachments'
-            }
+              _id: 'doc_no_attachments',
+            },
           ];
 
           for (var i = 0; i < 25; i++) {
-            // test paging in the migration
+            // Test paging in the migration
             docs.push({
-              _id: 'some_other_doc_' + i
+              _id: 'some_other_doc_' + i,
             });
           }
 
@@ -623,9 +623,9 @@ describe('migration', function () {
               _attachments: {
                 'att.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
-                }
-              }
+                  content_type: 'text/plain',
+                },
+              },
             }).then(function () {
               return newPouch.get('doc2');
             }).then(function (doc2) {
@@ -649,18 +649,18 @@ describe('migration', function () {
               _attachments: {
                 'att.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
+                  content_type: 'text/plain',
                 },
                 'att2.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
+                  content_type: 'text/plain',
                 },
                 'att3.txt': {
                   data: 'Zm9v', // 'foo'
-                  content_type: 'text/plain'
-                }
-              }
-            }
+                  content_type: 'text/plain',
+                },
+              },
+            },
           ];
 
           var oldPouch = new dbs.first.pouch(
@@ -675,9 +675,9 @@ describe('migration', function () {
               _attachments: {
                 'att.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
-                }
-              }
+                  content_type: 'text/plain',
+                },
+              },
             }).then(function () {
               return newPouch.get('doc2');
             }).then(function (doc2) {
@@ -703,34 +703,34 @@ describe('migration', function () {
               _attachments: {
                 'att.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
+                  content_type: 'text/plain',
                 },
                 'att2.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
+                  content_type: 'text/plain',
                 },
                 'att3.txt': {
                   data: 'Zm9v', // 'foo'
-                  content_type: 'text/plain'
-                }
-              }
+                  content_type: 'text/plain',
+                },
+              },
             }, {
               _id: 'doc3',
               _attachments: {
                 'att-a.txt': {
                   data: 'Zm9vYmFy', // 'foobar'
-                  content_type: 'text/plain'
+                  content_type: 'text/plain',
                 },
                 'att-b.txt': {
                   data: 'Zm9v', // 'foo'
-                  content_type: 'text/plain'
+                  content_type: 'text/plain',
                 },
                 'att-c.txt': {
                   data: 'YmFy', // 'bar'
-                  content_type: 'text/plain'
-                }
-              }
-            }
+                  content_type: 'text/plain',
+                },
+              },
+            },
           ];
 
           var oldPouch = new dbs.first.pouch(
@@ -745,9 +745,9 @@ describe('migration', function () {
               _attachments: {
                 'att.txt': {
                   data: 'YmFy', // 'bar'
-                  content_type: 'text/plain'
-                }
-              }
+                  content_type: 'text/plain',
+                },
+              },
             }).then(function () {
               return newPouch.get('doc2');
             }).then(function (doc2) {
@@ -778,11 +778,11 @@ describe('migration', function () {
             docs.push({
               _id: 'doc' + i,
               _attachments: {
-                'att.txt' : {
+                'att.txt': {
                   data: PouchDB.utils.btoa(Math.random().toString()),
-                  content_type: 'text/plain'
-                }
-              }
+                  content_type: 'text/plain',
+                },
+              },
             });
           }
           docs.push({
@@ -790,17 +790,17 @@ describe('migration', function () {
             _attachments: {
               'att.txt': {
                 data: 'Zm9vYmFy', // 'foobar'
-                content_type: 'text/plain'
+                content_type: 'text/plain',
               },
               'att2.txt': {
                 data: 'Zm9vYmFy', // 'foobar'
-                content_type: 'text/plain'
+                content_type: 'text/plain',
               },
               'att3.txt': {
                 data: 'Zm9v', // 'foo'
-                content_type: 'text/plain'
-              }
-            }
+                content_type: 'text/plain',
+              },
+            },
           });
           var oldPouch = new dbs.first.pouch(
             dbs.first.local, dbs.first.localOpts);
@@ -814,9 +814,9 @@ describe('migration', function () {
               _attachments: {
                 'att.txt': {
                   data: 'Zm9v', // 'foo'
-                  content_type: 'text/plain'
-                }
-              }
+                  content_type: 'text/plain',
+                },
+              },
             }).then(function () {
               return newPouch.get('doc_b');
             }).then(function (doc) {
@@ -835,7 +835,7 @@ describe('migration', function () {
 
         it('#2818 compaction of atts after many revs', function () {
           if (skip) { return; }
-          
+
           var oldPouch = new dbs.first.pouch(
             dbs.first.local, dbs.first.localOpts);
 
@@ -919,28 +919,28 @@ describe('migration', function () {
               {
                 _id: 'foo',
                 _rev: '1-a',
-                _revisions: {start: 1, ids: ['a']}
-              }
+                _revisions: {start: 1, ids: ['a']},
+              },
             ], [
               {
                 _id: 'foo',
                 _rev: '2-b',
-                _revisions: {start: 2, ids: ['b', 'a']}
-              }
+                _revisions: {start: 2, ids: ['b', 'a']},
+              },
             ], [
               {
                 _id: 'bar',
                 _rev: '1-x',
-                _revisions: {start: 1, ids: ['x']}
-              }
+                _revisions: {start: 1, ids: ['x']},
+              },
             ], [
               {
                 _id: 'foo',
                 _rev: '2-c',
                 _deleted: true,
-                _revisions: {start: 2, ids: ['c', 'a']}
-              }
-            ]
+                _revisions: {start: 2, ids: ['c', 'a']},
+              },
+            ],
           ];
 
           var oldPouch = new dbs.first.pouch(
@@ -959,31 +959,31 @@ describe('migration', function () {
               {auto_compaction: false});
             return newPouch.changes({
               include_docs: true,
-              style: 'all_docs'
+              style: 'all_docs',
             });
           }).then(function (result) {
-            // order don't matter
+            // Order don't matter
             result.results.forEach(function (ch) {
               ch.changes = ch.changes.sort(function (a, b) {
                 return a.rev < b.rev ? -1 : 1;
               });
             });
             var expected = {
-              "results": [
+              results: [
                 {
-                  "seq": 3,
-                  "id": "bar",
-                  "changes": [{"rev": "1-x"}],
-                  "doc": {"_id": "bar", "_rev": "1-x"}
+                  seq: 3,
+                  id: 'bar',
+                  changes: [{rev: '1-x'}],
+                  doc: {_id: 'bar', _rev: '1-x'},
                 },
                 {
-                  "seq": 4,
-                  "id": "foo",
-                  "changes": [{"rev": "2-b"}, {"rev": "2-c"}],
-                  "doc": {"_id": "foo", "_rev": "2-b"}
-                }
+                  seq: 4,
+                  id: 'foo',
+                  changes: [{rev: '2-b'}, {rev: '2-c'}],
+                  doc: {_id: 'foo', _rev: '2-b'},
+                },
               ],
-              "last_seq": 4
+              last_seq: 4,
             };
             result.should.deep.equal(expected);
           });
@@ -998,199 +998,199 @@ describe('migration', function () {
 
           var data = [
             {
-              "docs": [
+              docs: [
                 {
-                  "_revisions": {
-                    "start": 2,
-                    "ids": [
-                      "4e16ac64356d4358bf1bdb4857fc299f",
-                      "aed67b17ea5ba6b78e704ad65d3fb5db"
-                    ]
+                  _revisions: {
+                    start: 2,
+                    ids: [
+                      '4e16ac64356d4358bf1bdb4857fc299f',
+                      'aed67b17ea5ba6b78e704ad65d3fb5db',
+                    ],
                   },
-                  "_rev": "2-4e16ac64356d4358bf1bdb4857fc299f",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '2-4e16ac64356d4358bf1bdb4857fc299f',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 2,
-                    "ids": [
-                      "3757f03a178b34284361c89303cf8c35",
-                      "0593f4c87b24f0f9b620526433929bb0"
-                    ]
+                  _revisions: {
+                    start: 2,
+                    ids: [
+                      '3757f03a178b34284361c89303cf8c35',
+                      '0593f4c87b24f0f9b620526433929bb0',
+                    ],
                   },
-                  "_rev": "2-3757f03a178b34284361c89303cf8c35",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '2-3757f03a178b34284361c89303cf8c35',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 3,
-                    "ids": [
-                      "f28d17ab990dcadd20ad38860fde9f11",
-                      "6cf4b9e2115d7e884292b97aa8765285",
-                      "dcfdf66ab61873ee512a9ccf3e3731a1"
-                    ]
+                  _revisions: {
+                    start: 3,
+                    ids: [
+                      'f28d17ab990dcadd20ad38860fde9f11',
+                      '6cf4b9e2115d7e884292b97aa8765285',
+                      'dcfdf66ab61873ee512a9ccf3e3731a1',
+                    ],
                   },
-                  "_rev": "3-f28d17ab990dcadd20ad38860fde9f11",
-                  "_id": "b74e3b45"
+                  _rev: '3-f28d17ab990dcadd20ad38860fde9f11',
+                  _id: 'b74e3b45',
                 },
                 {
-                  "_revisions": {
-                    "start": 3,
-                    "ids": [
-                      "4d93920c00a4a7269095b22ff4329b3c",
-                      "7190eca51acb2b302a89ed1204ac2813",
-                      "017eba7ef1e4f529143f463779822627"
-                    ]
+                  _revisions: {
+                    start: 3,
+                    ids: [
+                      '4d93920c00a4a7269095b22ff4329b3c',
+                      '7190eca51acb2b302a89ed1204ac2813',
+                      '017eba7ef1e4f529143f463779822627',
+                    ],
                   },
-                  "_rev": "3-4d93920c00a4a7269095b22ff4329b3c",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '3-4d93920c00a4a7269095b22ff4329b3c',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 3,
-                    "ids": [
-                      "91b47d7b889feb36eaf9336c071f00cc",
-                      "0e3379b8f9128e6062d13eeb98ec538e",
-                      "1c006ce18b663e2a031ced4669797c28"
-                    ]
+                  _revisions: {
+                    start: 3,
+                    ids: [
+                      '91b47d7b889feb36eaf9336c071f00cc',
+                      '0e3379b8f9128e6062d13eeb98ec538e',
+                      '1c006ce18b663e2a031ced4669797c28',
+                    ],
                   },
-                  "_rev": "3-91b47d7b889feb36eaf9336c071f00cc",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '3-91b47d7b889feb36eaf9336c071f00cc',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 4,
-                    "ids": [
-                      "2c3c860d421fc9f6cc82e4fb811dc8e2",
-                      "4473170dcffa850aca381b4f644b2947",
-                      "3524a871600080f5e30e59a292b02a3f",
-                      "89eb0b5131800963bb7caf1fc83b6242"
-                    ]
+                  _revisions: {
+                    start: 4,
+                    ids: [
+                      '2c3c860d421fc9f6cc82e4fb811dc8e2',
+                      '4473170dcffa850aca381b4f644b2947',
+                      '3524a871600080f5e30e59a292b02a3f',
+                      '89eb0b5131800963bb7caf1fc83b6242',
+                    ],
                   },
-                  "_rev": "4-2c3c860d421fc9f6cc82e4fb811dc8e2",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '4-2c3c860d421fc9f6cc82e4fb811dc8e2',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 6,
-                    "ids": [
-                      "441f43a31c89dc68a7cc934ce5779bf8",
-                      "4c7f8b00508144d049d18668d17e552a",
-                      "e8431fb3b448f3457c5b2d77012fa8b4",
-                      "f2e7dc8102123e13ca792a0a05ca6235",
-                      "37a13a5c1e2ce5926a3ffcda7e669106",
-                      "78739468c87b30f76d067a2d7f373803"
-                    ]
+                  _revisions: {
+                    start: 6,
+                    ids: [
+                      '441f43a31c89dc68a7cc934ce5779bf8',
+                      '4c7f8b00508144d049d18668d17e552a',
+                      'e8431fb3b448f3457c5b2d77012fa8b4',
+                      'f2e7dc8102123e13ca792a0a05ca6235',
+                      '37a13a5c1e2ce5926a3ffcda7e669106',
+                      '78739468c87b30f76d067a2d7f373803',
+                    ],
                   },
-                  "_rev": "6-441f43a31c89dc68a7cc934ce5779bf8",
-                  "_id": "b74e3b45",
-                  "_deleted": true
-                }
-              ]
+                  _rev: '6-441f43a31c89dc68a7cc934ce5779bf8',
+                  _id: 'b74e3b45',
+                  _deleted: true,
+                },
+              ],
             },
             {
-              "docs": [
+              docs: [
                 {
-                  "_revisions": {
-                    "start": 2,
-                    "ids": [
-                      "3757f03a178b34284361c89303cf8c35",
-                      "0593f4c87b24f0f9b620526433929bb0"
-                    ]
+                  _revisions: {
+                    start: 2,
+                    ids: [
+                      '3757f03a178b34284361c89303cf8c35',
+                      '0593f4c87b24f0f9b620526433929bb0',
+                    ],
                   },
-                  "_rev": "2-3757f03a178b34284361c89303cf8c35",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '2-3757f03a178b34284361c89303cf8c35',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 2,
-                    "ids": [
-                      "4e16ac64356d4358bf1bdb4857fc299f",
-                      "aed67b17ea5ba6b78e704ad65d3fb5db"
-                    ]
+                  _revisions: {
+                    start: 2,
+                    ids: [
+                      '4e16ac64356d4358bf1bdb4857fc299f',
+                      'aed67b17ea5ba6b78e704ad65d3fb5db',
+                    ],
                   },
-                  "_rev": "2-4e16ac64356d4358bf1bdb4857fc299f",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '2-4e16ac64356d4358bf1bdb4857fc299f',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 3,
-                    "ids": [
-                      "91b47d7b889feb36eaf9336c071f00cc",
-                      "0e3379b8f9128e6062d13eeb98ec538e",
-                      "1c006ce18b663e2a031ced4669797c28"
-                    ]
+                  _revisions: {
+                    start: 3,
+                    ids: [
+                      '91b47d7b889feb36eaf9336c071f00cc',
+                      '0e3379b8f9128e6062d13eeb98ec538e',
+                      '1c006ce18b663e2a031ced4669797c28',
+                    ],
                   },
-                  "_rev": "3-91b47d7b889feb36eaf9336c071f00cc",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '3-91b47d7b889feb36eaf9336c071f00cc',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 3,
-                    "ids": [
-                      "4d93920c00a4a7269095b22ff4329b3c",
-                      "7190eca51acb2b302a89ed1204ac2813",
-                      "017eba7ef1e4f529143f463779822627"
-                    ]
+                  _revisions: {
+                    start: 3,
+                    ids: [
+                      '4d93920c00a4a7269095b22ff4329b3c',
+                      '7190eca51acb2b302a89ed1204ac2813',
+                      '017eba7ef1e4f529143f463779822627',
+                    ],
                   },
-                  "_rev": "3-4d93920c00a4a7269095b22ff4329b3c",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '3-4d93920c00a4a7269095b22ff4329b3c',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 4,
-                    "ids": [
-                      "2c3c860d421fc9f6cc82e4fb811dc8e2",
-                      "4473170dcffa850aca381b4f644b2947",
-                      "3524a871600080f5e30e59a292b02a3f",
-                      "89eb0b5131800963bb7caf1fc83b6242"
-                    ]
+                  _revisions: {
+                    start: 4,
+                    ids: [
+                      '2c3c860d421fc9f6cc82e4fb811dc8e2',
+                      '4473170dcffa850aca381b4f644b2947',
+                      '3524a871600080f5e30e59a292b02a3f',
+                      '89eb0b5131800963bb7caf1fc83b6242',
+                    ],
                   },
-                  "_rev": "4-2c3c860d421fc9f6cc82e4fb811dc8e2",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '4-2c3c860d421fc9f6cc82e4fb811dc8e2',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 4,
-                    "ids": [
-                      "dbaa7e6c02381c2c0ec5259572387d7c",
-                      "f28d17ab990dcadd20ad38860fde9f11",
-                      "6cf4b9e2115d7e884292b97aa8765285",
-                      "dcfdf66ab61873ee512a9ccf3e3731a1"
-                    ]
+                  _revisions: {
+                    start: 4,
+                    ids: [
+                      'dbaa7e6c02381c2c0ec5259572387d7c',
+                      'f28d17ab990dcadd20ad38860fde9f11',
+                      '6cf4b9e2115d7e884292b97aa8765285',
+                      'dcfdf66ab61873ee512a9ccf3e3731a1',
+                    ],
                   },
-                  "_rev": "4-dbaa7e6c02381c2c0ec5259572387d7c",
-                  "_id": "b74e3b45",
-                  "_deleted": true
+                  _rev: '4-dbaa7e6c02381c2c0ec5259572387d7c',
+                  _id: 'b74e3b45',
+                  _deleted: true,
                 },
                 {
-                  "_revisions": {
-                    "start": 6,
-                    "ids": [
-                      "441f43a31c89dc68a7cc934ce5779bf8",
-                      "4c7f8b00508144d049d18668d17e552a",
-                      "e8431fb3b448f3457c5b2d77012fa8b4",
-                      "f2e7dc8102123e13ca792a0a05ca6235",
-                      "37a13a5c1e2ce5926a3ffcda7e669106",
-                      "78739468c87b30f76d067a2d7f373803"
-                    ]
+                  _revisions: {
+                    start: 6,
+                    ids: [
+                      '441f43a31c89dc68a7cc934ce5779bf8',
+                      '4c7f8b00508144d049d18668d17e552a',
+                      'e8431fb3b448f3457c5b2d77012fa8b4',
+                      'f2e7dc8102123e13ca792a0a05ca6235',
+                      '37a13a5c1e2ce5926a3ffcda7e669106',
+                      '78739468c87b30f76d067a2d7f373803',
+                    ],
                   },
-                  "_rev": "6-441f43a31c89dc68a7cc934ce5779bf8",
-                  "_id": "b74e3b45",
-                  "_deleted": true
-                }
-              ]
-            }
+                  _rev: '6-441f43a31c89dc68a7cc934ce5779bf8',
+                  _id: 'b74e3b45',
+                  _deleted: true,
+                },
+              ],
+            },
           ];
 
           var oldPouch = new dbs.first.pouch(
@@ -1198,7 +1198,7 @@ describe('migration', function () {
           var newPouch;
 
           return oldPouch.bulkDocs(data[0], {
-            new_edits: false
+            new_edits: false,
           }).then(function () {
             return oldPouch.bulkDocs(data[1], {new_edits: false});
           }).then(function () {

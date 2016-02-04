@@ -4,7 +4,7 @@ var adapters = [
   ['local', 'http'],
   ['http', 'http'],
   ['http', 'local'],
-  ['local', 'local']
+  ['local', 'local'],
 ];
 
 if ('saucelabs' in testUtils.params()) {
@@ -29,11 +29,11 @@ adapters.forEach(function (adapters) {
     it('PouchDB.sync event', function (done) {
       var doc1 = {
           _id: 'adoc',
-          foo: 'bar'
+          foo: 'bar',
         };
       var doc2 = {
           _id: 'anotherdoc',
-          foo: 'baz'
+          foo: 'baz',
         };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -53,16 +53,16 @@ adapters.forEach(function (adapters) {
     it('sync throws errors in promise', function () {
       var doc1 = {
         _id: 'adoc',
-        foo: 'bar'
+        foo: 'bar',
       };
       var doc2 = {
         _id: 'anotherdoc',
-        foo: 'baz'
+        foo: 'baz',
       };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
-      // intentionally throw an error during replication
+      // Intentionally throw an error during replication
       remote.allDocs = function (opts) {
         return PouchDB.utils.Promise.reject(new Error('flunking you'));
       };
@@ -82,16 +82,16 @@ adapters.forEach(function (adapters) {
     it('sync throws errors in promise catch()', function () {
       var doc1 = {
         _id: 'adoc',
-        foo: 'bar'
+        foo: 'bar',
       };
       var doc2 = {
         _id: 'anotherdoc',
-        foo: 'baz'
+        foo: 'baz',
       };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
-      // intentionally throw an error during replication
+      // Intentionally throw an error during replication
       remote.allDocs = function (opts) {
         return PouchDB.utils.Promise.reject(new Error('flunking you'));
       };
@@ -115,16 +115,16 @@ adapters.forEach(function (adapters) {
     it('sync throws errors in error listener', function () {
       var doc1 = {
         _id: 'adoc',
-        foo: 'bar'
+        foo: 'bar',
       };
       var doc2 = {
         _id: 'anotherdoc',
-        foo: 'baz'
+        foo: 'baz',
       };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
-      // intentionally throw an error during replication
+      // Intentionally throw an error during replication
       remote.allDocs = function (opts) {
         return PouchDB.utils.Promise.reject(new Error('flunking you'));
       };
@@ -144,16 +144,16 @@ adapters.forEach(function (adapters) {
     it('sync throws errors in callback', function () {
       var doc1 = {
         _id: 'adoc',
-        foo: 'bar'
+        foo: 'bar',
       };
       var doc2 = {
         _id: 'anotherdoc',
-        foo: 'baz'
+        foo: 'baz',
       };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
-      // intentionally throw an error during replication
+      // Intentionally throw an error during replication
       remote.allDocs = function (opts) {
         return PouchDB.utils.Promise.reject(new Error('flunking you'));
       };
@@ -165,7 +165,7 @@ adapters.forEach(function (adapters) {
           db.sync(remote, function (err) {
             resolve(err);
           }).catch(function () {
-            // avoid annoying chrome warning about uncaught (in promise)
+            // Avoid annoying chrome warning about uncaught (in promise)
           });
         });
       }).then(function (err) {
@@ -177,11 +177,11 @@ adapters.forEach(function (adapters) {
     it('sync returns result in callback', function () {
       var doc1 = {
         _id: 'adoc',
-        foo: 'bar'
+        foo: 'bar',
       };
       var doc2 = {
         _id: 'anotherdoc',
-        foo: 'baz'
+        foo: 'baz',
       };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -205,11 +205,11 @@ adapters.forEach(function (adapters) {
     it('PouchDB.sync callback', function (done) {
       var doc1 = {
           _id: 'adoc',
-          foo: 'bar'
+          foo: 'bar',
         };
       var doc2 = {
           _id: 'anotherdoc',
-          foo: 'baz'
+          foo: 'baz',
         };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -229,11 +229,11 @@ adapters.forEach(function (adapters) {
     it('PouchDB.sync promise', function (done) {
       var doc1 = {
           _id: 'adoc',
-          foo: 'bar'
+          foo: 'bar',
         };
       var doc2 = {
           _id: 'anotherdoc',
-          foo: 'baz'
+          foo: 'baz',
         };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -253,11 +253,11 @@ adapters.forEach(function (adapters) {
     it('db.sync event', function (done) {
       var doc1 = {
           _id: 'adoc',
-          foo: 'bar'
+          foo: 'bar',
         };
       var doc2 = {
           _id: 'anotherdoc',
-          foo: 'baz'
+          foo: 'baz',
         };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -277,11 +277,11 @@ adapters.forEach(function (adapters) {
     it('db.sync callback', function (done) {
       var doc1 = {
           _id: 'adoc',
-          foo: 'bar'
+          foo: 'bar',
         };
       var doc2 = {
           _id: 'anotherdoc',
-          foo: 'baz'
+          foo: 'baz',
         };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -301,11 +301,11 @@ adapters.forEach(function (adapters) {
     it('db.sync promise', function (done) {
       var doc1 = {
           _id: 'adoc',
-          foo: 'bar'
+          foo: 'bar',
         };
       var doc2 = {
           _id: 'anotherdoc',
-          foo: 'baz'
+          foo: 'baz',
         };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -336,7 +336,7 @@ adapters.forEach(function (adapters) {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var replications = db.sync(remote).on('complete', function () {
-        setTimeout(done); // let cancel() get called twice before finishing
+        setTimeout(done); // Let cancel() get called twice before finishing
       });
       should.exist(replications);
       replications.cancel();
@@ -346,11 +346,11 @@ adapters.forEach(function (adapters) {
     it('Test syncing two endpoints (issue 838)', function () {
       var doc1 = {
           _id: 'adoc',
-          foo: 'bar'
+          foo: 'bar',
         };
       var doc2 = {
           _id: 'anotherdoc',
-          foo: 'baz'
+          foo: 'baz',
         };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -392,7 +392,7 @@ adapters.forEach(function (adapters) {
           }).then(function () {
             return PouchDB.utils.Promise.all([
               db.destroy(),
-              remote.destroy()
+              remote.destroy(),
             ]);
           });
         });
@@ -572,11 +572,11 @@ adapters.forEach(function (adapters) {
     it('PouchDB.sync with strings for dbs', function (done) {
       var doc1 = {
           _id: 'adoc',
-          foo: 'bar'
+          foo: 'bar',
         };
       var doc2 = {
           _id: 'anotherdoc',
-          foo: 'baz'
+          foo: 'baz',
         };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -596,7 +596,7 @@ adapters.forEach(function (adapters) {
     it('#3270 triggers "denied" events',
         function (done) {
       testUtils.isCouchDB(function (isCouchDB) {
-        if (/*adapters[1] !== 'http' || */!isCouchDB) {
+        if (/*Adapters[1] !== 'http' || */!isCouchDB) {
           return done();
         }
         if (adapters[0] !== 'local' || adapters[1] !== 'http') {
@@ -605,12 +605,12 @@ adapters.forEach(function (adapters) {
 
         var deniedErrors = [];
         var ddoc = {
-          "_id": "_design/validate",
-          "validate_doc_update": function (newDoc) {
+          _id: '_design/validate',
+          validate_doc_update: function (newDoc) {
             if (newDoc.foo) {
               throw { unauthorized: 'go away, no picture' };
             }
-          }.toString()
+          }.toString(),
         };
 
         var remote = new PouchDB(dbs.remote);
@@ -620,7 +620,7 @@ adapters.forEach(function (adapters) {
           var docs = [
             {_id: 'foo1', foo: 'string'},
             {_id: 'nofoo'},
-            {_id: 'foo2', foo: 'object'}
+            {_id: 'foo2', foo: 'object'},
           ];
           return db.bulkDocs({docs: docs});
         }).then(function () {
@@ -644,7 +644,7 @@ adapters.forEach(function (adapters) {
     it('#3270 triggers "denied" events, reverse direction',
       function (done) {
         testUtils.isCouchDB(function (isCouchDB) {
-          if (/*adapters[1] !== 'http' || */!isCouchDB) {
+          if (/*Adapters[1] !== 'http' || */!isCouchDB) {
             return done();
           }
           if (adapters[0] !== 'local' || adapters[1] !== 'http') {
@@ -653,12 +653,12 @@ adapters.forEach(function (adapters) {
 
           var deniedErrors = [];
           var ddoc = {
-            "_id": "_design/validate",
-            "validate_doc_update": function (newDoc) {
+            _id: '_design/validate',
+            validate_doc_update: function (newDoc) {
               if (newDoc.foo) {
                 throw { unauthorized: 'go away, no picture' };
               }
-            }.toString()
+            }.toString(),
           };
 
           var remote = new PouchDB(dbs.remote);
@@ -668,7 +668,7 @@ adapters.forEach(function (adapters) {
             var docs = [
               {_id: 'foo1', foo: 'string'},
               {_id: 'nofoo'},
-              {_id: 'foo2', foo: 'object'}
+              {_id: 'foo2', foo: 'object'},
             ];
             return db.bulkDocs({docs: docs});
           }).then(function () {
@@ -695,7 +695,7 @@ adapters.forEach(function (adapters) {
       var docs = [
         {_id: '1'},
         {_id: '2'},
-        {_id: '3'}
+        {_id: '3'},
       ];
 
       db.bulkDocs({ docs: docs }, {})
@@ -733,7 +733,7 @@ adapters.forEach(function (adapters) {
       }).then(function() {
         return db.sync(remote, {
           push: {filter: function(doc) { return doc._id === '0'; }},
-          pull: {filter: function(doc) { return doc._id === 'a'; }}
+          pull: {filter: function(doc) { return doc._id === 'a'; }},
         });
       }).then(function() {
         return db.allDocs();

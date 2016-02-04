@@ -8,21 +8,21 @@ import generateReplicationId from './generateReplicationId';
 import getDocs from './getDocs';
 
 function replicate(src, target, opts, returnValue, result) {
-  var batches = [];               // list of batches to be processed
-  var currentBatch;               // the batch currently being processed
+  var batches = [];               // List of batches to be processed
+  var currentBatch;               // The batch currently being processed
   var pendingBatch = {
     seq: 0,
     changes: [],
-    docs: []
-  }; // next batch, not yet ready to be processed
-  var writingCheckpoint = false;  // true while checkpoint is being written
-  var changesCompleted = false;   // true when all changes received
-  var replicationCompleted = false; // true when replication has completed
+    docs: [],
+  }; // Next batch, not yet ready to be processed
+  var writingCheckpoint = false;  // True while checkpoint is being written
+  var changesCompleted = false;   // True when all changes received
+  var replicationCompleted = false; // True when replication has completed
   var last_seq = 0;
   var continuous = opts.continuous || opts.live || false;
   var batch_size = opts.batch_size || 100;
   var batches_limit = opts.batches_limit || 10;
-  var changesPending = false;     // true while src.changes is running
+  var changesPending = false;     // True while src.changes is running
   var doc_ids = opts.doc_ids;
   var repId;
   var checkpointer;
@@ -37,7 +37,7 @@ function replicate(src, target, opts, returnValue, result) {
     docs_read: 0,
     docs_written: 0,
     doc_write_failures: 0,
-    errors: []
+    errors: [],
   };
 
   var changesOpts = {};
@@ -130,7 +130,7 @@ function replicate(src, target, opts, returnValue, result) {
     currentBatch.changes.forEach(function (change) {
       // Couchbase Sync Gateway emits these, but we can ignore them
       /* istanbul ignore if */
-      if (change.id === "_user/") {
+      if (change.id === '_user/') {
         return;
       }
       diff[change.id] = change.changes.map(function (x) {
@@ -142,7 +142,7 @@ function replicate(src, target, opts, returnValue, result) {
         completeReplication();
         throw new Error('cancelled');
       }
-      // currentBatch.diffs elements are deleted as the documents are written
+      // CurrentBatch.diffs elements are deleted as the documents are written
       currentBatch.diffs = diffs;
     });
   }
@@ -199,7 +199,7 @@ function replicate(src, target, opts, returnValue, result) {
       pendingBatch = {
         seq: 0,
         changes: [],
-        docs: []
+        docs: [],
       };
       if (returnValue.state === 'pending' || returnValue.state === 'stopped') {
         returnValue.state = 'active';
@@ -225,7 +225,7 @@ function replicate(src, target, opts, returnValue, result) {
     pendingBatch = {
       seq: 0,
       changes: [],
-      docs: []
+      docs: [],
     };
     completeReplication();
   }
@@ -285,7 +285,7 @@ function replicate(src, target, opts, returnValue, result) {
       return completeReplication();
     }
 
-    // if no results were returned then we're done,
+    // If no results were returned then we're done,
     // else fetch more
     if (changes.results.length > 0) {
       changesOpts.since = changes.last_seq;
@@ -328,7 +328,7 @@ function replicate(src, target, opts, returnValue, result) {
       returnValue.removeListener('cancel', abortChanges);
     }
 
-    if (returnValue._changes) { // remove old changes() and listeners
+    if (returnValue._changes) { // Remove old changes() and listeners
       returnValue.removeListener('cancel', returnValue._abortChanges);
       returnValue._changes.cancel();
     }
@@ -341,7 +341,7 @@ function replicate(src, target, opts, returnValue, result) {
       .catch(onChangesError);
 
     if (opts.retry) {
-      // save for later so we can cancel if necessary
+      // Save for later so we can cancel if necessary
       returnValue._changes = changes;
       returnValue._abortChanges = abortChanges;
     }
@@ -362,13 +362,13 @@ function replicate(src, target, opts, returnValue, result) {
           batch_size: batch_size,
           style: 'all_docs',
           doc_ids: doc_ids,
-          return_docs: true // required so we know when we're done
+          return_docs: true, // Required so we know when we're done
         };
         if (opts.filter) {
           if (typeof opts.filter !== 'string') {
-            // required for the client-side filter in onChange
+            // Required for the client-side filter in onChange
             changesOpts.include_docs = true;
-          } else { // ddoc filter
+          } else { // Ddoc filter
             changesOpts.filter = opts.filter;
           }
         }
@@ -399,7 +399,7 @@ function replicate(src, target, opts, returnValue, result) {
   }
 
   /* istanbul ignore if */
-  if (returnValue.cancelled) { // cancelled immediately
+  if (returnValue.cancelled) { // Cancelled immediately
     completeReplication();
     return;
   }

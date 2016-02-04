@@ -1,7 +1,7 @@
 'use strict';
 if (!process.env.LEVEL_ADAPTER &&
     !process.env.LEVEL_PREFIX && !process.env.AUTO_COMPACTION) {
-  // these tests don't make sense for anything other than default leveldown
+  // These tests don't make sense for anything other than default leveldown
   var fs = require('fs');
   describe('Remove DB', function () {
     afterEach(function (done) {

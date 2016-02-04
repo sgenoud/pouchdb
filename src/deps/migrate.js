@@ -4,13 +4,13 @@ import isLocalId from './docs/isLocalId';
 import winningRev from '../deps/merge/winningRev';
 import levelup from 'levelup';
 import { obj as through } from 'through2';
-import LevelWriteStream from "level-write-stream";
+import LevelWriteStream from 'level-write-stream';
 
 var stores = [
   'document-store',
   'by-sequence',
   'attach-store',
-  'attach-binary-store'
+  'attach-binary-store',
 ];
 function formatSeq(n) {
   return ('0000000000000000' + n).slice(-16);
@@ -20,8 +20,8 @@ var DOC_COUNT_KEY = '_local_doc_count';
 var UUID_KEY = '_local_uuid';
 
 var toSublevel = function (name, db, callback) {
-  // local require to prevent crashing if leveldown isn't installed.
-  var leveldown = require("leveldown");
+  // Local require to prevent crashing if leveldown isn't installed.
+  var leveldown = require('leveldown');
 
   var base = path.resolve(name);
   function move(store, index, cb) {
@@ -29,11 +29,11 @@ var toSublevel = function (name, db, callback) {
     var opts;
     if (index === 3) {
       opts = {
-        valueEncoding: 'binary'
+        valueEncoding: 'binary',
       };
     } else {
       opts = {
-        valueEncoding: 'json'
+        valueEncoding: 'json',
       };
     }
     var sub = db.sublevel(store, opts);
@@ -78,7 +78,7 @@ var localAndMetaStores = function (db, stores, callback) {
   var batches = [];
   stores.bySeqStore.get(UUID_KEY, function (err, value) {
     if (err) {
-      // no uuid key, so don't need to migrate;
+      // No uuid key, so don't need to migrate;
       return callback();
     }
     batches.push({
@@ -86,16 +86,16 @@ var localAndMetaStores = function (db, stores, callback) {
       value: value,
       prefix: stores.metaStore,
       type: 'put',
-      valueEncoding: 'json'
+      valueEncoding: 'json',
     });
     batches.push({
       key: UUID_KEY,
       prefix: stores.bySeqStore,
-      type: 'del'
+      type: 'del',
     });
     stores.bySeqStore.get(DOC_COUNT_KEY, function (err, value) {
       if (value) {
-        // if no doc count key,
+        // If no doc count key,
         // just skip
         // we can live with this
         batches.push({
@@ -103,17 +103,17 @@ var localAndMetaStores = function (db, stores, callback) {
           value: value,
           prefix: stores.metaStore,
           type: 'put',
-          valueEncoding: 'json'
+          valueEncoding: 'json',
         });
         batches.push({
           key: DOC_COUNT_KEY,
           prefix: stores.bySeqStore,
-          type: 'del'
+          type: 'del',
         });
       }
       stores.bySeqStore.get(UPDATE_SEQ_KEY, function (err, value) {
         if (value) {
-          // if no UPDATE_SEQ_KEY
+          // If no UPDATE_SEQ_KEY
           // just skip
           // we've gone to far to stop.
           batches.push({
@@ -121,18 +121,18 @@ var localAndMetaStores = function (db, stores, callback) {
             value: value,
             prefix: stores.metaStore,
             type: 'put',
-            valueEncoding: 'json'
+            valueEncoding: 'json',
           });
           batches.push({
             key: UPDATE_SEQ_KEY,
             prefix: stores.bySeqStore,
-            type: 'del'
+            type: 'del',
           });
         }
         var deletedSeqs = {};
         stores.docStore.createReadStream({
           startKey: '_',
-          endKey: '_\xFF'
+          endKey: '_\xFF',
         }).pipe(through(function (ch, _, next) {
           if (!isLocalId(ch.key)) {
             return next();
@@ -140,7 +140,7 @@ var localAndMetaStores = function (db, stores, callback) {
           batches.push({
             key: ch.key,
             prefix: stores.docStore,
-            type: 'del'
+            type: 'del',
           });
           var winner = winningRev(ch.value);
           Object.keys(ch.value.rev_map).forEach(function (key) {
@@ -156,7 +156,7 @@ var localAndMetaStores = function (db, stores, callback) {
                 value: value,
                 prefix: stores.localStore,
                 type: 'put',
-                valueEncoding: 'json'
+                valueEncoding: 'json',
               });
             }
             next();
@@ -176,7 +176,7 @@ var localAndMetaStores = function (db, stores, callback) {
             batches.push({
               key: seq,
               prefix: stores.bySeqStore,
-              type: 'del'
+              type: 'del',
             });
             next();
           });
@@ -191,5 +191,5 @@ var localAndMetaStores = function (db, stores, callback) {
 
 export default {
   toSublevel: toSublevel,
-  localAndMetaStores: localAndMetaStores
+  localAndMetaStores: localAndMetaStores,
 };

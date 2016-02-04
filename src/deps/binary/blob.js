@@ -8,7 +8,7 @@ function createBlob(parts, properties) {
   try {
     return new Blob(parts, properties);
   } catch (e) {
-    if (e.name !== "TypeError") {
+    if (e.name !== 'TypeError') {
       throw e;
     }
     var Builder = typeof BlobBuilder !== 'undefined' ? BlobBuilder :

@@ -96,14 +96,14 @@ adapters.forEach(function (adapter) {
           {
             _id: 'fubar',
             _rev: '2-a2',
-            _revisions: { start: 2, ids: [ 'a2', 'a1' ] }
+            _revisions: { start: 2, ids: [ 'a2', 'a1' ] },
           }, {
             _id: 'fubar',
             _rev: '1-a1',
-            _revisions: { start: 1, ids: [ 'a1' ] }
-          }
+            _revisions: { start: 1, ids: [ 'a1' ] },
+          },
         ],
-        new_edits: false
+        new_edits: false,
       }).then(function () {
         return db.changes();
       }).then(function (changes) {
@@ -130,23 +130,23 @@ adapters.forEach(function (adapter) {
           _rev: '1-a',
           _revisions: {
             start: 1,
-            ids: [ 'a' ]
-          }
+            ids: [ 'a' ],
+          },
         }, {
           _id: 'fubar',
           _rev: '1-b',
           _revisions: {
             start: 1,
-            ids: [ 'b' ]
-          }
+            ids: [ 'b' ],
+          },
         }, {
           _id: 'fubar',
           _rev: '1-1',
           _revisions: {
             start: 1,
-            ids: [ '1' ]
-          }
-        }
+            ids: [ '1' ],
+          },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -160,9 +160,9 @@ adapters.forEach(function (adapter) {
             _rev: '2-2',
             _revisions: {
               start: 2,
-              ids: [ '2', '1' ]
-            }
-          }]
+              ids: [ '2', '1' ],
+            },
+          },],
         });
       }).then(function (res) {
         return db.get('fubar');
@@ -178,16 +178,16 @@ adapters.forEach(function (adapter) {
           _rev: '2-a',
           _revisions: {
             start: 2,
-            ids: [ 'a' ]
-          }
+            ids: [ 'a' ],
+          },
         }, {
           _id: 'fubar',
           _rev: '1-b',
           _revisions: {
             start: 1,
-            ids: [ 'b' ]
-          }
-        }
+            ids: [ 'b' ],
+          },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -207,16 +207,16 @@ adapters.forEach(function (adapter) {
           _rev: '10-a',
           _revisions: {
             start: 10,
-            ids: [ 'a' ]
-          }
+            ids: [ 'a' ],
+          },
         }, {
           _id: 'fubar',
           _rev: '2-b',
           _revisions: {
             start: 2,
-            ids: [ 'b' ]
-          }
-        }
+            ids: [ 'b' ],
+          },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -234,21 +234,21 @@ adapters.forEach(function (adapter) {
         {
           _id: 'fubar',
           _rev: '1-a1',
-          _revisions: { start: 1, ids: [ 'a1' ] }
+          _revisions: { start: 1, ids: [ 'a1' ] },
         }, {
           _id: 'fubar',
           _rev: '2-a2',
-          _revisions: { start: 2, ids: [ 'a2', 'a1' ] }
+          _revisions: { start: 2, ids: [ 'a2', 'a1' ] },
         }, {
           _id: 'fubar',
           _deleted: true,
           _rev: '3-a3',
-          _revisions: { start: 3, ids: [ 'a3', 'a2', 'a1' ] }
+          _revisions: { start: 3, ids: [ 'a3', 'a2', 'a1' ] },
         }, {
           _id: 'fubar',
           _rev: '1-b1',
-          _revisions: { start: 1, ids: [ 'b1' ] }
-        }
+          _revisions: { start: 1, ids: [ 'b1' ] },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -267,20 +267,20 @@ adapters.forEach(function (adapter) {
           _id: 'fubar',
           _deleted: true,
           _rev: '3-a3',
-          _revisions: { start: 3, ids: [ 'a3', 'a2', 'a1' ] }
+          _revisions: { start: 3, ids: [ 'a3', 'a2', 'a1' ] },
         }, {
           _id: 'fubar',
           _rev: '2-a2',
-          _revisions: { start: 2, ids: [ 'a2', 'a1' ] }
+          _revisions: { start: 2, ids: [ 'a2', 'a1' ] },
         }, {
           _id: 'fubar',
           _rev: '1-a1',
-          _revisions: { start: 1, ids: [ 'a1' ] }
+          _revisions: { start: 1, ids: [ 'a1' ] },
         }, {
           _id: 'fubar',
           _rev: '1-b1',
-          _revisions: { start: 1, ids: [ 'b1' ] }
-        }
+          _revisions: { start: 1, ids: [ 'b1' ] },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -298,21 +298,21 @@ adapters.forEach(function (adapter) {
         {
           _id: 'fubar',
           _rev: '1-a1',
-          _revisions: { start: 1, ids: [ 'a1' ] }
+          _revisions: { start: 1, ids: [ 'a1' ] },
         }, {
           _id: 'fubar',
           _rev: '1-b1',
-          _revisions: { start: 1, ids: [ 'b1' ] }
+          _revisions: { start: 1, ids: [ 'b1' ] },
         }, {
           _id: 'fubar',
           _rev: '2-a2',
-          _revisions: { start: 2, ids: [ 'a2', 'a1' ] }
+          _revisions: { start: 2, ids: [ 'a2', 'a1' ] },
         }, {
           _id: 'fubar',
           _deleted: true,
           _rev: '3-a3',
-          _revisions: { start: 3, ids: [ 'a3', 'a2', 'a1' ] }
-        }
+          _revisions: { start: 3, ids: [ 'a3', 'a2', 'a1' ] },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -330,21 +330,21 @@ adapters.forEach(function (adapter) {
         {
           _id: 'fubar',
           _rev: '1-a1',
-          _revisions: { start: 1, ids: [ 'a1' ] }
+          _revisions: { start: 1, ids: [ 'a1' ] },
         }, {
           _id: 'fubar',
           _rev: '1-b1',
-          _revisions: { start: 1, ids: [ 'b1' ] }
+          _revisions: { start: 1, ids: [ 'b1' ] },
         }, {
           _id: 'fubar',
           _rev: '2-a2',
-          _revisions: { start: 2, ids: [ 'a2', 'a1' ] }
+          _revisions: { start: 2, ids: [ 'a2', 'a1' ] },
         }, {
           _id: 'fubar',
           _deleted: true,
           _rev: '3-a3',
-          _revisions: { start: 3, ids: [ 'a3', 'a2', 'a1' ] }
-        }
+          _revisions: { start: 3, ids: [ 'a3', 'a2', 'a1' ] },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -363,20 +363,20 @@ adapters.forEach(function (adapter) {
           _id: 'fubar',
           _deleted: true,
           _rev: '3-a3',
-          _revisions: { start: 3, ids: [ 'a3', 'a2', 'a1' ] }
+          _revisions: { start: 3, ids: [ 'a3', 'a2', 'a1' ] },
         }, {
           _id: 'fubar',
           _rev: '2-a2',
-          _revisions: { start: 2, ids: [ 'a2', 'a1' ] }
+          _revisions: { start: 2, ids: [ 'a2', 'a1' ] },
         }, {
           _id: 'fubar',
           _rev: '1-b1',
-          _revisions: { start: 1, ids: [ 'b1' ] }
+          _revisions: { start: 1, ids: [ 'b1' ] },
         }, {
           _id: 'fubar',
           _rev: '1-a1',
-          _revisions: { start: 1, ids: [ 'a1' ] }
-        }
+          _revisions: { start: 1, ids: [ 'a1' ] },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -394,18 +394,18 @@ adapters.forEach(function (adapter) {
         {
           _id: 'fubar',
           _rev: '2-a2',
-          _revisions: { start: 2, ids: [ 'a2', 'a1' ] }
+          _revisions: { start: 2, ids: [ 'a2', 'a1' ] },
         }, {
           _id: 'fubar',
           _deleted: true,
           _rev: '1-b1',
-          _revisions: { start: 1, ids: [ 'b1' ] }
+          _revisions: { start: 1, ids: [ 'b1' ] },
         }, {
           _id: 'fubar',
           _deleted: true,
           _rev: '1-c1',
-          _revisions: { start: 1, ids: [ 'c1' ] }
-        }
+          _revisions: { start: 1, ids: [ 'c1' ] },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -424,17 +424,17 @@ adapters.forEach(function (adapter) {
           _id: 'fubar',
           _deleted: true,
           _rev: '1-b1',
-          _revisions: { start: 1, ids: [ 'b1' ] }
+          _revisions: { start: 1, ids: [ 'b1' ] },
         }, {
           _id: 'fubar',
           _rev: '2-a2',
-          _revisions: { start: 2, ids: [ 'a2', 'a1' ] }
+          _revisions: { start: 2, ids: [ 'a2', 'a1' ] },
         }, {
           _id: 'fubar',
           _deleted: true,
           _rev: '1-c1',
-          _revisions: { start: 1, ids: [ 'c1' ] }
-        }
+          _revisions: { start: 1, ids: [ 'c1' ] },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -453,17 +453,17 @@ adapters.forEach(function (adapter) {
           _id: 'fubar',
           _deleted: true,
           _rev: '1-b1',
-          _revisions: { start: 1, ids: [ 'b1' ] }
+          _revisions: { start: 1, ids: [ 'b1' ] },
         }, {
           _id: 'fubar',
           _deleted: true,
           _rev: '1-c1',
-          _revisions: { start: 1, ids: [ 'c1' ] }
+          _revisions: { start: 1, ids: [ 'c1' ] },
         }, {
           _id: 'fubar',
           _rev: '2-a2',
-          _revisions: { start: 2, ids: [ 'a2', 'a1' ] }
-        }
+          _revisions: { start: 2, ids: [ 'a2', 'a1' ] },
+        },
       ];
       var db = new PouchDB(dbs.name);
       return db.bulkDocs({ docs: docs, new_edits: false }).then(function () {
@@ -491,8 +491,8 @@ adapters.forEach(function (adapter) {
               _rev: '2-' + hash,
               _revisions: {
                 start: 2,
-                ids: [hash, 'a']
-              }
+                ids: [hash, 'a'],
+              },
             });
           }
           return db.bulkDocs(docs, {new_edits: false});
@@ -502,8 +502,8 @@ adapters.forEach(function (adapter) {
       chain = chain.then(function () {
         return db.bulkDocs([{
           _id: 'foo',
-          _rev: '1-a'
-        }], {new_edits: false});
+          _rev: '1-a',
+        },], {new_edits: false});
       });
 
       for (var i = 0; i < 10; i++) {

@@ -28,7 +28,7 @@ describe('test.parse-uri.js', function () {
       authority: 'user:pass@foo.com',
       protocol: 'http',
       source: 'http://user:pass@foo.com/baz/bar/index.html?hey=yo',
-      queryKey: { hey: 'yo' } }
+      queryKey: { hey: 'yo' }, }
     );
   });
 

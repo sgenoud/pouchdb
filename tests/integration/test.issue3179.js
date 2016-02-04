@@ -4,7 +4,7 @@ var adapters = [
   ['http', 'http'],
   ['http', 'local'],
   ['local', 'http'],
-  ['local', 'local']
+  ['local', 'local'],
 ];
 
 if ('saucelabs' in testUtils.params()) {
@@ -61,7 +61,7 @@ adapters.forEach(function (adapters) {
       }).then(function (localDoc) {
         return remote.get('1', {
           conflicts: true,
-          revs: true
+          revs: true,
         }).then(function (remoteDoc) {
           remoteDoc.should.deep.equal(localDoc);
         });
@@ -97,7 +97,7 @@ adapters.forEach(function (adapters) {
       }).then(function (localDoc) {
         return remote.get('1', {
           conflicts: true,
-          revs: true
+          revs: true,
         }).then(function (remoteDoc) {
           remoteDoc.should.deep.equal(localDoc);
         });
@@ -123,11 +123,11 @@ adapters.forEach(function (adapters) {
 
         return defaultToEmpty(local.get('1', {
           revs: true,
-          conflicts: true
+          conflicts: true,
         })).then(function (localDoc) {
           return defaultToEmpty(remote.get('1', {
             revs: true,
-            conflicts: true
+            conflicts: true,
           })).then(function (remoteDoc) {
             var revsEqual = JSON.stringify(localDoc._revisions) ===
               JSON.stringify(remoteDoc._revisions);
@@ -145,7 +145,7 @@ adapters.forEach(function (adapters) {
           var changes = remote.changes({
             live: true,
             include_docs: true,
-            conflicts: true
+            conflicts: true,
           }).on('change', function(change) {
             if (!('_conflicts' in change.doc)) {
               changes.cancel();
@@ -193,7 +193,7 @@ adapters.forEach(function (adapters) {
       }).then(function (localDoc) {
         return remote.get('1', {
           conflicts: true,
-          revs: true
+          revs: true,
         }).then(function (remoteDoc) {
           remoteDoc.should.deep.equal(localDoc);
         });
@@ -218,7 +218,7 @@ adapters.forEach(function (adapters) {
           var changes = remote.changes({
             live: true,
             include_docs: true,
-            conflicts: true
+            conflicts: true,
           }).on('change', function(change) {
             if (!('_conflicts' in change.doc)) {
               changes.cancel();
@@ -241,11 +241,11 @@ adapters.forEach(function (adapters) {
 
         return defaultToEmpty(local.get('1', {
           revs: true,
-          conflicts: true
+          conflicts: true,
         })).then(function (localDoc) {
           return defaultToEmpty(remote.get('1', {
             revs: true,
-            conflicts: true
+            conflicts: true,
           })).then(function (remoteDoc) {
             var revsEqual = JSON.stringify(localDoc._revisions) ===
               JSON.stringify(remoteDoc._revisions);
@@ -309,7 +309,7 @@ adapters.forEach(function (adapters) {
       }).then(function (localDoc) {
         return remote.get('1', {
           conflicts: true,
-          revs: true
+          revs: true,
         }).then(function (remoteDoc) {
           remoteDoc.should.deep.equal(localDoc);
         });

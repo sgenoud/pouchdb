@@ -22,19 +22,19 @@ adapters.forEach(function (adapter) {
       var revs = [];
       db.post({
         test: 'somestuff',
-        _id: 'somestuff'
+        _id: 'somestuff',
       }, function (err, info) {
         revs.push(info.rev);
         db.put({
           _id: info.id,
           _rev: info.rev,
-          another: 'test'
+          another: 'test',
         }, function (err, info2) {
           revs.push(info2.rev);
-          db.revsDiff({ 'somestuff': revs }, function (err, results) {
+          db.revsDiff({ somestuff: revs }, function (err, results) {
             results.should.not.include.keys('somestuff');
             revs.push('2-randomid');
-            db.revsDiff({ 'somestuff': revs }, function (err, results) {
+            db.revsDiff({ somestuff: revs }, function (err, results) {
               results.should.include.keys('somestuff');
               results.somestuff.missing.should.have.length(1);
               done();
@@ -49,19 +49,19 @@ adapters.forEach(function (adapter) {
       var revs = [];
       db.post({
         test: 'somestuff',
-        _id: 'somestuff'
+        _id: 'somestuff',
       }, function (err, info) {
         revs.push(info.rev);
         db.put({
           _id: info.id,
           _rev: info.rev,
-          another: 'test'
+          another: 'test',
         }, function (err, info2) {
           revs.push(info2.rev);
-          db.revsDiff({ 'somestuff': revs }, {}, function (err, results) {
+          db.revsDiff({ somestuff: revs }, {}, function (err, results) {
             results.should.not.include.keys('somestuff');
             revs.push('2-randomid');
-            db.revsDiff({ 'somestuff': revs }, function (err, results) {
+            db.revsDiff({ somestuff: revs }, function (err, results) {
               results.should.include.keys('somestuff');
               results.somestuff.missing.should.have.length(1);
               done();
@@ -74,7 +74,7 @@ adapters.forEach(function (adapter) {
     it('Missing docs should be returned with all revisions', function (done) {
       new PouchDB(dbs.name, function (err, db) {
         var revs = ['1-a', '2-a', '2-b'];
-        db.revsDiff({'foo': revs }, function (err, results) {
+        db.revsDiff({foo: revs }, function (err, results) {
           results.should.include.keys('foo');
           results.foo.missing.should.deep.equal(revs, 'listed all revs');
           done();
@@ -88,18 +88,18 @@ adapters.forEach(function (adapter) {
         db.put(doc, { new_edits: false }, function (err, res) {
           testUtils.putAfter(db, {
             _id: '939',
-            _rev: '2-a'
+            _rev: '2-a',
           }, '1-a', function (err, res) {
             testUtils.putAfter(db, {
               _id: '939',
-              _rev: '2-b'
+              _rev: '2-b',
             }, '1-a', callback);
           });
         });
       }
       var db = new PouchDB(dbs.name, {auto_compaction: false});
       createConflicts(db, function () {
-        db.revsDiff({'939': ['1-a', '2-a', '2-b']}, function (err, results) {
+        db.revsDiff({939: ['1-a', '2-a', '2-b']}, function (err, results) {
           results.should.not.include.keys('939');
           done();
         });
@@ -110,18 +110,18 @@ adapters.forEach(function (adapter) {
       function createDeletedRevision(db, callback) {
         db.put({
           _id: '935',
-          _rev: '1-a'
+          _rev: '1-a',
         }, { new_edits: false }, function (err, info) {
           testUtils.putAfter(db, {
             _id: '935',
             _rev: '2-a',
-            _deleted: true
+            _deleted: true,
           }, '1-a', callback);
         });
       }
       var db = new PouchDB(dbs.name);
       createDeletedRevision(db, function () {
-        db.revsDiff({'935': ['1-a', '2-a']}, function (err, results) {
+        db.revsDiff({935: ['1-a', '2-a']}, function (err, results) {
           results.should.not.include.keys('939');
           done();
         });
@@ -141,19 +141,19 @@ adapters.forEach(function (adapter) {
       var revs = [];
       db.post({
         test: 'constructor',
-        _id: 'constructor'
+        _id: 'constructor',
       }, function (err, info) {
         revs.push(info.rev);
         db.put({
           _id: info.id,
           _rev: info.rev,
-          another: 'test'
+          another: 'test',
         }, function (err, info2) {
           revs.push(info2.rev);
-          db.revsDiff({ 'constructor': revs }, function (err, results) {
+          db.revsDiff({ constructor: revs }, function (err, results) {
             results.should.not.include.keys('constructor');
             revs.push('2-randomid');
-            db.revsDiff({ 'constructor': revs }, function (err, results) {
+            db.revsDiff({ constructor: revs }, function (err, results) {
               results.should.include.keys('constructor');
               results.constructor.missing.should.have.length(1);
               done();

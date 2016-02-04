@@ -105,7 +105,7 @@ function processChange(doc, metadata, opts) {
   var change = {
     id: metadata.id,
     changes: changeList,
-    doc: doc
+    doc: doc,
   };
 
   if (isDeleted(metadata, doc._rev)) {
@@ -155,7 +155,7 @@ Changes.prototype.doChanges = function (opts) {
     /* istanbul ignore next */
     }, function (err) {
       if (err.id === 'idbNull') {
-        // db closed before this returned thats ok
+        // Db closed before this returned thats ok
         return;
       }
       throw err;
@@ -200,7 +200,7 @@ Changes.prototype.filterChanges = function (opts) {
         '`view` filter parameter not found or invalid.');
       return callback(err);
     }
-    // fetch a view from a design doc, make it behave like a filter
+    // Fetch a view from a design doc, make it behave like a filter
     var viewName = parseDdocFunctionName(opts.view);
     this.db.get('_design/' + viewName[0], function (err, ddoc) {
       /* istanbul ignore if */
@@ -222,7 +222,7 @@ Changes.prototype.filterChanges = function (opts) {
       self.doChanges(opts);
     });
   } else {
-    // fetch a filter from a design doc
+    // Fetch a filter from a design doc
     var filterName = parseDdocFunctionName(opts.filter);
     if (!filterName) {
       return self.doChanges(opts);

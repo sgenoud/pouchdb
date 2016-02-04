@@ -55,7 +55,7 @@ function IdbPouch(opts, callback) {
     action: function (thisCallback) {
       init(api, opts, thisCallback);
     },
-    callback: callback
+    callback: callback,
   });
   applyNext(api.constructor);
 }
@@ -67,41 +67,41 @@ function init(api, opts, callback) {
   var idb = null;
   api._meta = null;
 
-  // called when creating a fresh new database
+  // Called when creating a fresh new database
   function createSchema(db) {
-    var docStore = db.createObjectStore(DOC_STORE, {keyPath : 'id'});
+    var docStore = db.createObjectStore(DOC_STORE, {keyPath: 'id'});
     db.createObjectStore(BY_SEQ_STORE, {autoIncrement: true})
       .createIndex('_doc_id_rev', '_doc_id_rev', {unique: true});
     db.createObjectStore(ATTACH_STORE, {keyPath: 'digest'});
     db.createObjectStore(META_STORE, {keyPath: 'id', autoIncrement: false});
     db.createObjectStore(DETECT_BLOB_SUPPORT_STORE);
 
-    // added in v2
-    docStore.createIndex('deletedOrLocal', 'deletedOrLocal', {unique : false});
+    // Added in v2
+    docStore.createIndex('deletedOrLocal', 'deletedOrLocal', {unique: false});
 
-    // added in v3
+    // Added in v3
     db.createObjectStore(LOCAL_STORE, {keyPath: '_id'});
 
-    // added in v4
+    // Added in v4
     var attAndSeqStore = db.createObjectStore(ATTACH_AND_SEQ_STORE,
       {autoIncrement: true});
     attAndSeqStore.createIndex('seq', 'seq');
     attAndSeqStore.createIndex('digestSeq', 'digestSeq', {unique: true});
   }
 
-  // migration to version 2
+  // Migration to version 2
   // unfortunately "deletedOrLocal" is a misnomer now that we no longer
   // store local docs in the main doc-store, but whaddyagonnado
   function addDeletedOrLocalIndex(txn, callback) {
     var docStore = txn.objectStore(DOC_STORE);
-    docStore.createIndex('deletedOrLocal', 'deletedOrLocal', {unique : false});
+    docStore.createIndex('deletedOrLocal', 'deletedOrLocal', {unique: false});
 
     docStore.openCursor().onsuccess = function (event) {
       var cursor = event.target.result;
       if (cursor) {
         var metadata = cursor.value;
         var deleted = isDeleted(metadata);
-        metadata.deletedOrLocal = deleted ? "1" : "0";
+        metadata.deletedOrLocal = deleted ? '1' : '0';
         docStore.put(metadata);
         cursor.continue();
       } else {
@@ -110,13 +110,13 @@ function init(api, opts, callback) {
     };
   }
 
-  // migration to version 3 (part 1)
+  // Migration to version 3 (part 1)
   function createLocalStoreSchema(db) {
     db.createObjectStore(LOCAL_STORE, {keyPath: '_id'})
       .createIndex('_doc_id_rev', '_doc_id_rev', {unique: true});
   }
 
-  // migration to version 3 (part 2)
+  // Migration to version 3 (part 2)
   function migrateLocalStore(txn, cb) {
     var localStore = txn.objectStore(LOCAL_STORE);
     var docStore = txn.objectStore(DOC_STORE);
@@ -131,18 +131,18 @@ function init(api, opts, callback) {
         var local = isLocalId(docId);
         var rev = calculateWinningRev(metadata);
         if (local) {
-          var docIdRev = docId + "::" + rev;
-          // remove all seq entries
+          var docIdRev = docId + '::' + rev;
+          // Remove all seq entries
           // associated with this docId
-          var start = docId + "::";
-          var end = docId + "::~";
+          var start = docId + '::';
+          var end = docId + '::~';
           var index = seqStore.index('_doc_id_rev');
           var range = IDBKeyRange.bound(start, end, false, false);
           var seqCursor = index.openCursor(range);
           seqCursor.onsuccess = function (e) {
             seqCursor = e.target.result;
             if (!seqCursor) {
-              // done
+              // Done
               docStore.delete(cursor.primaryKey);
               cursor.continue();
             } else {
@@ -163,7 +163,7 @@ function init(api, opts, callback) {
     };
   }
 
-  // migration to version 4 (part 1)
+  // Migration to version 4 (part 1)
   function addAttachAndSeqStore(db) {
     var attAndSeqStore = db.createObjectStore(ATTACH_AND_SEQ_STORE,
       {autoIncrement: true});
@@ -171,26 +171,26 @@ function init(api, opts, callback) {
     attAndSeqStore.createIndex('digestSeq', 'digestSeq', {unique: true});
   }
 
-  // migration to version 4 (part 2)
+  // Migration to version 4 (part 2)
   function migrateAttsAndSeqs(txn, callback) {
     var seqStore = txn.objectStore(BY_SEQ_STORE);
     var attStore = txn.objectStore(ATTACH_STORE);
     var attAndSeqStore = txn.objectStore(ATTACH_AND_SEQ_STORE);
 
-    // need to actually populate the table. this is the expensive part,
+    // Need to actually populate the table. this is the expensive part,
     // so as an optimization, check first that this database even
     // contains attachments
     var req = attStore.count();
     req.onsuccess = function (e) {
       var count = e.target.result;
       if (!count) {
-        return callback(); // done
+        return callback(); // Done
       }
 
       seqStore.openCursor().onsuccess = function (e) {
         var cursor = e.target.result;
         if (!cursor) {
-          return callback(); // done
+          return callback(); // Done
         }
         var doc = cursor.value;
         var seq = cursor.primaryKey;
@@ -198,14 +198,14 @@ function init(api, opts, callback) {
         var digestMap = {};
         for (var j = 0; j < atts.length; j++) {
           var att = doc._attachments[atts[j]];
-          digestMap[att.digest] = true; // uniq digests, just in case
+          digestMap[att.digest] = true; // Uniq digests, just in case
         }
         var digests = Object.keys(digestMap);
         for (j = 0; j < digests.length; j++) {
           var digest = digests[j];
           attAndSeqStore.put({
             seq: seq,
-            digestSeq: digest + '::' + seq
+            digestSeq: digest + '::' + seq,
           });
         }
         cursor.continue();
@@ -213,7 +213,7 @@ function init(api, opts, callback) {
     };
   }
 
-  // migration to version 5
+  // Migration to version 5
   // Instead of relying on on-the-fly migration of metadata,
   // this brings the doc-store to its modern form:
   // - metadata.winningrev
@@ -223,14 +223,14 @@ function init(api, opts, callback) {
 
     function decodeMetadataCompat(storedObject) {
       if (!storedObject.data) {
-        // old format, when we didn't store it stringified
+        // Old format, when we didn't store it stringified
         storedObject.deleted = storedObject.deletedOrLocal === '1';
         return storedObject;
       }
       return decodeMetadata(storedObject);
     }
 
-    // ensure that every metadata has a winningRev and seq,
+    // Ensure that every metadata has a winningRev and seq,
     // which was previously created on-the-fly but better to migrate
     var bySeqStore = txn.objectStore(BY_SEQ_STORE);
     var docStore = txn.objectStore(DOC_STORE);
@@ -238,7 +238,7 @@ function init(api, opts, callback) {
     cursor.onsuccess = function (e) {
       var cursor = e.target.result;
       if (!cursor) {
-        return; // done
+        return; // Done
       }
       var metadata = decodeMetadataCompat(cursor.value);
 
@@ -246,7 +246,7 @@ function init(api, opts, callback) {
         calculateWinningRev(metadata);
 
       function fetchMetadataSeq() {
-        // metadata.seq was added post-3.2.0, so if it's missing,
+        // Metadata.seq was added post-3.2.0, so if it's missing,
         // we need to fetch it manually
         var start = metadata.id + '::';
         var end = metadata.id + '::\uffff';
@@ -321,7 +321,7 @@ function init(api, opts, callback) {
 
     txn.objectStore(DOC_STORE).get(id).onsuccess = function (e) {
       metadata = decodeMetadata(e.target.result);
-      // we can determine the result here if:
+      // We can determine the result here if:
       // 1. there is no such document
       // 2. the document is deleted and we don't ask about specific rev
       // When we ask with opts.rev we expect the answer to be either
@@ -331,7 +331,7 @@ function init(api, opts, callback) {
         return finish();
       }
       if (isDeleted(metadata) && !opts.rev) {
-        err = createError(MISSING_DOC, "deleted");
+        err = createError(MISSING_DOC, 'deleted');
         return finish();
       }
       var objectStore = txn.objectStore(BY_SEQ_STORE);
@@ -395,7 +395,7 @@ function init(api, opts, callback) {
     cursor.onsuccess = function (event) {
       var cursor = event.target.result;
       updateSeq = cursor ? cursor.key : 0;
-      // count within the same txn for consistency
+      // Count within the same txn for consistency
       docCount = api._meta.docCount;
     };
 
@@ -403,8 +403,8 @@ function init(api, opts, callback) {
       callback(null, {
         doc_count: docCount,
         update_seq: updateSeq,
-        // for debugging
-        idb_attachment_format: (api._meta.blobSupport ? 'binary' : 'base64')
+        // For debugging
+        idb_attachment_format: (api._meta.blobSupport ? 'binary' : 'base64'),
       });
     };
   };
@@ -423,7 +423,7 @@ function init(api, opts, callback) {
       return {
         cancel: function () {
           IdbPouch.Changes.removeListener(dbName, id);
-        }
+        },
       };
     }
 
@@ -434,7 +434,7 @@ function init(api, opts, callback) {
 
     var limit = 'limit' in opts ? opts.limit : -1;
     if (limit === 0) {
-      limit = 1; // per CouchDB _changes spec
+      limit = 1; // Per CouchDB _changes spec
     }
     var returnDocs;
     if ('return_docs' in opts) {
@@ -469,7 +469,7 @@ function init(api, opts, callback) {
 
       function onGetMetadata() {
         if (metadata.seq !== seq) {
-          // some other seq is later
+          // Some other seq is later
           return cursor.continue();
         }
 
@@ -505,7 +505,7 @@ function init(api, opts, callback) {
           if (returnDocs) {
             results.push(change);
           }
-          // process the attachment immediately
+          // Process the attachment immediately
           // for the benefit of live listeners
           if (opts.attachments && opts.include_docs) {
             fetchAttachmentsIfNecessary(winningDoc, opts, txn, function () {
@@ -523,10 +523,10 @@ function init(api, opts, callback) {
       }
 
       metadata = docIdsToMetadata.get(doc._id);
-      if (metadata) { // cached
+      if (metadata) { // Cached
         return onGetMetadata();
       }
-      // metadata not cached, have to go fetch it
+      // Metadata not cached, have to go fetch it
       docStore.get(doc._id).onsuccess = function (event) {
         metadata = decodeMetadata(event.target.result);
         docIdsToMetadata.set(doc._id, metadata);
@@ -578,12 +578,12 @@ function init(api, opts, callback) {
       function finish() {
         opts.complete(null, {
           results: results,
-          last_seq: lastSeq
+          last_seq: lastSeq,
         });
       }
 
       if (!opts.continuous && opts.attachments) {
-        // cannot guarantee that postProcessing was already done,
+        // Cannot guarantee that postProcessing was already done,
         // so do it again
         postProcessAttachments(results).then(finish);
       } else {
@@ -630,7 +630,7 @@ function init(api, opts, callback) {
       DOC_STORE,
       BY_SEQ_STORE,
       ATTACH_STORE,
-      ATTACH_AND_SEQ_STORE
+      ATTACH_AND_SEQ_STORE,
     ];
     var txnResult = openTransactionSafely(idb, stores, 'readwrite');
     if (txnResult.error) {
@@ -676,7 +676,7 @@ function init(api, opts, callback) {
       if (!doc) {
         callback(createError(MISSING_DOC));
       } else {
-        delete doc['_doc_id_rev']; // for backwards compat
+        delete doc['_doc_id_rev']; // For backwards compat
         callback(null, doc);
       }
     };
@@ -687,7 +687,7 @@ function init(api, opts, callback) {
       callback = opts;
       opts = {};
     }
-    delete doc._revisions; // ignore this, trust the rev
+    delete doc._revisions; // Ignore this, trust the rev
     var oldRev = doc._rev;
     var id = doc._id;
     if (!oldRev) {
@@ -720,27 +720,27 @@ function init(api, opts, callback) {
         var oldDoc = e.target.result;
         if (!oldDoc || oldDoc._rev !== oldRev) {
           callback(createError(REV_CONFLICT));
-        } else { // update
+        } else { // Update
           var req = oStore.put(doc);
           req.onsuccess = function () {
             ret = {ok: true, id: doc._id, rev: doc._rev};
-            if (opts.ctx) { // return immediately
+            if (opts.ctx) { // Return immediately
               callback(null, ret);
             }
           };
         }
       };
-    } else { // new doc
+    } else { // New doc
       req = oStore.add(doc);
       req.onerror = function (e) {
-        // constraint error, already exists
+        // Constraint error, already exists
         callback(createError(REV_CONFLICT));
-        e.preventDefault(); // avoid transaction abort
-        e.stopPropagation(); // avoid transaction onerror
+        e.preventDefault(); // Avoid transaction abort
+        e.stopPropagation(); // Avoid transaction onerror
       };
       req.onsuccess = function () {
         ret = {ok: true, id: doc._id, rev: doc._rev};
-        if (opts.ctx) { // return immediately
+        if (opts.ctx) { // Return immediately
           callback(null, ret);
         }
       };
@@ -778,7 +778,7 @@ function init(api, opts, callback) {
       } else {
         oStore.delete(id);
         ret = {ok: true, id: id, rev: '0-0'};
-        if (opts.ctx) { // return immediately
+        if (opts.ctx) { // Return immediately
           callback(null, ret);
         }
       }
@@ -788,7 +788,7 @@ function init(api, opts, callback) {
   api._destroy = function (opts, callback) {
     IdbPouch.Changes.removeAllListeners(dbName);
 
-    //Close open request for "dbName" database to fix ie delay.
+    // Close open request for "dbName" database to fix ie delay.
     if (IdbPouch.openReqList[dbName] && IdbPouch.openReqList[dbName].result) {
       IdbPouch.openReqList[dbName].result.close();
       delete cachedDBs[dbName];
@@ -796,14 +796,14 @@ function init(api, opts, callback) {
     var req = indexedDB.deleteDatabase(dbName);
 
     req.onsuccess = function () {
-      //Remove open request from the list.
+      // Remove open request from the list.
       if (IdbPouch.openReqList[dbName]) {
         IdbPouch.openReqList[dbName] = null;
       }
       if (hasLocalStorage() && (dbName in localStorage)) {
         delete localStorage[dbName];
       }
-      callback(null, { 'ok': true });
+      callback(null, { ok: true });
     };
 
     req.onerror = idbError(callback);
@@ -835,26 +835,26 @@ function init(api, opts, callback) {
   req.onupgradeneeded = function (e) {
     var db = e.target.result;
     if (e.oldVersion < 1) {
-      return createSchema(db); // new db, initial schema
+      return createSchema(db); // New db, initial schema
     }
-    // do migrations
+    // Do migrations
 
     var txn = e.currentTarget.transaction;
-    // these migrations have to be done in this function, before
+    // These migrations have to be done in this function, before
     // control is returned to the event loop, because IndexedDB
 
     if (e.oldVersion < 3) {
-      createLocalStoreSchema(db); // v2 -> v3
+      createLocalStoreSchema(db); // V2 -> v3
     }
     if (e.oldVersion < 4) {
-      addAttachAndSeqStore(db); // v3 -> v4
+      addAttachAndSeqStore(db); // V3 -> v4
     }
 
     var migrations = [
-      addDeletedOrLocalIndex, // v1 -> v2
-      migrateLocalStore,      // v2 -> v3
-      migrateAttsAndSeqs,     // v3 -> v4
-      migrateMetadata         // v4 -> v5
+      addDeletedOrLocalIndex, // V1 -> v2
+      migrateLocalStore,      // V2 -> v3
+      migrateAttsAndSeqs,     // V3 -> v4
+      migrateMetadata,        // V4 -> v5
     ];
 
     var i = e.oldVersion;
@@ -888,7 +888,7 @@ function init(api, opts, callback) {
     var txn = idb.transaction([
       META_STORE,
       DETECT_BLOB_SUPPORT_STORE,
-      DOC_STORE
+      DOC_STORE,
     ], 'readwrite');
 
     var req = txn.objectStore(META_STORE).get(META_STORE);
@@ -908,19 +908,19 @@ function init(api, opts, callback) {
             name: dbName,
             instanceId: instanceId,
             blobSupport: blobSupport,
-            docCount: docCount
+            docCount: docCount,
           };
 
           cachedDBs[dbName] = {
             idb: idb,
-            global: api._meta
+            global: api._meta,
           };
           callback(null, api);
         }
       };
 
       //
-      // fetch/store the id
+      // Fetch/store the id
       //
 
       var meta = e.target.result || {id: META_STORE};
@@ -936,11 +936,11 @@ function init(api, opts, callback) {
       }
 
       //
-      // check blob support
+      // Check blob support
       //
 
       if (!blobSupportPromise) {
-        // make sure blob support is only checked once
+        // Make sure blob support is only checked once
         blobSupportPromise = checkBlobSupport(txn);
       }
 
@@ -950,7 +950,7 @@ function init(api, opts, callback) {
       });
 
       //
-      // count docs
+      // Count docs
       //
 
       var index = txn.objectStore(DOC_STORE).index('deletedOrLocal');
@@ -978,7 +978,7 @@ IdbPouch.valid = function () {
     !/Chrome/.test(navigator.userAgent) &&
     !/BlackBerry/.test(navigator.platform);
 
-  // some outdated implementations of IDB that appear on Samsung
+  // Some outdated implementations of IDB that appear on Samsung
   // and HTC Android devices <4.4 are missing IDBKeyRange
   return !isSafari && typeof indexedDB !== 'undefined' &&
     typeof IDBKeyRange !== 'undefined';
@@ -987,13 +987,13 @@ IdbPouch.valid = function () {
 IdbPouch.Changes = new Changes();
 
 function tryStorageOption(dbName, storage) {
-  try { // option only available in Firefox 26+
+  try { // Option only available in Firefox 26+
     return indexedDB.open(dbName, {
       version: ADAPTER_VERSION,
-      storage: storage
+      storage: storage,
     });
-  } catch(err) {
-      return indexedDB.open(dbName, ADAPTER_VERSION);
+  } catch (err) {
+    return indexedDB.open(dbName, ADAPTER_VERSION);
   }
 }
 

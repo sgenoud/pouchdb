@@ -1,8 +1,8 @@
-import buffer from '../binary/buffer';
+import Buffer from '../binary/buffer';
 
 function createBlobOrBufferFromParts(parts, type) {
-  return buffer.concat(parts.map(function (part) {
-    return new buffer(part, 'binary');
+  return Buffer.concat(parts.map(function (part) {
+    return new Buffer(part, 'binary');
   }));
 }
 

@@ -18,7 +18,7 @@ module.exports = function (PouchDB, opts) {
       {key: Math.random()},
       {key: 'bar' + Math.random()},
       {key: 'foo' + Math.random()},
-      {key: 'foobar' + Math.random()}
+      {key: 'foobar' + Math.random()},
     ];
   }
 
@@ -33,7 +33,7 @@ module.exports = function (PouchDB, opts) {
           tasks.push(i);
         }
         Promise.all(tasks.map(function () {
-          return db.bulkDocs({docs : makeTestDocs()});
+          return db.bulkDocs({docs: makeTestDocs()});
         })).then(function () {
           callback();
         }, callback);
@@ -44,7 +44,7 @@ module.exports = function (PouchDB, opts) {
           {startkey: 'foobar', limit: 5},
           {startkey: 'foo', limit: 5},
           {startkey: -1, limit: 5},
-          {startkey: null, limit: 5}
+          {startkey: null, limit: 5},
         ];
         Promise.all(tasks.map(function (task) {
           return db.query(function (doc) {
@@ -53,7 +53,7 @@ module.exports = function (PouchDB, opts) {
         })).then(function (res) {
           done();
         }, done);
-      }
+      },
     },
     {
       name: 'persisted-views',
@@ -65,17 +65,17 @@ module.exports = function (PouchDB, opts) {
           tasks.push(i);
         }
         Promise.all(tasks.map(function () {
-          return db.bulkDocs({docs : makeTestDocs()});
+          return db.bulkDocs({docs: makeTestDocs()});
         })).then(function () {
           return db.put({
-            _id : '_design/myview',
-            views : {
-              myview : {
-                map : function (doc) {
+            _id: '_design/myview',
+            views: {
+              myview: {
+                map: function (doc) {
                   emit(doc.key);
-                }.toString()
-              }
-            }
+                }.toString(),
+              },
+            },
           });
         }).then(function () {
           return db.query('myview/myview');
@@ -89,14 +89,14 @@ module.exports = function (PouchDB, opts) {
           {startkey: 'foobar', limit: 5},
           {startkey: 'foo', limit: 5},
           {startkey: -1, limit: 5},
-          {startkey: null, limit: 5}
+          {startkey: null, limit: 5},
         ];
         Promise.all(tasks.map(function (task) {
             return db.query('myview/myview', task);
           })).then(function (res) {
             done();
           }, done);
-      }
+      },
     },
     {
       name: 'persisted-views-stale-ok',
@@ -108,17 +108,17 @@ module.exports = function (PouchDB, opts) {
           tasks.push(i);
         }
         Promise.all(tasks.map(function () {
-            return db.bulkDocs({docs : makeTestDocs()});
+            return db.bulkDocs({docs: makeTestDocs()});
           })).then(function () {
             return db.put({
-              _id : '_design/myview',
-              views : {
-                myview : {
-                  map : function (doc) {
+              _id: '_design/myview',
+              views: {
+                myview: {
+                  map: function (doc) {
                     emit(doc.key);
-                  }.toString()
-                }
-              }
+                  }.toString(),
+                },
+              },
             });
           }).then(function () {
             return db.query('myview/myview');
@@ -128,19 +128,19 @@ module.exports = function (PouchDB, opts) {
       },
       test: function (db, itr, doc, done) {
         var tasks = [
-          {startkey: 'foo', limit: 5, stale : 'ok'},
-          {startkey: 'foobar', limit: 5, stale : 'ok'},
-          {startkey: 'foo', limit: 5, stale : 'ok'},
-          {startkey: -1, limit: 5, stale : 'ok'},
-          {startkey: null, limit: 5, stale : 'ok'}
+          {startkey: 'foo', limit: 5, stale: 'ok'},
+          {startkey: 'foobar', limit: 5, stale: 'ok'},
+          {startkey: 'foo', limit: 5, stale: 'ok'},
+          {startkey: -1, limit: 5, stale: 'ok'},
+          {startkey: null, limit: 5, stale: 'ok'},
         ];
         Promise.all(tasks.map(function (task) {
             return db.query('myview/myview', task);
           })).then(function (res) {
             done();
           }, done);
-      }
-    }
+      },
+    },
   ];
 
   utils.runTests(PouchDB, 'views', testCases, opts);

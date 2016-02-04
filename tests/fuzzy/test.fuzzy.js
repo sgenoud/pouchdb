@@ -28,12 +28,12 @@ var actionCount = 100;
 var actions = {
 
   // Create a random document
-  'create': function(a) {
-    return a.post({'a': 'newdoc'});
+  create: function(a) {
+    return a.post({a: 'newdoc'});
   },
 
   // Pick from an existing document and updated it
-  'update': function(a) {
+  update: function(a) {
     return randomDoc(a).then(function(doc) {
       if (doc) {
         doc.updated = Date.now();
@@ -43,7 +43,7 @@ var actions = {
   },
 
   // Remove a random document
-  'remove': function(a) {
+  remove: function(a) {
     return randomDoc(a).then(function(doc) {
       if (doc) {
         return a.remove(doc);
@@ -53,10 +53,10 @@ var actions = {
 
   // Generate a conflict by writing a document with the same id to
   // both databases
-  'conflict': function(a, b) {
+  conflict: function(a, b) {
     var doc = {
       _id: 'random-' + Date.now(),
-      foo: 'bar'
+      foo: 'bar',
     };
     return a.put(doc).then(function() {
       doc.baz = 'fubar';
@@ -65,9 +65,9 @@ var actions = {
   },
 
   // Perform a one off replication
-  'replicate': function(a, b) {
+  replicate: function(a, b) {
     return a.replicate.to(b);
-  }
+  },
 };
 
 // Utilities
@@ -88,7 +88,7 @@ function randomNumber(min, max) {
     min = 0;
   }
   if (max !== max || max <= min) {
-    max = (min || 1) << 1; //doubling
+    max = (min || 1) << 1; // Doubling
   } else {
     max = max + 1;
   }
@@ -151,7 +151,7 @@ describe('chaos-monkey', function () {
   function compare() {
     return Promise.all([
       a.allDocs({include_docs: true}),
-      b.allDocs({include_docs: true})
+      b.allDocs({include_docs: true}),
     ]).then(function(res) {
       res[0].should.deep.equal(res[1]);
     });

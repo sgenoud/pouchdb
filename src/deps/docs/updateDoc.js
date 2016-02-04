@@ -13,7 +13,7 @@ function updateDoc(revLimit, prev, docInfo, results,
     return cb();
   }
 
-  // sometimes this is pre-calculated. historically not always
+  // Sometimes this is pre-calculated. historically not always
   var previousWinningRev = prev.winningRev || calculateWinningRev(prev);
   var previouslyDeleted = 'deleted' in prev ? prev.deleted :
     isDeleted(prev, previousWinningRev);
@@ -44,24 +44,24 @@ function updateDoc(revLimit, prev, docInfo, results,
   docInfo.metadata.rev_tree = merged.tree;
   /* istanbul ignore else */
   if (prev.rev_map) {
-    docInfo.metadata.rev_map = prev.rev_map; // used only by leveldb
+    docInfo.metadata.rev_map = prev.rev_map; // Used only by leveldb
   }
 
-  // recalculate
+  // Recalculate
   var winningRev = calculateWinningRev(docInfo.metadata);
   var winningRevIsDeleted = isDeleted(docInfo.metadata, winningRev);
 
-  // calculate the total number of documents that were added/removed,
+  // Calculate the total number of documents that were added/removed,
   // from the perspective of total_rows/doc_count
   var delta = (previouslyDeleted === winningRevIsDeleted) ? 0 :
     previouslyDeleted < winningRevIsDeleted ? -1 : 1;
 
   var newRevIsDeleted;
   if (newRev === winningRev) {
-    // if the new rev is the same as the winning rev, we can reuse that value
+    // If the new rev is the same as the winning rev, we can reuse that value
     newRevIsDeleted = winningRevIsDeleted;
   } else {
-    // if they're not the same, then we need to recalculate
+    // If they're not the same, then we need to recalculate
     newRevIsDeleted = isDeleted(docInfo.metadata, newRev);
   }
 

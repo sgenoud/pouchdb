@@ -4,7 +4,7 @@ var http = require('http');
 var url = require('url');
 
 var PouchDB = require('../../lib');
-var should = require("chai").should();
+var should = require('chai').should();
 
 describe('test.params.js', function () {
 

@@ -22,10 +22,10 @@ adapters.forEach(function (adapter) {
       views: {
         scores: {
           map: 'function (doc) { if (doc.score) { emit(null, doc.score); } }',
-          reduce: 'function (keys, values, rereduce) { return sum(values); }'
-        }
+          reduce: 'function (keys, values, rereduce) { return sum(values); }',
+        },
       },
-      filters: { even: 'function (doc) { return doc.integer % 2 === 0; }' }
+      filters: { even: 'function (doc) { return doc.integer % 2 === 0; }' },
     };
 
     it('Test writing design doc', function (done) {
@@ -44,13 +44,13 @@ adapters.forEach(function (adapter) {
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
         {_id: '2', integer: 2},
-        {_id: '3', integer: 3}
+        {_id: '3', integer: 3},
       ];
       var docs2 = [
         {_id: '4', integer: 4},
         {_id: '5', integer: 5},
         {_id: '6', integer: 6},
-        {_id: '7', integer: 7}
+        {_id: '7', integer: 7},
       ];
 
       var db = new PouchDB(dbs.name);
@@ -58,7 +58,7 @@ adapters.forEach(function (adapter) {
       db.bulkDocs({ docs: docs1 }, function (err, info) {
         var changes = db.changes({
           live: true,
-          filter: 'foo/even'
+          filter: 'foo/even',
         }).on('change', function (change) {
           count += 1;
           if (count === 4) {
@@ -78,7 +78,7 @@ adapters.forEach(function (adapter) {
         {_id: 'dale', score: 3},
         {_id: 'mikeal', score: 5},
         {_id: 'max', score: 4},
-        {_id: 'nuno', score: 3}
+        {_id: 'nuno', score: 3},
       ];
       var db = new PouchDB(dbs.name);
       db.bulkDocs({ docs: docs1 }, function (err, info) {
@@ -97,8 +97,8 @@ adapters.forEach(function (adapter) {
       db.bulkDocs({
         docs: [
           doc,
-          {_id: 'dale', score: 3}
-        ]
+          {_id: 'dale', score: 3},
+        ],
       }, function (err, info) {
         var cnt = 0;
         db.query('foo/scores', { reduce: false }, function (err, result) {

@@ -1,8 +1,8 @@
 function quote(str) {
-  return "'" + str + "'";
+  return '\'' + str + '\'';
 }
 
-var ADAPTER_VERSION = 7; // used to manage migrations
+var ADAPTER_VERSION = 7; // Used to manage migrations
 
 // The object stores created for each database
 // DOC_STORE stores the document meta data, its revision history and state
@@ -14,7 +14,7 @@ var BY_SEQ_STORE = quote('by-sequence');
 var ATTACH_STORE = quote('attach-store');
 var LOCAL_STORE = quote('local-store');
 var META_STORE = quote('metadata-store');
-// where we store many-to-many relations between attachment
+// Where we store many-to-many relations between attachment
 // digests and seqs
 var ATTACH_AND_SEQ_STORE = quote('attach-seq-store');
 

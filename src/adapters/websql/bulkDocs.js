@@ -56,7 +56,7 @@ function websqlBulkDocs(dbOpts, req, opts, api, db, Changes, callback) {
       return callback(preconditionErrored);
     }
     Changes.notify(api._name);
-    api._docCount = -1; // invalidate
+    api._docCount = -1; // Invalidate
     callback(null, results);
   }
 
@@ -122,7 +122,7 @@ function websqlBulkDocs(dbOpts, req, opts, api, db, Changes, callback) {
         ' (doc_id, rev, json, deleted) VALUES (?, ?, ?, ?);';
       var sqlArgs = [id, rev, json, deletedInt];
 
-      // map seqs to attachment digests, which
+      // Map seqs to attachment digests, which
       // we will need later during compaction
       function insertAttachmentMappings(seq, callback) {
         var attsAdded = 0;
@@ -135,19 +135,19 @@ function websqlBulkDocs(dbOpts, req, opts, api, db, Changes, callback) {
           if (++attsAdded === attsToAdd.length) {
             callback();
           }
-          return false; // ack handling a constraint error
+          return false; // Ack handling a constraint error
         }
         function add(att) {
           var sql = 'INSERT INTO ' + ATTACH_AND_SEQ_STORE +
             ' (digest, seq) VALUES (?,?)';
           var sqlArgs = [data._attachments[att].digest, seq];
           tx.executeSql(sql, sqlArgs, checkDone, checkDone);
-          // second callback is for a constaint error, which we ignore
+          // Second callback is for a constaint error, which we ignore
           // because this docid/rev has already been associated with
           // the digest (e.g. when new_edits == false)
         }
         for (var i = 0; i < attsToAdd.length; i++) {
-          add(attsToAdd[i]); // do in parallel
+          add(attsToAdd[i]); // Do in parallel
         }
       }
 
@@ -157,7 +157,7 @@ function websqlBulkDocs(dbOpts, req, opts, api, db, Changes, callback) {
           dataWritten(tx, seq);
         });
       }, function () {
-        // constraint error, recover by updating instead (see #1638)
+        // Constraint error, recover by updating instead (see #1638)
         var fetchSql = select('seq', BY_SEQ_STORE, null,
           'doc_id=? AND rev=?');
         tx.executeSql(fetchSql, [id, rev], function (tx, res) {
@@ -171,7 +171,7 @@ function websqlBulkDocs(dbOpts, req, opts, api, db, Changes, callback) {
             });
           });
         });
-        return false; // ack that we've handled the error
+        return false; // Ack that we've handled the error
       });
     }
 
@@ -222,7 +222,7 @@ function websqlBulkDocs(dbOpts, req, opts, api, db, Changes, callback) {
 
     function autoCompact() {
       if (!isUpdate || !api.auto_compaction) {
-        return; // nothing to do
+        return; // Nothing to do
       }
       var id = docInfo.metadata.id;
       var revsToDelete = compactTree(docInfo.metadata);
@@ -250,7 +250,7 @@ function websqlBulkDocs(dbOpts, req, opts, api, db, Changes, callback) {
         results[resultsIdx] = {
           ok: true,
           id: docInfo.metadata.id,
-          rev: winningRev
+          rev: winningRev,
         };
         fetchedDocs.set(id, docInfo.metadata);
         callback();
@@ -278,7 +278,7 @@ function websqlBulkDocs(dbOpts, req, opts, api, db, Changes, callback) {
 
     docInfos.forEach(function (docInfo) {
       if (docInfo._id && isLocalId(docInfo._id)) {
-        return checkDone(); // skip local docs
+        return checkDone(); // Skip local docs
       }
       var id = docInfo.metadata.id;
       tx.executeSql('SELECT json FROM ' + DOC_STORE +
@@ -295,10 +295,10 @@ function websqlBulkDocs(dbOpts, req, opts, api, db, Changes, callback) {
   function saveAttachment(digest, data, callback) {
     var sql = 'SELECT digest FROM ' + ATTACH_STORE + ' WHERE digest=?';
     tx.executeSql(sql, [digest], function (tx, result) {
-      if (result.rows.length) { // attachment already exists
+      if (result.rows.length) { // Attachment already exists
         return callback();
       }
-      // we could just insert before selecting and catch the error,
+      // We could just insert before selecting and catch the error,
       // but my hunch is that it's cheaper not to serialize the blob
       // from JS to C if we don't have to (TODO: confirm this)
       sql = 'INSERT INTO ' + ATTACH_STORE +
@@ -306,9 +306,9 @@ function websqlBulkDocs(dbOpts, req, opts, api, db, Changes, callback) {
       tx.executeSql(sql, [digest, escapeBlob(data)], function () {
         callback();
       }, function () {
-        // ignore constaint errors, means it already exists
+        // Ignore constaint errors, means it already exists
         callback();
-        return false; // ack we handled the error
+        return false; // Ack we handled the error
       });
     });
   }

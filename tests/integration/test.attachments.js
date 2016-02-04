@@ -5,24 +5,25 @@ var repl_adapters = [
   ['local', 'http'],
   ['http', 'http'],
   ['http', 'local'],
-  ['local', 'local']
+  ['local', 'local'],
 ];
 
 /* jshint maxlen:false */
+// jscs:disable maximumLineLength
 var icons = [
-  "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"
+  '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',
 ];
 
 var iconDigests = [
-  "md5-Mf8m9ehZnCXC717bPkqkCA==",
-  "md5-fdEZBYtnvr+nozYVDzzxpA==",
-  "md5-ImDARszfC+GA3Cv9TVW4HA==",
-  "md5-hBsgoz3ujHM4ioa72btwow==",
-  "md5-jDUyV6ySnTVANn2qq3332g=="
+  'md5-Mf8m9ehZnCXC717bPkqkCA==',
+  'md5-fdEZBYtnvr+nozYVDzzxpA==',
+  'md5-ImDARszfC+GA3Cv9TVW4HA==',
+  'md5-hBsgoz3ujHM4ioa72btwow==',
+  'md5-jDUyV6ySnTVANn2qq3332g==',
 ];
 
 var iconLengths = [1047, 789, 967, 527, 1108];
@@ -46,29 +47,29 @@ adapters.forEach(function (adapter) {
       _attachments: {
         'foo.txt': {
           content_type: 'text/plain',
-          data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ='
-        }
-      }
+          data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
+        },
+      },
     };
-    // empty attachment
+    // Empty attachment
     var binAttDoc2 = {
       _id: 'bin_doc2',
       _attachments: {
         'foo.txt': {
           content_type: 'text/plain',
-          data: ''
-        }
-      }
+          data: '',
+        },
+      },
     };
-    // json string doc
+    // Json string doc
     var jsonDoc = {
       _id: 'json_doc',
       _attachments: {
         'foo.json': {
           content_type: 'application/json',
-          data: 'eyJIZWxsbyI6IndvcmxkIn0='
-        }
-      }
+          data: 'eyJIZWxsbyI6IndvcmxkIn0=',
+        },
+      },
     };
     var pngAttDoc = {
       _id: 'png_doc',
@@ -80,9 +81,9 @@ adapters.forEach(function (adapter) {
                 'nQDT2nT/AAAAcElEQVQY002OUQLEQARDw1D14f7X3TCdbfPnhQTqI5UqvG' +
                 'OWIz8gAIXFH9zmC63XRyTsOsCWk2A9Ga7wCXlA9m2S6G4JlVwQkpw/Ymxr' +
                 'UgNoMoyxBwSMH/WnAzy5cnfLFu+dK2l5gMvuPGLGJd1/9AOiBQiEgkzOpg' +
-                'AAAABJRU5ErkJggg=='
-        }
-      }
+                'AAAABJRU5ErkJggg==',
+        },
+      },
     };
 
     it('3357 Attachment names cant start with _', function (done) {
@@ -90,9 +91,9 @@ adapters.forEach(function (adapter) {
       var doc = {_id: 'baz', _attachments: {
         '_text1.txt': {
           content_type: 'text/plain',
-          data: testUtils.btoa('text1')
-        }
-      }};
+          data: testUtils.btoa('text1'),
+        },
+      },};
       return db.put(doc).then(function() {
         done('Should not succeed');
       }).catch(function(err) {
@@ -108,26 +109,26 @@ adapters.forEach(function (adapter) {
         _rev: '1-x',
         _revisions: {
           start: 1,
-          ids: ['x']
+          ids: ['x'],
         },
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: ''
-          }
-        }
+            data: '',
+          },
+        },
       };
       return db.bulkDocs({
         docs: [doc],
-        new_edits: false
+        new_edits: false,
       }).then(function () {
         return db.get('frog', {
           revs: true,
           open_revs: ['1-x', '2-fake'],
-          attachments: true
+          attachments: true,
         });
       }).then(function (res) {
-        // there should be exactly one "ok" result
+        // There should be exactly one "ok" result
         // and one result with attachments
         res.filter(function (x) {
           return x.ok;
@@ -145,7 +146,7 @@ adapters.forEach(function (adapter) {
       }).then(function (doc) {
         doc._attachments['bar.txt'] = {
           stub: true,
-          digest: 'md5-sorryIDoNotReallyExist=='
+          digest: 'md5-sorryIDoNotReallyExist==',
         };
         return db.put(doc);
       }).then(function (res) {
@@ -159,13 +160,13 @@ adapters.forEach(function (adapter) {
     it('issue 2803 should throw 412 part 2', function () {
       var stubDoc = {
         _id: 'stubby',
-        "_attachments": {
-          "foo.txt": {
-            "content_type": "text/plain",
-            "digest": "md5-aEI7pOYCRBLTRQvvqYrrJQ==",
-            "stub": true
+        _attachments: {
+          'foo.txt': {
+            content_type: 'text/plain',
+            digest: 'md5-aEI7pOYCRBLTRQvvqYrrJQ==',
+            stub: true,
           },
-        }
+        },
       };
       var db = new PouchDB(dbs.name);
       return db.put(stubDoc).then(function (res) {
@@ -187,7 +188,7 @@ adapters.forEach(function (adapter) {
       }).then(function (doc) {
         doc._attachments['bar.txt'] = {
           stub: true,
-          digest: 'md5-sorryIDoNotReallyExist=='
+          digest: 'md5-sorryIDoNotReallyExist==',
         };
         return db.put(doc);
       }).then(function (res) {
@@ -209,11 +210,11 @@ adapters.forEach(function (adapter) {
       }).then(function (doc) {
         doc._attachments['bar.txt'] = {
           stub: true,
-          digest: 'md5-sorryIDoNotReallyExist=='
+          digest: 'md5-sorryIDoNotReallyExist==',
         };
         doc._attachments['baz.txt'] = {
           stub: true,
-          digest: 'md5-yahNoIDoNotExistEither=='
+          digest: 'md5-yahNoIDoNotExistEither==',
         };
         return db.put(doc);
       }).then(function (res) {
@@ -233,7 +234,7 @@ adapters.forEach(function (adapter) {
           var expected = doc._attachments[attName];
           return db.get(doc._id, {
             attachments: true,
-            binary: true
+            binary: true,
           }).then(function (savedDoc) {
             var att = savedDoc._attachments[attName];
             should.not.exist(att.stub);
@@ -261,7 +262,7 @@ adapters.forEach(function (adapter) {
             key: doc._id,
             attachments: true,
             binary: true,
-            include_docs: true
+            include_docs: true,
           }).then(function (res) {
             res.rows.should.have.length(1);
             var savedDoc = res.rows[0].doc;
@@ -290,7 +291,7 @@ adapters.forEach(function (adapter) {
         return db.allDocs({
           include_docs: true,
           attachments: true,
-          binary: true
+          binary: true,
         }).then(function (res) {
           var savedDocs = res.rows.map(function (x) {
             return x.doc;
@@ -324,12 +325,12 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var docs = [binAttDoc, binAttDoc2, pngAttDoc,
         {_id: 'bar'},
-        {_id: 'foo', _deleted: true}];
+        {_id: 'foo', _deleted: true},];
       return db.bulkDocs(docs).then(function () {
         return db.allDocs({
           include_docs: true,
           attachments: true,
-          binary: true
+          binary: true,
         }).then(function (res) {
           res.rows.should.have.length(4);
           var savedDocs = res.rows.map(function (x) {
@@ -366,18 +367,18 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var docs = [binAttDoc, binAttDoc2, pngAttDoc,
         {_id: 'bar'},
-        {_id: 'foo', _deleted: true}];
+        {_id: 'foo', _deleted: true},];
       return db.bulkDocs(docs).then(function () {
         return db.allDocs({
           attachments: true,
-          binary: true
+          binary: true,
         }).then(function (res) {
           res.rows.should.have.length(4);
           res.rows.forEach(function (row) {
             should.not.exist(row.doc);
           });
           return db.allDocs({
-            binary: true
+            binary: true,
           });
         }).then(function (res) {
           res.rows.should.have.length(4);
@@ -392,15 +393,15 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var docs = [binAttDoc, binAttDoc2, pngAttDoc,
         {_id: 'bar'},
-        {_id: 'foo', deleted: true}];
+        {_id: 'foo', deleted: true},];
       return db.bulkDocs(docs).then(function () {
         return db.allDocs({
           keys: [
-            binAttDoc._id, binAttDoc2._id, pngAttDoc._id, 'foo', 'bar'
+            binAttDoc._id, binAttDoc2._id, pngAttDoc._id, 'foo', 'bar',
           ],
           attachments: true,
           binary: true,
-          include_docs: true
+          include_docs: true,
         }).then(function (res) {
           res.rows.should.have.length(5);
 
@@ -437,51 +438,51 @@ adapters.forEach(function (adapter) {
         {_id: 'baz', _attachments: {
           'text1.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text1')
+            data: testUtils.btoa('text1'),
           },
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
-          }
-        }},
+            data: testUtils.btoa('text2'),
+          },
+        },},
         {_id: 'foo', _attachments: {
           'text5.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text5')
-          }
-        }},
+            data: testUtils.btoa('text5'),
+          },
+        },},
         {_id: 'quux', _attachments: {
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
+            data: testUtils.btoa('text3'),
           },
           'text4.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text4')
-          }
-        }},
+            data: testUtils.btoa('text4'),
+          },
+        },},
         {_id: 'zob', _attachments: {
           'text6.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }},
+            data: testUtils.btoa('text3'),
+          },
+        },},
         {_id: 'zorb', _attachments: {
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
+            data: testUtils.btoa('text2'),
           },
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }}
+            data: testUtils.btoa('text3'),
+          },
+        },},
       ];
       return db.bulkDocs(docs).then(function () {
         return db.allDocs({
           attachments: true,
           binary: true,
-          include_docs: true
+          include_docs: true,
         }).then(function (res) {
           res.rows.should.have.length(5);
 
@@ -515,61 +516,61 @@ adapters.forEach(function (adapter) {
         {_id: 'baz', _attachments: {
           'text1.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text1')
+            data: testUtils.btoa('text1'),
           },
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
-          }
-        }},
+            data: testUtils.btoa('text2'),
+          },
+        },},
         {_id: 'foo', _attachments: {
           'text5.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text5')
-          }
-        }},
+            data: testUtils.btoa('text5'),
+          },
+        },},
         {_id: 'imdeleted', _deleted: true},
         {_id: 'quux', _attachments: {
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
+            data: testUtils.btoa('text3'),
           },
           'text4.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text4')
-          }
-        }},
+            data: testUtils.btoa('text4'),
+          },
+        },},
         {_id: 'imempty'},
         {_id: 'zob', _attachments: {
           'text6.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }},
+            data: testUtils.btoa('text3'),
+          },
+        },},
 
         {_id: 'imempty2'},
         {_id: 'zorb', _attachments: {
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
+            data: testUtils.btoa('text2'),
           },
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }},
+            data: testUtils.btoa('text3'),
+          },
+        },},
         {_id: 'imkindaempty', _attachments: {
           'text0.txt': {
             content_type: 'text/plain',
-            data: ''
-          }
-        }}
+            data: '',
+          },
+        },},
       ];
       return db.bulkDocs(docs).then(function () {
         return db.allDocs({
           attachments: true,
           binary: true,
-          include_docs: true
+          include_docs: true,
         }).then(function (res) {
           res.rows.should.have.length(8);
 
@@ -609,12 +610,12 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var docs = [binAttDoc, binAttDoc2, pngAttDoc,
         {_id: 'bar'},
-        {_id: 'foo', deleted: true}];
+        {_id: 'foo', deleted: true},];
       return db.bulkDocs(docs).then(function () {
         return db.changes({
           attachments: true,
           binary: true,
-          include_docs: true
+          include_docs: true,
         }).then(function (res) {
           res.results.should.have.length(5);
 
@@ -654,51 +655,51 @@ adapters.forEach(function (adapter) {
         {_id: 'baz', _attachments: {
           'text1.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text1')
+            data: testUtils.btoa('text1'),
           },
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
-          }
-        }},
+            data: testUtils.btoa('text2'),
+          },
+        },},
         {_id: 'foo', _attachments: {
           'text5.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text5')
-          }
-        }},
+            data: testUtils.btoa('text5'),
+          },
+        },},
         {_id: 'quux', _attachments: {
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
+            data: testUtils.btoa('text3'),
           },
           'text4.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text4')
-          }
-        }},
+            data: testUtils.btoa('text4'),
+          },
+        },},
         {_id: 'zob', _attachments: {
           'text6.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }},
+            data: testUtils.btoa('text3'),
+          },
+        },},
         {_id: 'zorb', _attachments: {
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
+            data: testUtils.btoa('text2'),
           },
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }}
+            data: testUtils.btoa('text3'),
+          },
+        },},
       ];
       return db.bulkDocs(docs).then(function () {
         return db.changes({
           attachments: true,
           binary: true,
-          include_docs: true
+          include_docs: true,
         }).then(function (res) {
           res.results.should.have.length(5);
 
@@ -732,61 +733,61 @@ adapters.forEach(function (adapter) {
         {_id: 'baz', _attachments: {
           'text1.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text1')
+            data: testUtils.btoa('text1'),
           },
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
-          }
-        }},
+            data: testUtils.btoa('text2'),
+          },
+        },},
         {_id: 'foo', _attachments: {
           'text5.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text5')
-          }
-        }},
+            data: testUtils.btoa('text5'),
+          },
+        },},
         {_id: 'imdeleted', _deleted: true},
         {_id: 'quux', _attachments: {
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
+            data: testUtils.btoa('text3'),
           },
           'text4.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text4')
-          }
-        }},
+            data: testUtils.btoa('text4'),
+          },
+        },},
         {_id: 'imempty'},
         {_id: 'zob', _attachments: {
           'text6.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }},
+            data: testUtils.btoa('text3'),
+          },
+        },},
 
         {_id: 'imempty2'},
         {_id: 'zorb', _attachments: {
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
+            data: testUtils.btoa('text2'),
           },
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }},
+            data: testUtils.btoa('text3'),
+          },
+        },},
         {_id: 'imkindaempty', _attachments: {
           'text0.txt': {
             content_type: 'text/plain',
-            data: ''
-          }
-        }}
+            data: '',
+          },
+        },},
       ];
       return db.bulkDocs(docs).then(function () {
         return db.changes({
           attachments: true,
           binary: true,
-          include_docs: true
+          include_docs: true,
         }).then(function (res) {
           res.results.should.have.length(9);
 
@@ -824,62 +825,62 @@ adapters.forEach(function (adapter) {
         {_id: 'baz', _attachments: {
           'text1.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text1')
+            data: testUtils.btoa('text1'),
           },
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
-          }
-        }},
+            data: testUtils.btoa('text2'),
+          },
+        },},
         {_id: 'foo', _attachments: {
           'text5.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text5')
-          }
-        }},
+            data: testUtils.btoa('text5'),
+          },
+        },},
         {_id: 'imdeleted', _deleted: true},
         {_id: 'quux', _attachments: {
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
+            data: testUtils.btoa('text3'),
           },
           'text4.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text4')
-          }
-        }},
+            data: testUtils.btoa('text4'),
+          },
+        },},
         {_id: 'imempty'},
         {_id: 'zob', _attachments: {
           'text6.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }},
+            data: testUtils.btoa('text3'),
+          },
+        },},
 
         {_id: 'imempty2'},
         {_id: 'zorb', _attachments: {
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
+            data: testUtils.btoa('text2'),
           },
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }},
+            data: testUtils.btoa('text3'),
+          },
+        },},
         {_id: 'imkindaempty', _attachments: {
           'text0.txt': {
             content_type: 'text/plain',
-            data: ''
-          }
-        }}
+            data: '',
+          },
+        },},
       ];
       return db.bulkDocs(docs).then(function () {
         return new PouchDB.utils.Promise(function (resolve, reject) {
           db.changes({
             attachments: true,
             binary: true,
-            include_docs: true
+            include_docs: true,
           }).on('error', reject).on('complete', resolve);
         }).then(function (results) {
             return PouchDB.utils.Promise.all(results.results.map(function (row) {
@@ -918,14 +919,14 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var docs = [binAttDoc, binAttDoc2, pngAttDoc,
         {_id: 'bar'},
-        {_id: 'foo', deleted: true}];
+        {_id: 'foo', deleted: true},];
       return db.bulkDocs(docs).then(function () {
         return new PouchDB.utils.Promise(function (resolve, reject) {
           var ret = db.changes({
             attachments: true,
             binary: true,
             include_docs: true,
-            live: true
+            live: true,
           }).on('error', reject)
             .on('change', handleChange)
             .on('complete', resolve);
@@ -980,55 +981,55 @@ adapters.forEach(function (adapter) {
         {_id: 'baz', _attachments: {
           'text1.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text1')
+            data: testUtils.btoa('text1'),
           },
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
-          }
-        }},
+            data: testUtils.btoa('text2'),
+          },
+        },},
         {_id: 'foo', _attachments: {
           'text5.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text5')
-          }
-        }},
+            data: testUtils.btoa('text5'),
+          },
+        },},
         {_id: 'imdeleted', _deleted: true},
         {_id: 'quux', _attachments: {
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
+            data: testUtils.btoa('text3'),
           },
           'text4.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text4')
-          }
-        }},
+            data: testUtils.btoa('text4'),
+          },
+        },},
         {_id: 'imempty'},
         {_id: 'zob', _attachments: {
           'text6.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }},
+            data: testUtils.btoa('text3'),
+          },
+        },},
 
         {_id: 'imempty2'},
         {_id: 'zorb', _attachments: {
           'text2.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text2')
+            data: testUtils.btoa('text2'),
           },
           'text3.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('text3')
-          }
-        }},
+            data: testUtils.btoa('text3'),
+          },
+        },},
         {_id: 'imkindaempty', _attachments: {
           'text0.txt': {
             content_type: 'text/plain',
-            data: ''
-          }
-        }}
+            data: '',
+          },
+        },},
       ];
       return db.bulkDocs(docs).then(function () {
         return new PouchDB.utils.Promise(function (resolve, reject) {
@@ -1036,7 +1037,7 @@ adapters.forEach(function (adapter) {
             attachments: true,
             binary: true,
             include_docs: true,
-            live: true
+            live: true,
           }).on('error', reject)
             .on('change', handleChange)
             .on('complete', resolve);
@@ -1090,14 +1091,14 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var docs = [binAttDoc, binAttDoc2, pngAttDoc,
         {_id: 'bar'},
-        {_id: 'foo', deleted: true}];
+        {_id: 'foo', deleted: true},];
       return db.bulkDocs(docs).then(function () {
         return new PouchDB.utils.Promise(function (resolve, reject) {
           var ret = db.changes({
             attachments: true,
             binary: true,
             include_docs: true,
-            live: true
+            live: true,
           }).on('error', reject)
             .on('change', handleChange)
             .on('complete', resolve);
@@ -1150,13 +1151,13 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var docs = [binAttDoc, binAttDoc2, pngAttDoc,
         {_id: 'bar'},
-        {_id: 'foo', deleted: true}];
+        {_id: 'foo', deleted: true},];
       return db.bulkDocs(docs).then(function () {
         return new PouchDB.utils.Promise(function (resolve, reject) {
           var ret = db.changes({
             include_docs: true,
             binary: true,
-            live: true
+            live: true,
           }).on('error', reject)
             .on('change', handleChange)
             .on('complete', resolve);
@@ -1205,13 +1206,13 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       var docs = [binAttDoc, binAttDoc2, pngAttDoc,
         {_id: 'bar'},
-        {_id: 'foo', deleted: true}];
+        {_id: 'foo', deleted: true},];
       return db.bulkDocs(docs).then(function () {
         return new PouchDB.utils.Promise(function (resolve, reject) {
           var ret = db.changes({
             attachments: true,
             binary: true,
-            live: true
+            live: true,
           }).on('error', reject)
             .on('change', handleChange)
             .on('complete', resolve);
@@ -1242,25 +1243,25 @@ adapters.forEach(function (adapter) {
       return db.put(binAttDoc).then(function () {
         return db.get(binAttDoc._id);
       }).then(function (doc) {
-        delete doc._attachments["foo.txt"].revpos;
+        delete doc._attachments['foo.txt'].revpos;
 
-        // because of libicu vs. ascii
-        var digest = doc._attachments["foo.txt"].digest;
+        // Because of libicu vs. ascii
+        var digest = doc._attachments['foo.txt'].digest;
         var validDigests = [
-          "md5-qUUYqS41RhwF0TrCsTAxFg==",
-          "md5-aEI7pOYCRBLTRQvvqYrrJQ==",
-          "md5-jeLnIuUvK7d+6gya044lVA=="
+          'md5-qUUYqS41RhwF0TrCsTAxFg==',
+          'md5-aEI7pOYCRBLTRQvvqYrrJQ==',
+          'md5-jeLnIuUvK7d+6gya044lVA==',
         ];
         validDigests.indexOf(digest).should.not.equal(-1,
           'expected ' + digest  + ' to be in: ' +
             JSON.stringify(validDigests));
-        delete doc._attachments["foo.txt"].digest;
+        delete doc._attachments['foo.txt'].digest;
         doc._attachments.should.deep.equal({
-          "foo.txt": {
-            "content_type": "text/plain",
-            "stub": true,
-            length: 29
-          }
+          'foo.txt': {
+            content_type: 'text/plain',
+            stub: true,
+            length: 29,
+          },
         });
       });
     });
@@ -1274,9 +1275,9 @@ adapters.forEach(function (adapter) {
           _attachments: {
             'foo.png': {
               data: icons[i],
-              content_type: 'image/png'
-            }
-          }
+              content_type: 'image/png',
+            },
+          },
         });
       }
       return db.bulkDocs(docs).then(function () {
@@ -1291,11 +1292,11 @@ adapters.forEach(function (adapter) {
         });
         attachments.should.deep.equal(icons.map(function (icon, i) {
           return {
-            "foo.png": {
-              "content_type": "image/png",
-              "data": icon,
-              "digest": iconDigests[i]
-            }
+            'foo.png': {
+              content_type: 'image/png',
+              data: icon,
+              digest: iconDigests[i],
+            },
           };
         }), 'when attachments=true');
         return db.changes({include_docs: true});
@@ -1309,10 +1310,10 @@ adapters.forEach(function (adapter) {
         });
         attachments.should.deep.equal(icons.map(function (icon, i) {
           return {
-            "content_type": "image/png",
+            content_type: 'image/png',
             stub: true,
-            "digest": iconDigests[i],
-            length: iconLengths[i]
+            digest: iconDigests[i],
+            length: iconLengths[i],
           };
         }), 'when attachments=false');
         return db.changes({attachments: true});
@@ -1357,15 +1358,15 @@ adapters.forEach(function (adapter) {
           _attachments: {
             'foo.png': {
               data: icons[i],
-              content_type: 'image/png'
-            }
-          }
+              content_type: 'image/png',
+            },
+          },
         });
       }
       return db.bulkDocs(docs).then(function () {
         return liveChangesPromise({
           include_docs: true,
-          attachments: true
+          attachments: true,
         });
       }).then(function (res) {
         var attachments = res.results.sort(function (left, right) {
@@ -1377,11 +1378,11 @@ adapters.forEach(function (adapter) {
         });
         attachments.should.deep.equal(icons.map(function (icon, i) {
           return {
-            "foo.png": {
-              "content_type": "image/png",
-              "data": icon,
-              "digest": iconDigests[i]
-            }
+            'foo.png': {
+              content_type: 'image/png',
+              data: icon,
+              digest: iconDigests[i],
+            },
           };
         }), 'when attachments=true');
         return liveChangesPromise({include_docs: true});
@@ -1395,10 +1396,10 @@ adapters.forEach(function (adapter) {
         });
         attachments.should.deep.equal(icons.map(function (icon, i) {
           return {
-            "content_type": "image/png",
+            content_type: 'image/png',
             stub: true,
-            "digest": iconDigests[i],
-            length: iconLengths[i]
+            digest: iconDigests[i],
+            length: iconLengths[i],
           };
         }), 'when attachments=false');
         return liveChangesPromise({attachments: true});
@@ -1423,7 +1424,7 @@ adapters.forEach(function (adapter) {
       var docs = [];
       for (var i = 0; i < 5; i++) {
         docs.push({
-          _id: i.toString()
+          _id: i.toString(),
         });
       }
       return db.bulkDocs(docs).then(function () {
@@ -1488,13 +1489,13 @@ adapters.forEach(function (adapter) {
       var docs = [];
       for (var i = 0; i < 5; i++) {
         docs.push({
-          _id: i.toString()
+          _id: i.toString(),
         });
       }
       return db.bulkDocs(docs).then(function () {
         return liveChangesPromise({
           include_docs: true,
-          attachments: true
+          attachments: true,
         });
       }).then(function (res) {
         var attachments = res.results.sort(function (left, right) {
@@ -1545,14 +1546,14 @@ adapters.forEach(function (adapter) {
             follows: false,
             foo: 'bar',
             baz: true,
-            quux: 1
-          }
-        }
+            quux: 1,
+          },
+        },
       }).then(function () {
         return db.get('foo', {attachments: true});
       }).then(function (doc) {
         var keys = Object.keys(doc._attachments['foo.txt']).filter(function (x) {
-          return x !== 'revpos'; // not supported by PouchDB right now
+          return x !== 'revpos'; // Not supported by PouchDB right now
         }).sort();
         keys.should.deep.equal(['content_type', 'data', 'digest']);
       });
@@ -1564,30 +1565,30 @@ adapters.forEach(function (adapter) {
         return db.allDocs({key: binAttDoc._id, include_docs: true});
       }).then(function (res) {
         var doc = res.rows[0].doc;
-        delete doc._attachments["foo.txt"].revpos;
+        delete doc._attachments['foo.txt'].revpos;
 
-        // because of libicu vs. ascii
-        var digest = doc._attachments["foo.txt"].digest;
+        // Because of libicu vs. ascii
+        var digest = doc._attachments['foo.txt'].digest;
         var validDigests = [
-          "md5-qUUYqS41RhwF0TrCsTAxFg==",
-          "md5-aEI7pOYCRBLTRQvvqYrrJQ==",
-          "md5-jeLnIuUvK7d+6gya044lVA=="
+          'md5-qUUYqS41RhwF0TrCsTAxFg==',
+          'md5-aEI7pOYCRBLTRQvvqYrrJQ==',
+          'md5-jeLnIuUvK7d+6gya044lVA==',
         ];
         validDigests.indexOf(digest).should.not.equal(-1,
           'expected ' + digest  + ' to be in: ' +
           JSON.stringify(validDigests));
-        delete doc._attachments["foo.txt"].digest;
+        delete doc._attachments['foo.txt'].digest;
         doc._attachments.should.deep.equal({
-          "foo.txt": {
-            "content_type": "text/plain",
-            "stub": true,
-            length: 29
-          }
+          'foo.txt': {
+            content_type: 'text/plain',
+            stub: true,
+            length: 29,
+          },
         });
         return db.allDocs({
           key: binAttDoc._id,
           include_docs: true,
-          attachments: true
+          attachments: true,
         });
       }).then(function (res) {
         var doc = res.rows[0].doc;
@@ -1607,9 +1608,9 @@ adapters.forEach(function (adapter) {
           _attachments: {
             'foo.txt': {
               data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
-              content_type: 'text/plain'
-            }
-          }
+              content_type: 'text/plain',
+            },
+          },
         });
       }
       return db.bulkDocs(docs).then(function () {
@@ -1624,10 +1625,10 @@ adapters.forEach(function (adapter) {
         });
         attachments.should.deep.equal([1, 2, 3, 4, 5].map(function () {
           return {
-            "foo.txt": {
-              "content_type": "text/plain",
-              "data": "VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ="
-            }
+            'foo.txt': {
+              content_type: 'text/plain',
+              data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
+            },
           };
         }));
       });
@@ -1642,9 +1643,9 @@ adapters.forEach(function (adapter) {
           _attachments: {
             'foo.png': {
               data: icons[i],
-              content_type: 'image/png'
-            }
-          }
+              content_type: 'image/png',
+            },
+          },
         });
       }
       return db.bulkDocs(docs).then(function () {
@@ -1657,11 +1658,11 @@ adapters.forEach(function (adapter) {
         });
         attachments.should.deep.equal(icons.map(function (icon, i) {
           return {
-            "foo.png": {
-              "content_type": "image/png",
-              "data": icon,
-              "digest": iconDigests[i]
-            }
+            'foo.png': {
+              content_type: 'image/png',
+              data: icon,
+              digest: iconDigests[i],
+            },
           };
         }));
         return db.allDocs({include_docs: true});
@@ -1673,10 +1674,10 @@ adapters.forEach(function (adapter) {
         });
         attachments.should.deep.equal(icons.map(function (icon, i) {
           return {
-            "content_type": "image/png",
+            content_type: 'image/png',
             stub: true,
-            "digest": iconDigests[i],
-            length: iconLengths[i]
+            digest: iconDigests[i],
+            length: iconLengths[i],
           };
         }));
       });
@@ -1687,14 +1688,14 @@ adapters.forEach(function (adapter) {
       var docs = [];
       for (var i = 0; i < 5; i++) {
         var doc = {
-          _id: i.toString()
+          _id: i.toString(),
         };
         if (i % 2 === 1) {
           doc._attachments = {
             'foo.png': {
               data: icons[i],
-              content_type: 'image/png'
-            }
+              content_type: 'image/png',
+            },
           };
         }
         docs.push(doc);
@@ -1715,11 +1716,11 @@ adapters.forEach(function (adapter) {
             return null;
           }
           return {
-            "foo.png": {
-              "content_type": "image/png",
-              "data": icon,
-              "digest": iconDigests[i]
-            }
+            'foo.png': {
+              content_type: 'image/png',
+              data: icon,
+              digest: iconDigests[i],
+            },
           };
         }));
         return db.allDocs({include_docs: true});
@@ -1737,10 +1738,10 @@ adapters.forEach(function (adapter) {
             return null;
           }
           return {
-            "content_type": "image/png",
+            content_type: 'image/png',
             stub: true,
-            "digest": iconDigests[i],
-            length: iconLengths[i]
+            digest: iconDigests[i],
+            length: iconLengths[i],
           };
         }));
       });
@@ -1751,7 +1752,7 @@ adapters.forEach(function (adapter) {
       var docs = [];
       for (var i = 0; i < 5; i++) {
         var doc = {
-          _id: i.toString()
+          _id: i.toString(),
         };
         docs.push(doc);
       }
@@ -1778,7 +1779,7 @@ adapters.forEach(function (adapter) {
       var docs = [];
       for (var i = 0; i < 5; i++) {
         var doc = {
-          _id: i.toString()
+          _id: i.toString(),
         };
         docs.push(doc);
       }
@@ -1786,7 +1787,7 @@ adapters.forEach(function (adapter) {
         return db.allDocs({
           include_docs: true,
           attachments: true,
-          keys: []
+          keys: [],
         });
       }).then(function (res) {
         res.rows.should.have.length(0);
@@ -1803,9 +1804,9 @@ adapters.forEach(function (adapter) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'Zm9vYmFy' // 'foobar'
-          }
-        }
+            data: 'Zm9vYmFy', // 'foobar'
+          },
+        },
       };
       var rev;
       return db.put(doc).then(function () {
@@ -1816,7 +1817,7 @@ adapters.forEach(function (adapter) {
         rev = doc._rev;
         doc._attachments['foo.txt'] = {
           content_type: 'text/plain',
-          data: 'dG90bw=='
+          data: 'dG90bw==',
         }; // 'toto'
         return db.put(doc);
       }).then(function () {
@@ -1829,18 +1830,18 @@ adapters.forEach(function (adapter) {
         rev = res.rev;
         return db.allDocs({keys: ['doc'], attachments: true, include_docs: true});
       }).then(function (res) {
-        // technically CouchDB sets this to null, but we won't adhere strictly to that
+        // Technically CouchDB sets this to null, but we won't adhere strictly to that
         should.not.exist(res.rows[0].doc);
         delete res.rows[0].doc;
         res.rows.should.deep.equal([
           {
-            id: "doc",
-            key: "doc",
+            id: 'doc',
+            key: 'doc',
             value: {
               rev: rev,
-              deleted: true
-            }
-          }
+              deleted: true,
+            },
+          },
         ]);
       });
     });
@@ -1851,31 +1852,31 @@ adapters.forEach(function (adapter) {
         return db.allDocs({key: binAttDoc2._id, include_docs: true});
       }).then(function (res) {
         var doc = res.rows[0].doc;
-        delete doc._attachments["foo.txt"].revpos;
+        delete doc._attachments['foo.txt'].revpos;
 
-        // because of libicu vs. ascii
-        var digest = doc._attachments["foo.txt"].digest;
+        // Because of libicu vs. ascii
+        var digest = doc._attachments['foo.txt'].digest;
         var validDigests = [
           'md5-1B2M2Y8AsgTpgAmY7PhCfg==',
           'md5-cCkGbCesb17xjWYNV0GXmg==',
-          'md5-3gIs+o2eJiHrXZqziQZqBA=='
+          'md5-3gIs+o2eJiHrXZqziQZqBA==',
         ];
         validDigests.indexOf(digest).should.not.equal(-1,
           'expected ' + digest  + ' to be in: ' +
           JSON.stringify(validDigests));
-        delete doc._attachments["foo.txt"].digest;
-        delete doc._attachments["foo.txt"].digest;
+        delete doc._attachments['foo.txt'].digest;
+        delete doc._attachments['foo.txt'].digest;
         doc._attachments.should.deep.equal({
-          "foo.txt": {
-            "content_type": "text/plain",
-            "stub": true,
-            length: 0
-          }
+          'foo.txt': {
+            content_type: 'text/plain',
+            stub: true,
+            length: 0,
+          },
         });
         return db.allDocs({
           key: binAttDoc2._id,
           include_docs: true,
-          attachments: true
+          attachments: true,
         });
       }).then(function (res) {
         var doc = res.rows[0].doc;
@@ -1976,17 +1977,17 @@ adapters.forEach(function (adapter) {
       return db.put({
         _id: 'doc',
         _attachments: {
-          '1': {
+          1: {
             content_type: 'application/octet-stream',
-            data: testUtils.btoa('1\u00002\u00013\u0002')
-          }
-        }
+            data: testUtils.btoa('1\u00002\u00013\u0002'),
+          },
+        },
       }).then(function (res) {
         return db.get('doc');
       }).then(function (doc) {
         doc._attachments['2'] = {
           content_type: 'application/octet-stream',
-          data: testUtils.btoa('3\u00002\u00011\u0002')
+          data: testUtils.btoa('3\u00002\u00011\u0002'),
         };
         return db.put(doc);
       }).then(function () {
@@ -2010,17 +2011,17 @@ adapters.forEach(function (adapter) {
       return db.put({
         _id: 'doc',
         _attachments: {
-          '1': {
+          1: {
             content_type: 'application/octet-stream',
-            data: testUtils.btoa('1\u00002\u00013\u0002')
-          }
-        }
+            data: testUtils.btoa('1\u00002\u00013\u0002'),
+          },
+        },
       }).then(function (res) {
         return db.get('doc');
       }).then(function (doc) {
         doc._attachments['2'] = {
           content_type: 'application/octet-stream',
-          data: testUtils.btoa('3\u00002\u00011\u0002')
+          data: testUtils.btoa('3\u00002\u00011\u0002'),
         };
         return db.put(doc);
       }).then(function () {
@@ -2046,34 +2047,34 @@ adapters.forEach(function (adapter) {
         {
           _id: 'doc1',
           _attachments: {
-            'att0': {
+            att0: {
               data: 'YXR0YWNobWVudDA=',
-              content_type: 'text/plain'
-            }
-          }
+              content_type: 'text/plain',
+            },
+          },
         },
         {
           _id: 'doc2',
           _attachments: {
-            'att0': {
+            att0: {
               data: 'YXR0YWNobWVudDA=',
-              content_type: 'text/plain'
+              content_type: 'text/plain',
             },
-            'att1': {
+            att1: {
               data: 'YXR0YWNobWVudDE=',
-              content_type: 'text/plain'
-            }
-          }
+              content_type: 'text/plain',
+            },
+          },
         },
         {
           _id: 'doc3',
           _attachments: {
-            'att0': {
+            att0: {
               data: 'YXR0YWNobWVudDA=',
-              content_type: 'text/plain'
-            }
-          }
-        }
+              content_type: 'text/plain',
+            },
+          },
+        },
       ];
       function sort(a, b) {
         return a.id.localeCompare(b.id);
@@ -2092,7 +2093,7 @@ adapters.forEach(function (adapter) {
           should.not.exist(res.rows[0].doc._attachments,
                            '(allDocs) doc0 contains no attachments');
           db.changes({
-            include_docs: true
+            include_docs: true,
           }).on('change', function (change) {
             var i = +change.id.substr(3);
             if (i === 0) {
@@ -2146,7 +2147,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       return db.putAttachment('doc', 'att', null, '\u65e5\u672c\u8a9e', 'text/plain')
         .should.be.rejected.then(function (err) {
-          err.should.have.property("message", "Some query argument is invalid");
+          err.should.have.property('message', 'Some query argument is invalid');
         });
     });
 
@@ -2163,11 +2164,11 @@ adapters.forEach(function (adapter) {
             db.get(binAttDoc2._id, function (err, doc) {
               var att = doc._attachments['foo.txt'];
               att.stub.should.equal(true);
-              // both ascii and libicu
+              // Both ascii and libicu
               var validDigests = [
                 'md5-1B2M2Y8AsgTpgAmY7PhCfg==',
                 'md5-cCkGbCesb17xjWYNV0GXmg==',
-                'md5-3gIs+o2eJiHrXZqziQZqBA=='
+                'md5-3gIs+o2eJiHrXZqziQZqBA==',
               ];
               validDigests.indexOf(att.digest).should.be.above(-1);
               att.content_type.should.equal('text/plain');
@@ -2295,14 +2296,14 @@ adapters.forEach(function (adapter) {
     it('Testing with invalid docs', function (done) {
       var db = new PouchDB(dbs.name);
       var invalidDoc = {
-        '_id': '_invalid',
-        foo: 'bar'
+        _id: '_invalid',
+        foo: 'bar',
       };
       db.bulkDocs({
         docs: [
           invalidDoc,
-          binAttDoc
-        ]
+          binAttDoc,
+        ],
       }, function (err, info) {
         should.exist(err, 'bad request');
         done();
@@ -2323,7 +2324,7 @@ adapters.forEach(function (adapter) {
       function (done) {
       var db = new PouchDB(dbs.name);
       var changes = db.changes({
-        live: true
+        live: true,
       }).on('complete', function (result) {
         result.status.should.equal('cancelled');
         done();
@@ -2341,7 +2342,7 @@ adapters.forEach(function (adapter) {
           });
         }
       });
-        var blob = testUtils.makeBlob('Mytext');
+      var blob = testUtils.makeBlob('Mytext');
       db.putAttachment('anotherdoc2', 'mytext', blob, 'text/plain');
     });
 
@@ -2496,7 +2497,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name);
       db.put({
         _id: 'foo',
-        _attachments: {}
+        _attachments: {},
       }, function (err, resp) {
         db.get('foo', { attachments: true }, function (err, res) {
           res._id.should.equal('foo');
@@ -2510,15 +2511,15 @@ adapters.forEach(function (adapter) {
       db.put({
         _id: 'mydoc',
         _attachments: {
-          'mytext1': {
+          mytext1: {
             content_type: 'text/plain',
-            data: 'TXl0ZXh0MQ=='
+            data: 'TXl0ZXh0MQ==',
           },
-          'mytext2': {
+          mytext2: {
             content_type: 'text/plain',
-            data: 'TXl0ZXh0Mg=='
-          }
-        }
+            data: 'TXl0ZXh0Mg==',
+          },
+        },
       }, function (err, res) {
         var rev = res.rev;
         db.get('mydoc', { attachments: true }, function (err, res) {
@@ -2587,9 +2588,9 @@ adapters.forEach(function (adapter) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'this should have been encoded!'
-          }
-        }
+            data: 'this should have been encoded!',
+          },
+        },
       };
       db.put(doc, function (err) {
         should.exist(err);
@@ -2634,7 +2635,7 @@ adapters.forEach(function (adapter) {
         db.get('a', { attachments: true }, function (err, doc) {
           should.not.exist(err, 'Correctly got attachment');
           doc._attachments['foo2.txt'].data.should.equal('');
-          // firefox 3 appends charset=utf8
+          // Firefox 3 appends charset=utf8
           // see http://forums.mozillazine.org/viewtopic.php?p=6318215#p6318215
           doc._attachments['foo2.txt'].content_type.indexOf('text/plain')
             .should.equal(0, 'expected content-type to start with text/plain');
@@ -2650,22 +2651,22 @@ adapters.forEach(function (adapter) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'Zm9v'
+            data: 'Zm9v',
           },
           'bar.txt': {
             content_type: 'text/plain',
-            data: 'Zm9v'
-          }
-        }
+            data: 'Zm9v',
+          },
+        },
       };
       return db.put(doc).then(function () {
         return db.get(doc._id);
       }).then(function (doc) {
         doc._attachments['baz.txt'] = {
           content_type: 'text/plain',
-          data: 'Zm9v'
+          data: 'Zm9v',
         };
-        // at this point, foo and bar are stubs, but baz is not
+        // At this point, foo and bar are stubs, but baz is not
         return db.put(doc);
       }).then(function () {
         return db.get(doc._id, {attachments: true});
@@ -2688,26 +2689,26 @@ adapters.forEach(function (adapter) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'Zm9v'
+            data: 'Zm9v',
           },
           'bar.txt': {
             content_type: 'text/plain',
-            data: 'Zm9v'
+            data: 'Zm9v',
           },
           'baz.txt': {
             content_type: 'text/plain',
-            data: 'Zm9v'
-          }
+            data: 'Zm9v',
+          },
         },
         _revisions: {
-          'start': 2,
-          'ids': ['x', 'a']
-        }
+          start: 2,
+          ids: ['x', 'a'],
+        },
       };
       return db.bulkDocs([doc], {new_edits: false}).then(function () {
         return db.get(doc._id);
       }).then(function () {
-          // at this point, foo and bar are stubs, but baz is not
+          // At this point, foo and bar are stubs, but baz is not
           return db.bulkDocs([doc], {new_edits: false});
         }).then(function () {
           return db.get(doc._id, {attachments: true});
@@ -2726,7 +2727,7 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name, {auto_compaction: false});
 
       var doc = {
-        _id: 'a'
+        _id: 'a',
       };
       var rev1;
       var rev2;
@@ -2736,8 +2737,8 @@ adapters.forEach(function (adapter) {
         doc._attachments = {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'Zm9v'
-          }
+            data: 'Zm9v',
+          },
         };
         return db.put(doc);
       }).then(function (res) {
@@ -2757,7 +2758,7 @@ adapters.forEach(function (adapter) {
           db.getAttachment('a', 'foo.txt', {rev: '3-fake'}),
           db.getAttachment('a', 'foo.txt'),
           db.getAttachment('a', 'foo.txt', {}),
-          db.getAttachment('a', 'foo.txt', {rev: rev3})
+          db.getAttachment('a', 'foo.txt', {rev: rev3}),
         ].map(function (promise) {
           return promise.then(function () {
             throw new Error('expected an error');
@@ -2777,9 +2778,9 @@ adapters.forEach(function (adapter) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'Zm9v'
-          }
-        }
+            data: 'Zm9v',
+          },
+        },
       };
       var rev1;
       var rev2;
@@ -2789,8 +2790,8 @@ adapters.forEach(function (adapter) {
         doc._attachments = {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'YmFy'
-          }
+            data: 'YmFy',
+          },
         };
         return db.put(doc);
       }).then(function (res) {
@@ -2798,8 +2799,8 @@ adapters.forEach(function (adapter) {
         doc._attachments = {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'YmF6'
-          }
+            data: 'YmF6',
+          },
         };
         return db.put(doc);
       }).then(function (res) {
@@ -2809,7 +2810,7 @@ adapters.forEach(function (adapter) {
           [db.getAttachment('a', 'foo.txt'), 'baz'],
           [db.getAttachment('a', 'foo.txt', {rev: rev3}), 'baz'],
           [db.getAttachment('a', 'foo.txt', {rev: rev2}), 'bar'],
-          [db.getAttachment('a', 'foo.txt', {rev: rev1}), 'foo']
+          [db.getAttachment('a', 'foo.txt', {rev: rev1}), 'foo'],
         ];
 
         return PouchDB.utils.Promise.all(testCases.map(function (testCase) {
@@ -2863,26 +2864,26 @@ adapters.forEach(function (adapter) {
                 testUtils.btoa(returnedData).should.equal(data);
                 db.get('foo', function (err, doc) {
                   should.not.exist(err, 'err on get');
-                  delete doc._attachments["foo.txt"].revpos;
+                  delete doc._attachments['foo.txt'].revpos;
 
-                  // couchdb encodes plaintext strings differently from us
+                  // Couchdb encodes plaintext strings differently from us
                   // because of libicu vs. ascii. that's okay
-                  var digest = doc._attachments["foo.txt"].digest;
+                  var digest = doc._attachments['foo.txt'].digest;
                   var validDigests = [
-                    "md5-qUUYqS41RhwF0TrCsTAxFg==",
-                    "md5-aEI7pOYCRBLTRQvvqYrrJQ==",
-                    "md5-jeLnIuUvK7d+6gya044lVA=="
+                    'md5-qUUYqS41RhwF0TrCsTAxFg==',
+                    'md5-aEI7pOYCRBLTRQvvqYrrJQ==',
+                    'md5-jeLnIuUvK7d+6gya044lVA==',
                   ];
                   validDigests.indexOf(digest).should.not.equal(-1,
                     'expected ' + digest  + ' to be in: ' +
                       JSON.stringify(validDigests));
-                  delete doc._attachments["foo.txt"].digest;
+                  delete doc._attachments['foo.txt'].digest;
                   doc._attachments.should.deep.equal({
-                    "foo.txt": {
-                      "content_type": "text/plain",
-                      "stub": true,
-                      length: 29
-                    }
+                    'foo.txt': {
+                      content_type: 'text/plain',
+                      stub: true,
+                      length: 29,
+                    },
                   });
                   done();
                 });
@@ -2910,14 +2911,14 @@ adapters.forEach(function (adapter) {
                 testUtils.btoa(returnedData).should.equal(data);
                 db.get('foo', function (err, doc) {
                   should.not.exist(err, 'err on get');
-                  delete doc._attachments["foo.png"].revpos;
+                  delete doc._attachments['foo.png'].revpos;
                   doc._attachments.should.deep.equal({
-                    "foo.png": {
-                      "content_type": "image/png",
-                      "digest": "md5-c6eA+rofKUsstTNQBKUc8A==",
-                      "stub": true,
-                      length: 229
-                    }
+                    'foo.png': {
+                      content_type: 'image/png',
+                      digest: 'md5-c6eA+rofKUsstTNQBKUc8A==',
+                      stub: true,
+                      length: 229,
+                    },
                   });
                   done();
                 });
@@ -2972,9 +2973,9 @@ adapters.forEach(function (adapter) {
           _attachments: {
             'foo.txt': {
               content_type: 'text/plain',
-              data: 'Zm9vYmFy' // 'foobar'
-            }
-          }
+              data: 'Zm9vYmFy', // 'foobar'
+            },
+          },
         });
       }
       return db.bulkDocs(docs);
@@ -2987,19 +2988,19 @@ adapters.forEach(function (adapter) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'Zm9vYmFy' // 'foobar'
-          }
-        }
+            data: 'Zm9vYmFy', // 'foobar'
+          },
+        },
       };
       var rev;
       return db.put(doc).then(function () {
         return db.get('doc');
       }).then(function (doc) {
         rev = doc._rev;
-        //delete doc._attachments['foo.txt'];
+        // Delete doc._attachments['foo.txt'];
         doc._attachments['foo.txt'] = {
           content_type: 'text/plain',
-          data: 'dG90bw=='
+          data: 'dG90bw==',
         }; // 'toto'
         return db.put(doc);
       }).then(function () {
@@ -3019,9 +3020,9 @@ adapters.forEach(function (adapter) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'Zm9vYmFy' // 'foobar'
-          }
-        }
+            data: 'Zm9vYmFy', // 'foobar'
+          },
+        },
       };
       var rev;
       return db.put(doc).then(function (res) {
@@ -3040,7 +3041,7 @@ adapters.forEach(function (adapter) {
             var blob = testUtils.binaryStringToBlob(
               testUtils.atob(data), 'image/png');
             if (typeof URL === 'undefined') {
-              // phantomjs doesn't have this, give up on this test
+              // Phantomjs doesn't have this, give up on this test
               return done();
             }
             var checkedOnce = false;
@@ -3049,10 +3050,10 @@ adapters.forEach(function (adapter) {
               PouchDB.utils.ajax({
                 url: url,
                 cache: true,
-                binary: true
+                binary: true,
               }, function (err, res) {
                 if (err && err.status === 500) {
-                  // firefox won't let us use ajax to get the blob.
+                  // Firefox won't let us use ajax to get the blob.
                   // too bad, but firefox wasn't the problem anyway
                   return done();
                 }
@@ -3060,7 +3061,7 @@ adapters.forEach(function (adapter) {
                 if (!checkedOnce) {
                   checkedOnce = true;
                   if (res.type !== 'image/png') {
-                    // in Safari/iOS 7, blob URLs are missing
+                    // In Safari/iOS 7, blob URLs are missing
                     // the content type even without storing them.
                     // so just give up.
                     return done();
@@ -3109,14 +3110,14 @@ adapters.forEach(function (adapter) {
       /Safari/.test(window.navigator.userAgent) &&
       !/Chrome/.test(window.navigator.userAgent);
     if (!isSafari) {
-      // skip in safari/ios because of size limit popup
+      // Skip in safari/ios because of size limit popup
       it('putAttachment and getAttachment with big png data', function (done) {
 
         function getData(cb) {
           if (typeof process !== 'undefined' && !process.browser) {
             var bigimage = require('./deps/bigimage.js');
             cb(null, bigimage);
-          } else { // browser
+          } else { // Browser
             var script = document.createElement('script');
             script.src = 'deps/bigimage.js';
             document.body.appendChild(script);
@@ -3146,14 +3147,14 @@ adapters.forEach(function (adapter) {
                     testUtils.btoa(returnedData).should.equal(data);
                     db.get('foo', function (err, doc) {
                       should.not.exist(err, 'err on get');
-                      delete doc._attachments["foo.png"].revpos;
+                      delete doc._attachments['foo.png'].revpos;
                       doc._attachments.should.deep.equal({
-                        "foo.png": {
-                          "content_type": "image/png",
-                          "digest": "md5-kqr2YcdElgDs3RkMn1Ygbw==",
-                          "stub": true,
-                          length: 678010
-                        }
+                        'foo.png': {
+                          content_type: 'image/png',
+                          digest: 'md5-kqr2YcdElgDs3RkMn1Ygbw==',
+                          stub: true,
+                          length: 678010,
+                        },
                       });
                       done();
                     });
@@ -3172,19 +3173,19 @@ repl_adapters.forEach(function (adapters) {
   describe('suite2 test.attachments.js- ' + adapters[0] + ':' + adapters[1],
     function () {
 
-    var dbs = {};
+      var dbs = {};
 
-    beforeEach(function (done) {
+      beforeEach(function (done) {
       dbs.name = testUtils.adapterUrl(adapters[0], 'testdb');
       dbs.remote = testUtils.adapterUrl(adapters[1], 'test_attach_remote');
       testUtils.cleanup([dbs.name, dbs.remote], done);
     });
 
-    afterEach(function (done) {
+      afterEach(function (done) {
       testUtils.cleanup([dbs.name, dbs.remote], done);
     });
 
-    it('Attachments replicate back and forth', function () {
+      it('Attachments replicate back and forth', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
@@ -3193,9 +3194,9 @@ repl_adapters.forEach(function (adapters) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('foo')
-          }
-        }
+            data: testUtils.btoa('foo'),
+          },
+        },
       };
 
       return db.bulkDocs({ docs: [doc] }).then(function () {
@@ -3212,7 +3213,7 @@ repl_adapters.forEach(function (adapters) {
         return PouchDB.utils.Promise.all([db, remote].map(function (pouch) {
           return pouch.allDocs({
             include_docs: true,
-            attachments: true
+            attachments: true,
           }).then(function (res) {
             res.rows.should.have.length(3);
             res.rows.forEach(function (row) {
@@ -3229,7 +3230,7 @@ repl_adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replicate same doc, same atts', function () {
+      it('Replicate same doc, same atts', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
@@ -3238,9 +3239,9 @@ repl_adapters.forEach(function (adapters) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('foo')
-          }
-        }
+            data: testUtils.btoa('foo'),
+          },
+        },
       };
 
       return remote.put(doc).then(function (res) {
@@ -3259,7 +3260,7 @@ repl_adapters.forEach(function (adapters) {
         return PouchDB.utils.Promise.all([db, remote].map(function (pouch) {
           return pouch.allDocs({
             include_docs: true,
-            attachments: true
+            attachments: true,
           }).then(function (res) {
             res.rows.should.have.length(1);
             res.rows.forEach(function (row) {
@@ -3276,7 +3277,7 @@ repl_adapters.forEach(function (adapters) {
       });
     });
 
-    it('Replicate same doc, same atts 2', function () {
+      it('Replicate same doc, same atts 2', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
@@ -3285,9 +3286,9 @@ repl_adapters.forEach(function (adapters) {
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: testUtils.btoa('foo')
-          }
-        }
+            data: testUtils.btoa('foo'),
+          },
+        },
       };
 
       return db.put(doc).then(function (res) {
@@ -3306,7 +3307,7 @@ repl_adapters.forEach(function (adapters) {
         return PouchDB.utils.Promise.all([db, remote].map(function (pouch) {
           return pouch.allDocs({
             include_docs: true,
-            attachments: true
+            attachments: true,
           }).then(function (res) {
             res.rows.should.have.length(1);
             res.rows.forEach(function (row) {
@@ -3323,22 +3324,22 @@ repl_adapters.forEach(function (adapters) {
       });
     });
 
-    it('Attachments replicate', function (done) {
+      it('Attachments replicate', function (done) {
       var binAttDoc = {
         _id: 'bin_doc',
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ='
-          }
-        }
+            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
+          },
+        },
       };
       var docs1 = [
         binAttDoc,
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
         {_id: '2', integer: 2},
-        {_id: '3', integer: 3}
+        {_id: '3', integer: 3},
       ];
 
       var db = new PouchDB(dbs.name);
@@ -3355,22 +3356,22 @@ repl_adapters.forEach(function (adapters) {
       });
     });
 
-    it('Attachment types replicate', function () {
+      it('Attachment types replicate', function () {
       var binAttDoc = {
         _id: 'bin_doc',
         _attachments: {
           'foo.txt': {
             content_type: 'text/plain',
-            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ='
-          }
-        }
+            data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
+          },
+        },
       };
       var docs1 = [
         binAttDoc,
         {_id: '0', integer: 0},
         {_id: '1', integer: 1},
         {_id: '2', integer: 2},
-        {_id: '3', integer: 3}
+        {_id: '3', integer: 3},
       ];
 
       var db = new PouchDB(dbs.name);
@@ -3390,7 +3391,7 @@ repl_adapters.forEach(function (adapters) {
       });
     });
 
-    it('Many many attachments replicate', function () {
+      it('Many many attachments replicate', function () {
       var doc = {_id: 'foo'};
 
       var db = new PouchDB(dbs.name);
@@ -3406,7 +3407,7 @@ repl_adapters.forEach(function (adapters) {
       for (var i = 0; i < 50; i++) {
         doc._attachments[i + '.txt'] = {
           content_type: 'text/plain',
-          data: blob
+          data: blob,
         };
         expectedKeys.push(i + '.txt');
       }
@@ -3423,7 +3424,7 @@ repl_adapters.forEach(function (adapters) {
       });
     });
 
-    it('Many many png attachments replicate', function () {
+      it('Many many png attachments replicate', function () {
       var doc = {_id: 'foo'};
 
       var db = new PouchDB(dbs.name);
@@ -3444,7 +3445,7 @@ repl_adapters.forEach(function (adapters) {
       for (var i = 0; i < 50; i++) {
         doc._attachments[i + '.txt'] = {
           content_type: 'image/png',
-          data: blob
+          data: blob,
         };
         expectedKeys.push(i + '.txt');
       }
@@ -3461,7 +3462,7 @@ repl_adapters.forEach(function (adapters) {
       });
     });
 
-    it('Multiple attachments replicate', function () {
+      it('Multiple attachments replicate', function () {
       var doc = {_id: 'foo'};
 
       var db = new PouchDB(dbs.name);
@@ -3500,7 +3501,7 @@ repl_adapters.forEach(function (adapters) {
         for (var i = 0; i < 100; i++) {
           doc._attachments[i + '.txt'] = {
             data: testUtils.btoa(i.toString()),
-            content_type: 'text/plain'
+            content_type: 'text/plain',
           };
         }
 
@@ -3510,7 +3511,7 @@ repl_adapters.forEach(function (adapters) {
           return db.replicate.to(remote);
         }).then(function () {
           return PouchDB.utils.Promise.all([
-            db, remote
+            db, remote,
           ].map(function (pouch) {
             return pouch.get('foo', {attachments: true}).then(function (doc) {
               var atts = doc._attachments;
@@ -3538,7 +3539,7 @@ repl_adapters.forEach(function (adapters) {
         });
       });
 
-    it('Multiple attachments replicate, different docs (#2698)', function () {
+      it('Multiple attachments replicate, different docs (#2698)', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var docs = [];
@@ -3548,9 +3549,9 @@ repl_adapters.forEach(function (adapters) {
           _attachments: {
             'foo.txt': {
               data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
-              content_type: 'text/plain'
-            }
-          }
+              content_type: 'text/plain',
+            },
+          },
         });
       }
       return remote.bulkDocs(docs).then(function (info) {
@@ -3569,16 +3570,16 @@ repl_adapters.forEach(function (adapters) {
         });
         attachments.should.deep.equal([1, 2, 3, 4, 5].map(function () {
           return {
-            "foo.txt": {
-              "content_type": "text/plain",
-              "data": "VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ="
-            }
+            'foo.txt': {
+              content_type: 'text/plain',
+              data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
+            },
           };
         }));
       });
     });
 
-    it('Multiple attachments replicate, different docs png (#2698)', function () {
+      it('Multiple attachments replicate, different docs png (#2698)', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
       var docs = [];
@@ -3588,9 +3589,9 @@ repl_adapters.forEach(function (adapters) {
           _attachments: {
             'foo.png': {
               data: icons[i],
-              content_type: 'image/png'
-            }
-          }
+              content_type: 'image/png',
+            },
+          },
         });
       }
       return remote.bulkDocs(docs).then(function () {
@@ -3608,11 +3609,11 @@ repl_adapters.forEach(function (adapters) {
         });
         attachments.should.deep.equal(icons.map(function (icon, i) {
           return {
-            "foo.png": {
-              "content_type": "image/png",
-              "data": icon,
-              "digest": iconDigests[i]
-            }
+            'foo.png': {
+              content_type: 'image/png',
+              data: icon,
+              digest: iconDigests[i],
+            },
           };
         }));
 
@@ -3626,27 +3627,27 @@ repl_adapters.forEach(function (adapters) {
         });
         attachments.should.deep.equal(icons.map(function (icon, i) {
           return {
-            "content_type": "image/png",
+            content_type: 'image/png',
             stub: true,
-            "digest": iconDigests[i],
-            length: iconLengths[i]
+            digest: iconDigests[i],
+            length: iconLengths[i],
           };
         }));
       });
     });
 
-    it('#3932 attachments with tricky revpos', function () {
+      it('#3932 attachments with tricky revpos', function () {
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
 
       var rev;
 
       return remote.put({
-        _id:"test1",
-        type:"XX",
-        name: "Test1",
-        _attachments:{
-          "1.txt":{ content_type:"text/plain", data: "Wlpa"} }
+        _id: 'test1',
+        type: 'XX',
+        name: 'Test1',
+        _attachments: {
+          '1.txt': { content_type: 'text/plain', data: 'Wlpa'}, },
       }).then(function () {
         return db.replicate.from(remote);
       }).then(function () {
@@ -3667,12 +3668,12 @@ repl_adapters.forEach(function (adapters) {
         return remote.get('test1', {attachments: true});
       }).then(function (doc) {
         doc._attachments = {
-          "1.txt": {content_type: "text/plain", data: "Wlpa"},
-          "2.txt": {content_type: "text/plain", data: "Wlpa"}
+          '1.txt': {content_type: 'text/plain', data: 'Wlpa'},
+          '2.txt': {content_type: 'text/plain', data: 'Wlpa'},
         };
         return db.put(doc);
       }).then(function () {
-        return db.get("test1", {attachments:true});
+        return db.get('test1', {attachments: true});
       }).then(function (doc) {
         return db.put(doc);
       }).then(function () {
@@ -3691,20 +3692,20 @@ repl_adapters.forEach(function (adapters) {
       });
     });
 
-    it('replication with changing attachments', function () {
+      it('replication with changing attachments', function () {
       var attachment = {
         content_type: 'text/plain',
-        data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ='
+        data: 'VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=',
       };
       var attachment2 = {
         content_type: 'text/plain',
-        data: ''
+        data: '',
       };
       var binAttDoc = {
         _id: 'bin_doc',
         _attachments: {
-          'foo.txt': attachment
-        }
+          'foo.txt': attachment,
+        },
       };
       var db = new PouchDB(dbs.name);
       var remote = new PouchDB(dbs.remote);
@@ -3745,44 +3746,44 @@ repl_adapters.forEach(function (adapters) {
       });
     });
 
-    it('3955 race condition in put', function (done) {
+      it('3955 race condition in put', function (done) {
 
-      var db = new PouchDB(dbs.name);
-      var btoa = testUtils.btoa;
-      var srcdata = ['', '', ''];
+        var db = new PouchDB(dbs.name);
+        var btoa = testUtils.btoa;
+        var srcdata = ['', '', ''];
 
-      for (var i = 0; i < 50; i++) {
-        srcdata[0] += 'AAA';
-        srcdata[1] += 'BBB';
-        srcdata[2] += 'CCC';
-      }
+        for (var i = 0; i < 50; i++) {
+          srcdata[0] += 'AAA';
+          srcdata[1] += 'BBB';
+          srcdata[2] += 'CCC';
+        }
 
-      var doc = {
+        var doc = {
         _id: 'x',
         type: 'testdoc',
-        _attachments:{
+        _attachments: {
           'a.txt': {
             content_type: 'text/plain',
-            data:btoa(srcdata[0])
+            data: btoa(srcdata[0]),
           },
           'b.txt': {
             content_type: 'text/plain',
-            data:btoa(srcdata[1])
+            data: btoa(srcdata[1]),
           },
           'c.txt': {
             content_type: 'text/plain',
-            data:btoa(srcdata[2])
+            data: btoa(srcdata[2]),
           },
           'zzz.txt': {
             content_type: 'text/plain',
-            data:btoa('ZZZ')
-          }
-        }
+            data: btoa('ZZZ'),
+          },
+        },
       };
 
-      db.put(doc).then(function () {
+        db.put(doc).then(function () {
         return db.get('x');
-      }).then(function(doc){
+      }).then(function(doc) {
         var digests = Object.keys(doc._attachments).map(function (a) {
           return doc._attachments[a].digest;
         });
@@ -3793,19 +3794,21 @@ repl_adapters.forEach(function (adapters) {
         }
       });
 
-      doc._attachments['c.txt'].data = btoa('ZZZ');
-      doc._attachments['b.txt'].data = btoa('ZZZ');
+        doc._attachments['c.txt'].data = btoa('ZZZ');
+        doc._attachments['b.txt'].data = btoa('ZZZ');
 
-      function isUnique(arr) {
+        function isUnique(arr) {
         arr.sort();
-        for (var i = 1; i < arr.length; i++ ) {
-          if (arr[i-1] === arr[i]) {
+        for (var i = 1; i < arr.length; i++) {
+          if (arr[i - 1] === arr[i]) {
             return false;
           }
         }
         return true;
       }
-    });
+      });
 
-  });
+    });
 });
+
+// jscs:enable maximumLineLength

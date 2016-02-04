@@ -44,5 +44,5 @@ export default {
   binaryStringToBlobOrBuffer: binToBluffer,
   clone: clone,
   extend: extend,
-  createError: createError
+  createError: createError,
 };

@@ -25,7 +25,7 @@ Dual licensed under the MIT and GPL licenses.
  *   >>> Math.uuid(15)     // 15 character ID (default base=62)
  *   "VcydxgltxrVZSTV"
  *
- *   // Two arguments - returns ID of the specified length, and radix. 
+ *   // Two arguments - returns ID of the specified length, and radix.
  *   // (Radix must be <= 62)
  *   >>> Math.uuid(8, 2)  // 8 character ID (base=2)
  *   "01001010"
@@ -53,22 +53,25 @@ function uuid(len, radix) {
     }
     return out;
   }
-    // rfc4122, version 4 form
-    // Fill in random data.  At i==19 set the high bits of clock sequence as
-    // per rfc4122, sec. 4.1.5
+  // Rfc4122, version 4 form
+  // Fill in random data.  At i==19 set the high bits of clock sequence as
+  // per rfc4122, sec. 4.1.5
   while (++i < 36) {
     switch (i) {
       case 8:
       case 13:
       case 18:
-      case 23:
+      case 23: {
         out += '-';
         break;
-      case 19:
+      }
+      case 19: {
         out += chars[(getValue(16) & 0x3) | 0x8];
         break;
-      default:
+      }
+      default: {
         out += chars[getValue(16)];
+      }
     }
   }
 

@@ -7,7 +7,7 @@ import {
   ATTACH_AND_SEQ_STORE
 } from './constants';
 
-// escapeBlob and unescapeBlob are workarounds for a websql bug:
+// EscapeBlob and unescapeBlob are workarounds for a websql bug:
 // https://code.google.com/p/chromium/issues/detail?id=422690
 // https://bugs.webkit.org/show_bug.cgi?id=137637
 // The goal is to never actually insert the \u0000 character
@@ -27,7 +27,7 @@ function unescapeBlob(str) {
 }
 
 function stringifyDoc(doc) {
-  // don't bother storing the id/rev. it uses lots of space,
+  // Don't bother storing the id/rev. it uses lots of space,
   // in persistent map/reduce especially
   delete doc._id;
   delete doc._rev;
@@ -41,7 +41,7 @@ function unstringifyDoc(doc, id, rev) {
   return doc;
 }
 
-// question mark groups IN queries, e.g. 3 -> '(?,?,?)'
+// Question mark groups IN queries, e.g. 3 -> '(?,?,?)'
 function qMarks(num) {
   var s = '(';
   while (num--) {
@@ -72,13 +72,13 @@ function compactRevs(revs, docId, tx) {
   var seqs = [];
 
   function checkDone() {
-    if (++numDone === revs.length) { // done
+    if (++numDone === revs.length) { // Done
       deleteOrphans();
     }
   }
 
   function deleteOrphans() {
-    // find orphaned attachment digests
+    // Find orphaned attachment digests
 
     if (!seqs.length) {
       return;
@@ -127,13 +127,13 @@ function compactRevs(revs, docId, tx) {
     });
   }
 
-  // update by-seq and attach stores in parallel
+  // Update by-seq and attach stores in parallel
   revs.forEach(function (rev) {
     var sql = 'SELECT seq FROM ' + BY_SEQ_STORE +
       ' WHERE doc_id=? AND rev=?';
 
     tx.executeSql(sql, [docId, rev], function (tx, res) {
-      if (!res.rows.length) { // already deleted
+      if (!res.rows.length) { // Already deleted
         return checkDone();
       }
       var seq = res.rows.item(0).seq;
@@ -148,7 +148,7 @@ function compactRevs(revs, docId, tx) {
 function websqlError(callback) {
   return function (event) {
     console.error('WebSQL threw an error', event);
-    // event may actually be a SQLError object, so report is as such
+    // Event may actually be a SQLError object, so report is as such
     var errorNameMatch = event && event.constructor.toString()
         .match(/function ([^\(]+)/);
     var errorName = (errorNameMatch && errorNameMatch[1]) || event.type;
@@ -159,7 +159,7 @@ function websqlError(callback) {
 
 function getSize(opts) {
   if ('size' in opts) {
-    // triggers immediate popup in iOS, fixes #2347
+    // Triggers immediate popup in iOS, fixes #2347
     // e.g. 5000001 asks for 5 MB, 10000001 asks for 10 MB,
     return opts.size * 1000000;
   }
@@ -170,7 +170,7 @@ function getSize(opts) {
   // honest-to-god ceiling for data, so we need to
   // set it to a decently high number.
   var isAndroid = /Android/.test(window.navigator.userAgent);
-  return isAndroid ? 5000000 : 1; // in PhantomJS, if you use 0 it will crash
+  return isAndroid ? 5000000 : 1; // In PhantomJS, if you use 0 it will crash
 }
 
 function createOpenDBFunction() {
@@ -193,11 +193,11 @@ function createOpenDBFunction() {
 function openDBSafely(openDBFunction, opts) {
   try {
     return {
-      db: openDBFunction(opts)
+      db: openDBFunction(opts),
     };
   } catch (err) {
     return {
-      error: err
+      error: err,
     };
   }
 }

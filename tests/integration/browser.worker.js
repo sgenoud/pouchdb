@@ -8,7 +8,7 @@ if (!sourceFile) {
   sourceFile = '../../dist/' + sourceFile[1];
 }
 
-// only running in Chrome and Firefox due to various bugs.
+// Only running in Chrome and Firefox due to various bugs.
 // IE: https://connect.microsoft.com/IE/feedback/details/866495
 // Safari: doesn't have IndexedDB or WebSQL in a WW
 // NodeWebkit: not sure what the issue is
@@ -29,7 +29,7 @@ function runTests() {
       var worker = new Worker('worker.js');
       worker.addEventListener('error', function (e) {
         worker.terminate();
-        reject(new Error(e.message + ": " + e.filename + ': ' + e.lineno));
+        reject(new Error(e.message + ': ' + e.filename + ': ' + e.lineno));
       });
       worker.addEventListener('message', function (e) {
         worker.terminate();
@@ -87,7 +87,7 @@ function runTests() {
     it('put an attachment', function () {
       var blob = new Blob(['foobar'], {type: 'text/plain'});
       var message = ['putAttachment', dbs.name, 'doc', 'att.txt', blob,
-        'text/plain'];
+        'text/plain',];
       return workerPromise(message).then(function (blob) {
         blob.type.should.equal('text/plain');
         blob.size.should.equal(6);

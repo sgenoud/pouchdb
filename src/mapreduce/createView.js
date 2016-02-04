@@ -9,7 +9,7 @@ function createView(opts) {
   var reduceFun = opts.reduce;
   var temporary = opts.temporary;
 
-  // the "undefined" part is for backwards compatibility
+  // The "undefined" part is for backwards compatibility
   var viewSignature = mapFun.toString() + (reduceFun && reduceFun.toString()) +
     'undefined';
 
@@ -25,7 +25,7 @@ function createView(opts) {
     var depDbName = info.db_name + '-mrview-' +
       (temporary ? 'temp' : md5(viewSignature));
 
-    // save the view name in the source db so it can be cleaned up if necessary
+    // Save the view name in the source db so it can be cleaned up if necessary
     // (e.g. when the _design doc is deleted, remove all associated view data)
     function diffFunction(doc) {
       doc.views = doc.views || {};
@@ -36,7 +36,7 @@ function createView(opts) {
       var depDbs = doc.views[fullViewName] = doc.views[fullViewName] || {};
       /* istanbul ignore if */
       if (depDbs[depDbName]) {
-        return; // no update necessary
+        return; // No update necessary
       }
       depDbs[depDbName] = true;
       return doc;
@@ -51,7 +51,7 @@ function createView(opts) {
           sourceDB: sourceDB,
           adapter: sourceDB.adapter,
           mapFun: mapFun,
-          reduceFun: reduceFun
+          reduceFun: reduceFun,
         };
         return view.db.get('_local/lastSeq').catch(function (err) {
           /* istanbul ignore if */

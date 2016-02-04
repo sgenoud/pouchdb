@@ -1,4 +1,4 @@
-// for a better overview of what this is doing, read:
+// For a better overview of what this is doing, read:
 // https://github.com/apache/couchdb/blob/master/src/couchdb/couch_key_tree.erl
 //
 // But for a quick intro, CouchDB uses a revision tree to store a documents
@@ -15,7 +15,7 @@ function sortByPos(a, b) {
   return a.pos - b.pos;
 }
 
-// classic binary search
+// Classic binary search
 function binarySearch(arr, item, comparator) {
   var low = 0;
   var high = arr.length;
@@ -31,7 +31,7 @@ function binarySearch(arr, item, comparator) {
   return low;
 }
 
-// assuming the arr is sorted, insert the item in the proper place
+// Assuming the arr is sorted, insert the item in the proper place
 function insertSorted(arr, item, comparator) {
   var idx = binarySearch(arr, item, comparator);
   arr.splice(idx, 0, item);
@@ -56,7 +56,7 @@ function pathToTree(path, numStemmed) {
   return root;
 }
 
-// compare the IDs of two trees
+// Compare the IDs of two trees
 function compareTree(a, b) {
   return a[0] < b[0] ? -1 : 1;
 }
@@ -147,7 +147,7 @@ function doMerge(tree, path, dontExpand) {
             ids: elements[j],
             diff: item.diff - 1,
             parent: item.ids,
-            parentIdx: j
+            parentIdx: j,
           });
         }
       }
@@ -177,7 +177,7 @@ function doMerge(tree, path, dontExpand) {
 
   return {
     tree: restree,
-    conflicts: conflicts || 'internal_node'
+    conflicts: conflicts || 'internal_node',
   };
 }
 
@@ -194,7 +194,7 @@ function stem(tree, depth) {
     var numStemmed = Math.max(0, stemmed.length - depth);
     var stemmedNode = {
       pos: path.pos + numStemmed,
-      ids: pathToTree(stemmed, numStemmed)
+      ids: pathToTree(stemmed, numStemmed),
     };
     // Then we remerge all those flat trees together, ensuring that we dont
     // connect trees that would go beyond the depth limit
@@ -211,7 +211,7 @@ function merge(tree, path, depth) {
   var newTree = doMerge(tree, path);
   return {
     tree: stem(newTree.tree, depth),
-    conflicts: newTree.conflicts
+    conflicts: newTree.conflicts,
   };
 }
 

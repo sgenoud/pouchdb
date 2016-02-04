@@ -65,14 +65,14 @@ function processDocs(revLimit, docInfos, api, fetchedDocs, tx, results,
 
     var id = currentDoc.metadata.id;
     if (idsToDocs.has(id)) {
-      docsToDo--; // duplicate
+      docsToDo--; // Duplicate
       idsToDocs.get(id).push([currentDoc, resultsIdx]);
     } else {
       idsToDocs.set(id, [[currentDoc, resultsIdx]]);
     }
   });
 
-  // in the case of new_edits, the user can provide multiple docs
+  // In the case of new_edits, the user can provide multiple docs
   // with the same id. these need to be processed sequentially
   idsToDocs.forEach(function (docs, id) {
     var numDone = 0;

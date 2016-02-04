@@ -1,7 +1,7 @@
 'use strict';
 if (!process.env.LEVEL_ADAPTER &&
     !process.env.LEVEL_PREFIX && !process.env.AUTO_COMPACTION) {
-  // these tests don't make sense for anything other than default leveldown
+  // These tests don't make sense for anything other than default leveldown
   var fs = require('fs');
   var ncp = require('ncp').ncp;
 
@@ -48,7 +48,7 @@ if (!process.env.LEVEL_ADAPTER &&
     });
   });
 
-  // sanity check to ensure we don't actually need to migrate
+  // Sanity check to ensure we don't actually need to migrate
   // attachments for #2818
   describe('#2818 no migration needed for attachments', function () {
     beforeEach(function (done) {
@@ -57,16 +57,16 @@ if (!process.env.LEVEL_ADAPTER &&
     });
     it('should work', function () {
       return new PouchDB('lateStyle', {
-        auto_compaction: false
+        auto_compaction: false,
       }).then(function (db) {
         return db.put({
           _id: 'doc_b',
           _attachments: {
             'att.txt': {
               data: 'Zm9v', // 'foo'
-              content_type: 'text/plain'
-            }
-          }
+              content_type: 'text/plain',
+            },
+          },
         }).then(function () {
           return db.get('doc_b');
         }).then(function (doc) {
@@ -104,8 +104,8 @@ if (!process.env.LEVEL_ADAPTER &&
     it('should work', function () {
       var db = new PouchDB('laterStyle');
 
-      // basically this a db where I did a very pathological thing:
-      //var docsA = [{
+      // Basically this a db where I did a very pathological thing:
+      // var docsA = [{
       //  '_id': 'foo',
       //  '_rev': '1-x',
       //  'bar' : 'baz',
@@ -113,15 +113,15 @@ if (!process.env.LEVEL_ADAPTER &&
       //    'start': 1,
       //    'ids': ['x']
       //  }
-      //}, {
+      // }, {
       //  '_id' : 'fee',
       //  '_rev': '1-x',
       //  '_revisions': {
       //    'start': 1,
       //    'ids': ['x']
       //  }
-      //}];
-      //var docsB = [{
+      // }];
+      // var docsB = [{
       //  '_id': 'foo',
       //  '_rev': '1-x',
       //  'bar' : 'zam', // this update should be rejected
@@ -129,28 +129,27 @@ if (!process.env.LEVEL_ADAPTER &&
       //    'start': 1,
       //    'ids': ['x']
       //  }
-      //}];
-      //
-      //db.bulkDocs(docsA, {new_edits: false});
-      //db.bulkDocs(docsB, {new_edits: false});
+      // }];
+      // db.bulkDocs(docsA, {new_edits: false});
+      // db.bulkDocs(docsB, {new_edits: false});
 
 
       return db.changes({include_docs: true}).then(function (result) {
-        // the important thing is that 'zam' is ignored. see
+        // The important thing is that 'zam' is ignored. see
         // the other test in test.bulk_docs.js for details
         var expected = {
-          "results": [{
-            "id": "fee",
-            "changes": [{"rev": "1-x"}],
-            "doc": {"_id": "fee", "_rev": "1-x"},
-            "seq": 1
+          results: [{
+            id: 'fee',
+            changes: [{rev: '1-x'}],
+            doc: {_id: 'fee', _rev: '1-x'},
+            seq: 1,
           }, {
-            "id": "foo",
-            "changes": [{"rev": "1-x"}],
-            "doc": {"bar": "baz", "_id": "foo", "_rev": "1-x"},
-            "seq": 2
-          }],
-          "last_seq": 2
+            id: 'foo',
+            changes: [{rev: '1-x'}],
+            doc: {bar: 'baz', _id: 'foo', _rev: '1-x'},
+            seq: 2,
+          },],
+          last_seq: 2,
         };
         result.should.deep.equal(expected);
         return db.destroy();

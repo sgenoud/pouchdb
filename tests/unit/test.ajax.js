@@ -12,7 +12,7 @@ describe('test.ajax.js', function () {
     mockery.enable({
       warnOnReplace: false,
       warnOnUnregistered: false,
-      useCleanCache: true
+      useCleanCache: true,
     });
 
     function requestStub(callOpts, callCB) {
@@ -33,9 +33,9 @@ describe('test.ajax.js', function () {
     ajax({
       method: 'GET',
       binary: true,
-      url: 'http://test.db/dbname/docid/filename.jpg'
+      url: 'http://test.db/dbname/docid/filename.jpg',
     }, function(err, res) {
-      // here's the test, we should get an 'err' response
+      // Here's the test, we should get an 'err' response
       should.exist(err);
       should.not.exist(res);
       done();
@@ -44,9 +44,9 @@ describe('test.ajax.js', function () {
     // Simulates an interrupted network request
     setTimeout(function() {
       cb(null, {
-        statusCode: 0
+        statusCode: 0,
       },
-      "");
+      '');
     }, 4);
   });
 
@@ -54,7 +54,7 @@ describe('test.ajax.js', function () {
     ajax({
       method: 'GET',
       binary: true,
-      url: 'http://test.db/dbname/docid/filename.jpg'
+      url: 'http://test.db/dbname/docid/filename.jpg',
     }, function(err, res) {
       should.not.exist(err);
       should.exist(res);
@@ -65,8 +65,8 @@ describe('test.ajax.js', function () {
       cb(null, {
         statusCode: 200,
         headers: {
-          'Content-Type': 'image/jpeg'
-        }
+          'Content-Type': 'image/jpeg',
+        },
       }, new Buffer('sure this is binary data'));
     }, 4);
   });

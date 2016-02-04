@@ -1,6 +1,8 @@
 'use strict';
 /* jshint maxlen: false */
+// jscs:disable maximumLineLength
 var rfcRegexp = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+// jscs:enable maximumLineLength
 
 function makeUuids(count, length, radix) {
   count = count || 1;

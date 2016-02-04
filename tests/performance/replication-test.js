@@ -17,7 +17,7 @@ module.exports = function (PouchDB, Promise) {
     var self = this;
     return function (localDB, callback) {
       var remoteDBOpts = {ajax: {pool: {maxSockets: MAX_SOCKETS}}};
-      var remoteCouchUrl = commonUtils.couchHost() + "/" +
+      var remoteCouchUrl = commonUtils.couchHost() + '/' +
         commonUtils.safeRandomDBName();
 
       self.remoteDB = new PouchDB(remoteCouchUrl, remoteDBOpts);
@@ -34,7 +34,7 @@ module.exports = function (PouchDB, Promise) {
         docs.push({
           _id: commonUtils.createDocId(i),
           foo: Math.random(),
-          bar: Math.random()
+          bar: Math.random(),
         });
       }
 
@@ -50,7 +50,7 @@ module.exports = function (PouchDB, Promise) {
                 _id: doc.id,
                 _rev: doc.rev,
                 foo: Math.random(),
-                bar: Math.random()
+                bar: Math.random(),
               };
             });
             return addGeneration(generationCount, updatedDocs);
@@ -68,14 +68,14 @@ module.exports = function (PouchDB, Promise) {
       PouchDB.replicate(self.remoteDB, localDB,
         {live: false, batch_size: BATCH_SIZE})
       .on('change', function (info) {
-        log("replication - info - " + JSON.stringify(info));
+        log('replication - info - ' + JSON.stringify(info));
       })
       .on('complete', function (info) {
-        log("replication - complete - " + JSON.stringify(info));
+        log('replication - complete - ' + JSON.stringify(info));
         done();
       })
       .on('error', function (err) {
-        log("replication - error - " + JSON.stringify(err));
+        log('replication - error - ' + JSON.stringify(err));
         throw err;
       });
     };

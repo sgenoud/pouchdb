@@ -14,7 +14,7 @@ function adapterFun(name, callback) {
       }
       log.apply(null, logArgs);
 
-      // override the callback itself to log the response
+      // Override the callback itself to log the response
       var origCallback = args[args.length - 1];
       args[args.length - 1] = function (err, res) {
         var responseArgs = [self._db_name, name];

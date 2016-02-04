@@ -4,7 +4,7 @@ function randomNumber(min, max) {
   min = parseInt(min, 10) || 0;
   max = parseInt(max, 10);
   if (max !== max || max <= min) {
-    max = (min || 1) << 1; //doubling
+    max = (min || 1) << 1; // Doubling
   } else {
     max = max + 1;
   }

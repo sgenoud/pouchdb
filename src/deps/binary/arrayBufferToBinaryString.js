@@ -1,6 +1,6 @@
-//Can't find original post, but this is close
-//http://stackoverflow.com/questions/6965107/ (continues on next line)
-//converting-between-strings-and-arraybuffers
+// Can't find original post, but this is close
+// http://stackoverflow.com/questions/6965107/ (continues on next line)
+// converting-between-strings-and-arraybuffers
 function arrayBufferToBinaryString(buffer) {
   var binary = '';
   var bytes = new Uint8Array(buffer);
